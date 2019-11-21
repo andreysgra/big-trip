@@ -1,5 +1,3 @@
-'use strict';
-
 const EVENTS_NUMBER = 3;
 
 const getMenuComponent = () => {
