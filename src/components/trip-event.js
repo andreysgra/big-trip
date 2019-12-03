@@ -1,4 +1,4 @@
-const getEventComponent = () => {
+const getTripEventComponent = () => {
   return `
     <li class="trip-events__item">
       <div class="event">
@@ -37,6 +37,4 @@ const getEventComponent = () => {
   `;
 };
 
-export {
-  getEventComponent
-};
+export {getTripEventComponent};
