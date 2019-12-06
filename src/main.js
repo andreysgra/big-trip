@@ -25,7 +25,7 @@ const tripInfo = document.querySelector(`.trip-main__trip-info`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
 
-renderComponent(tripInfo, getTripInfoComponent(), `afterbegin`);
+renderComponent(tripInfo, getTripInfoComponent(events), `afterbegin`);
 renderComponent(tripControls.firstElementChild, getMenuComponent(MENU_ITEMS), `afterend`);
 renderComponent(tripControls, getFiltersComponent(FILTERS));
 renderComponent(tripEvents, getEventsSort());
