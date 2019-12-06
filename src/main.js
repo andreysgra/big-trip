@@ -1,5 +1,5 @@
 import {getMenuComponent} from './components/menu.js';
-import {getFiltersComponent} from './components/filters.js';
+import {getFiltersComponent} from './components/filter.js';
 import {getTripInfoComponent} from './components/trip-info.js';
 import {getEventsSort} from './components/trip-sort.js';
 import {getTripDaysComponent} from './components/trip-days.js';
@@ -8,6 +8,7 @@ import {getTripEventEditComponent} from './components/trip-event-edit.js';
 import {renderComponent} from './utils.js';
 import {generateEvents} from './mock/event.js';
 import {MENU_ITEMS} from './mock/menu.js';
+import {FILTERS} from './mock/filter.js';
 
 const EVENTS_COUNT = 4;
 
@@ -26,7 +27,7 @@ const tripEvents = document.querySelector(`.trip-events`);
 
 renderComponent(tripInfo, getTripInfoComponent(), `afterbegin`);
 renderComponent(tripControls.firstElementChild, getMenuComponent(MENU_ITEMS), `afterend`);
-renderComponent(tripControls, getFiltersComponent());
+renderComponent(tripControls, getFiltersComponent(FILTERS));
 renderComponent(tripEvents, getEventsSort());
 renderComponent(tripEvents, getTripDaysComponent());
 
