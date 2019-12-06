@@ -1,27 +1,5 @@
 import {getRandomArrayItem, getRandomNumber, getRandomDate, shuffle} from '../utils.js';
-
-const POINT_TYPES = [
-  `bus`,
-  `check-in`,
-  `drive`,
-  `flight`,
-  `restaurant`,
-  `ship`,
-  `sightseeing`,
-  `taxi`,
-  `train`,
-  `transport`,
-  `trip`
-];
-
-const CITIES = [
-  `Amsterdam`,
-  `Rotterdam`,
-  `Berlin`,
-  `Vienna`,
-  `Prague`,
-  `Paris`
-];
+import {EVENT_TYPES, CITIES, OFFERS} from '../const.js';
 
 const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -36,39 +14,16 @@ const DESCRIPTIONS = [
   `Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`
 ];
 
-const OPTIONS = [
-  {
-    type: `luggage`,
-    title: `Add luggage`,
-    price: 10
-  },
-  {
-    type: `comfort`,
-    title: `Switch to comfort class`,
-    price: 150
-  },
-  {
-    type: `meal`,
-    title: `Add meal`,
-    price: 2
-  },
-  {
-    type: `seat`,
-    title: `Choose seats`,
-    price: 9
-  }
-];
-
 const generatePhotos = () => {
   const count = getRandomNumber(1, 6);
 
   return [...Array(count)].map(() => `http://picsum.photos/300/150?r=${Math.random()}`);
 };
 
-const generateOptions = () => {
-  const count = getRandomNumber(0, 3);
+const generateOffers = () => {
+  const count = getRandomNumber(0, 6);
 
-  return [...Array(count)].map((it, i) => OPTIONS[i]);
+  return [...Array(count)].map((it, i) => OFFERS[i]);
 };
 
 const generateDescription = (descriptions) => {
@@ -79,15 +34,15 @@ const generateDescription = (descriptions) => {
     .join(` `);
 };
 
-const generateCard = () => {
-  const firstDate = getRandomDate(1, 7);
-  const secondDate = getRandomDate(1, 7);
+const generateEvent = () => {
+  const firstDate = getRandomDate();
+  const secondDate = getRandomDate();
 
   return {
-    type: getRandomArrayItem(POINT_TYPES),
+    type: getRandomArrayItem([...EVENT_TYPES.transfers, ...EVENT_TYPES.activities]),
     city: getRandomArrayItem(CITIES),
     photos: generatePhotos(),
-    options: generateOptions(),
+    offers: generateOffers(),
     description: generateDescription(DESCRIPTIONS),
     startDate: Math.min(firstDate, secondDate),
     endDate: Math.max(firstDate, secondDate),
@@ -95,8 +50,8 @@ const generateCard = () => {
   };
 };
 
-const generateCards = (count) => {
-  return [...Array(count)].map(() => generateCard());
+const generateEvents = (count) => {
+  return [...Array(count)].map(() => generateEvent());
 };
 
-export {generateCards};
+export {generateEvents};
