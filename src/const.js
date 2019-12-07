@@ -52,4 +52,16 @@ const OFFERS = [
   }
 ];
 
-export {EVENT_TYPES, CITIES, OFFERS};
+const FILTERS = [
+  `everything`,
+  `future`,
+  `past`
+];
+
+const MENU_ITEMS = [
+  `Table`,
+  `Stats`
+];
+
+
+export {EVENT_TYPES, CITIES, OFFERS, FILTERS, MENU_ITEMS};

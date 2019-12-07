@@ -6,9 +6,8 @@ import {getTripDaysComponent} from './components/trip-days.js';
 import {getTripEventComponent} from './components/trip-event.js';
 import {getTripEventEditComponent} from './components/trip-event-edit.js';
 import {renderComponent} from './utils.js';
+import {FILTERS, MENU_ITEMS} from './const.js';
 import {generateEvents} from './mock/event.js';
-import {MENU_ITEMS} from './mock/menu.js';
-import {FILTERS} from './mock/filter.js';
 
 const EVENTS_COUNT = 4;
 
