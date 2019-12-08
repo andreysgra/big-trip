@@ -1,11 +1,8 @@
 import {createElement} from '../utils.js';
-import {getTripDayComponent} from './trip-day.js';
 
 const createTripDaysTemplate = () => {
   return `
-    <ul class="trip-days">
-      ${getTripDayComponent()}
-    </ul>
+    <ul class="trip-days"></ul>
   `;
 };
 

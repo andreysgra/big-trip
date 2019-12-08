@@ -1,6 +1,7 @@
+import {createElement} from '../utils.js';
 import {getTripEventsComponent} from './trip-events.js';
 
-const getTripDayComponent = () => {
+const createTripDayTemplate = () => {
   return `
     <li class="trip-days__item  day">
       <div class="day__info">
@@ -12,4 +13,24 @@ const getTripDayComponent = () => {
   `;
 };
 
-export {getTripDayComponent};
+export default class TripDay {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripDayTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

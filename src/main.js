@@ -3,6 +3,7 @@ import FilterComponent from './components/filter.js';
 import TripInfoComponent from './components/trip-info.js';
 import TripSortComponent from './components/trip-sort.js';
 import TripDaysComponent from './components/trip-days.js';
+import TripDayComponent from './components/trip-day.js';
 // import {getTripEventComponent} from './components/trip-event.js';
 // import {getTripEventEditComponent} from './components/trip-event-edit.js';
 import {renderComponent} from './utils.js';
@@ -29,8 +30,12 @@ renderComponent(tripControls, new FilterComponent(FILTERS).getElement());
 
 const tripEvents = document.querySelector(`.trip-events`);
 renderComponent(tripEvents, new TripSortComponent().getElement());
-renderComponent(tripEvents, new TripDaysComponent().getElement());
 
+const tripDaysComponent = new TripDaysComponent();
+renderComponent(tripEvents, tripDaysComponent.getElement());
+
+const tripDayComponent = new TripDayComponent();
+renderComponent(tripDaysComponent.getElement(), tripDayComponent.getElement());
 // const tripDay = document.querySelector(`.trip-days__item`);
 // const tripEventsList = tripDay.querySelector(`.trip-events__list`);
 
