@@ -1,7 +1,7 @@
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
-import TripInfo from './components/trip-info.js';
-// import {getEventsSort} from './components/trip-sort.js';
+import TripInfoComponent from './components/trip-info.js';
+import TripSortComponent from './components/trip-sort.js';
 // import {getTripDaysComponent} from './components/trip-days.js';
 // import {getTripEventComponent} from './components/trip-event.js';
 // import {getTripEventEditComponent} from './components/trip-event-edit.js';
@@ -21,15 +21,14 @@ const events = generateEvents(EVENTS_COUNT);
 // };
 
 const tripInfo = document.querySelector(`.trip-main__trip-info`);
-renderComponent(tripInfo, new TripInfo(events).getElement(), RenderPosition.AFTERBEGIN);
+renderComponent(tripInfo, new TripInfoComponent(events).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
-// const tripEvents = document.querySelector(`.trip-events`);
-
 renderComponent(tripControls, new MenuComponent(MENU_ITEMS).getElement(), RenderPosition.AFTERBEGIN);
 renderComponent(tripControls, new FilterComponent(FILTERS).getElement());
 
-// renderComponent(tripEvents, getEventsSort());
+const tripEvents = document.querySelector(`.trip-events`);
+renderComponent(tripEvents, new TripSortComponent().getElement());
 // renderComponent(tripEvents, getTripDaysComponent());
 
 // const tripDay = document.querySelector(`.trip-days__item`);
