@@ -4,7 +4,8 @@ import TripInfoComponent from './components/trip-info.js';
 import TripSortComponent from './components/trip-sort.js';
 import TripDaysComponent from './components/trip-days.js';
 import TripDayComponent from './components/trip-day.js';
-// import {getTripEventComponent} from './components/trip-event.js';
+import TripEventsComponent from './components/trip-events.js';
+import TripEventComponent from './components/trip-event.js';
 // import {getTripEventEditComponent} from './components/trip-event-edit.js';
 import {renderComponent} from './utils.js';
 import {FILTERS, MENU_ITEMS, RenderPosition} from './const.js';
@@ -13,13 +14,6 @@ import {generateEvents} from './mock/event.js';
 const EVENTS_COUNT = 4;
 
 const events = generateEvents(EVENTS_COUNT);
-
-// const getEvents = () => {
-//   return events
-//     .slice(1, EVENTS_COUNT)
-//     .map((event) => getTripEventComponent(event))
-//     .join(``);
-// };
 
 const tripInfo = document.querySelector(`.trip-main__trip-info`);
 renderComponent(tripInfo, new TripInfoComponent(events).getElement(), RenderPosition.AFTERBEGIN);
@@ -36,11 +30,16 @@ renderComponent(tripEvents, tripDaysComponent.getElement());
 
 const tripDayComponent = new TripDayComponent();
 renderComponent(tripDaysComponent.getElement(), tripDayComponent.getElement());
-// const tripDay = document.querySelector(`.trip-days__item`);
-// const tripEventsList = tripDay.querySelector(`.trip-events__list`);
+
+const tripEventsComponent = new TripEventsComponent();
+renderComponent(tripDayComponent.getElement(), tripEventsComponent.getElement());
 
 // renderComponent(tripEventsList, getTripEventEditComponent(events[0]));
-// renderComponent(tripEventsList, getEvents());
+
+events
+  .slice(1, EVENTS_COUNT)
+  .forEach((event) => renderComponent(tripEventsComponent.getElement(), new TripEventComponent(event).getElement()));
+
 
 // const tripCost = events.reduce((acc, value) => acc + value.price, 0);
 // tripInfo.querySelector(`.trip-info__cost-value`).textContent = tripCost;

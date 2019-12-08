@@ -1,3 +1,4 @@
+import {createElement} from '../utils.js';
 import {formatTime, formatDuration} from '../utils.js';
 
 const OFFERS_MAX_VIEWING = 3;
@@ -18,7 +19,7 @@ const createOffersMarkup = (offers) => {
     .join(``);
 };
 
-const getTripEventComponent = (event) => {
+const createTripEventTemplate = (event) => {
   const {type, city, offers, startDate, endDate, price} = event;
 
   const offersMarkup = createOffersMarkup(offers);
@@ -61,4 +62,25 @@ const getTripEventComponent = (event) => {
   `;
 };
 
-export {getTripEventComponent};
+export default class TripEvent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
