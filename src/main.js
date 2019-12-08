@@ -6,7 +6,7 @@ import TripDaysComponent from './components/trip-days.js';
 import TripDayComponent from './components/trip-day.js';
 import TripEventsComponent from './components/trip-events.js';
 import TripEventComponent from './components/trip-event.js';
-// import {getTripEventEditComponent} from './components/trip-event-edit.js';
+import TripEventEditComponent from './components/trip-event-edit.js';
 import {renderComponent} from './utils.js';
 import {FILTERS, MENU_ITEMS, RenderPosition} from './const.js';
 import {generateEvents} from './mock/event.js';
@@ -14,6 +14,27 @@ import {generateEvents} from './mock/event.js';
 const EVENTS_COUNT = 4;
 
 const events = generateEvents(EVENTS_COUNT);
+
+const renderEvent = (event) => {
+  const tripEventComponent = new TripEventComponent(event);
+  const tripEventEditComponent = new TripEventEditComponent(event);
+
+  const buttonRollupElement = tripEventComponent.getElement().querySelector(`.event__rollup-btn`);
+  const formEditElement = tripEventEditComponent.getElement().querySelector(`.event--edit`);
+
+  const buttonEditClickHandler = () => {
+    tripEventsListElement.replaceChild(tripEventEditComponent.getElement(), tripEventComponent.getElement());
+  };
+
+  const formEditSubmitHandler = () => {
+    tripEventsListElement.replaceChild(tripEventComponent.getElement(), tripEventEditComponent.getElement());
+  };
+
+  buttonRollupElement.addEventListener(`click`, buttonEditClickHandler);
+  formEditElement.addEventListener(`submit`, formEditSubmitHandler);
+
+  renderComponent(tripEventsListElement, tripEventComponent.getElement());
+};
 
 const tripInfo = document.querySelector(`.trip-main__trip-info`);
 renderComponent(tripInfo, new TripInfoComponent(events).getElement(), RenderPosition.AFTERBEGIN);
@@ -32,11 +53,12 @@ const tripDayComponent = new TripDayComponent();
 renderComponent(tripDaysComponent.getElement(), tripDayComponent.getElement());
 
 const tripEventsComponent = new TripEventsComponent();
+const tripEventsListElement = tripEventsComponent.getElement();
 renderComponent(tripDayComponent.getElement(), tripEventsComponent.getElement());
 
 events
   .slice(0, EVENTS_COUNT)
-  .forEach((event) => renderComponent(tripEventsComponent.getElement(), new TripEventComponent(event).getElement()));
+  .forEach((event) => renderEvent(event));
 
 
 const tripCost = events.reduce((acc, value) => acc + value.price, 0);

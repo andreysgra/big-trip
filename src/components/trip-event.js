@@ -5,7 +5,7 @@ const OFFERS_MAX_VIEWING = 3;
 
 const createOffersMarkup = (offers) => {
   return offers
-    .slice(OFFERS_MAX_VIEWING)
+    .slice(0, OFFERS_MAX_VIEWING)
     .map((offer) => {
       const {title, price} = offer;
       return `
