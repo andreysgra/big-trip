@@ -1,17 +1,17 @@
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
-// import {getTripInfoComponent} from './components/trip-info.js';
+import TripInfo from './components/trip-info.js';
 // import {getEventsSort} from './components/trip-sort.js';
 // import {getTripDaysComponent} from './components/trip-days.js';
 // import {getTripEventComponent} from './components/trip-event.js';
 // import {getTripEventEditComponent} from './components/trip-event-edit.js';
 import {renderComponent} from './utils.js';
 import {FILTERS, MENU_ITEMS, RenderPosition} from './const.js';
-// import {generateEvents} from './mock/event.js';
+import {generateEvents} from './mock/event.js';
 
-// const EVENTS_COUNT = 4;
+const EVENTS_COUNT = 4;
 
-// const events = generateEvents(EVENTS_COUNT);
+const events = generateEvents(EVENTS_COUNT);
 
 // const getEvents = () => {
 //   return events
@@ -20,11 +20,11 @@ import {FILTERS, MENU_ITEMS, RenderPosition} from './const.js';
 //     .join(``);
 // };
 
-// const tripInfo = document.querySelector(`.trip-main__trip-info`);
+const tripInfo = document.querySelector(`.trip-main__trip-info`);
+renderComponent(tripInfo, new TripInfo(events).getElement(), RenderPosition.AFTERBEGIN);
+
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 // const tripEvents = document.querySelector(`.trip-events`);
-
-// renderComponent(tripInfo, getTripInfoComponent(events), `afterbegin`);
 
 renderComponent(tripControls, new MenuComponent(MENU_ITEMS).getElement(), RenderPosition.AFTERBEGIN);
 renderComponent(tripControls, new FilterComponent(FILTERS).getElement());
