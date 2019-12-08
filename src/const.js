@@ -1,4 +1,4 @@
-const EVENT_TYPES = {
+export const EVENT_TYPES = {
   transfers: [
     `bus`,
     `drive`,
@@ -15,7 +15,7 @@ const EVENT_TYPES = {
   ]
 };
 
-const CITIES = [
+export const CITIES = [
   `Amsterdam`,
   `Rotterdam`,
   `Berlin`,
@@ -24,7 +24,7 @@ const CITIES = [
   `Paris`
 ];
 
-const OFFERS = [
+export const OFFERS = [
   {
     type: `luggage`,
     title: `Add luggage`,
@@ -52,16 +52,19 @@ const OFFERS = [
   }
 ];
 
-const FILTERS = [
+export const FILTERS = [
   `everything`,
   `future`,
   `past`
 ];
 
-const MENU_ITEMS = [
+export const MENU_ITEMS = [
   `Table`,
   `Stats`
 ];
 
 
-export {EVENT_TYPES, CITIES, OFFERS, FILTERS, MENU_ITEMS};
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};

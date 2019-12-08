@@ -1,4 +1,6 @@
-const getMenuComponent = (items) => {
+import {createElement} from '../utils.js';
+
+const createMenuTemplate = (items) => {
   return `
     <nav class="trip-controls__trip-tabs  trip-tabs">
       ${items
@@ -10,6 +12,25 @@ const getMenuComponent = (items) => {
   `;
 };
 
-export {
-  getMenuComponent
-};
+export default class Menu {
+  constructor(items) {
+    this._items = items;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMenuTemplate(this._items);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
