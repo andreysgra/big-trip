@@ -1,6 +1,5 @@
-// import {getMenuComponent} from './components/menu.js';
 import MenuComponent from './components/menu.js';
-// import {getFiltersComponent} from './components/filter.js';
+import FilterComponent from './components/filter.js';
 // import {getTripInfoComponent} from './components/trip-info.js';
 // import {getEventsSort} from './components/trip-sort.js';
 // import {getTripDaysComponent} from './components/trip-days.js';
@@ -27,10 +26,9 @@ const tripControls = document.querySelector(`.trip-main__trip-controls`);
 
 // renderComponent(tripInfo, getTripInfoComponent(events), `afterbegin`);
 
-// renderComponent(tripControls.firstElementChild, getMenuComponent(MENU_ITEMS), `afterend`);
 renderComponent(tripControls, new MenuComponent(MENU_ITEMS).getElement(), RenderPosition.AFTERBEGIN);
+renderComponent(tripControls, new FilterComponent(FILTERS).getElement());
 
-// renderComponent(tripControls, getFiltersComponent(FILTERS));
 // renderComponent(tripEvents, getEventsSort());
 // renderComponent(tripEvents, getTripDaysComponent());
 
