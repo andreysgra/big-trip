@@ -1,3 +1,4 @@
+import {createElement} from '../utils.js';
 import {getRandomBool, formatDate, formatTime} from '../utils.js';
 import {EVENT_TYPES, CITIES} from '../const.js';
 
@@ -51,7 +52,7 @@ const createDestinationMarkup = (destinations) => {
     .join(``);
 };
 
-const getTripEventEditComponent = (event) => {
+const createTripEventEditTemplate = (event) => {
   const {type, city, photos, offers, description, startDate, endDate, price} = event;
 
   const photosMarkup = createEventPhotosMarkup(photos);
@@ -157,4 +158,25 @@ const getTripEventEditComponent = (event) => {
   `;
 };
 
-export {getTripEventEditComponent};
+export default class TripEventEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

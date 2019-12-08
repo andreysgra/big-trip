@@ -34,12 +34,10 @@ renderComponent(tripDaysComponent.getElement(), tripDayComponent.getElement());
 const tripEventsComponent = new TripEventsComponent();
 renderComponent(tripDayComponent.getElement(), tripEventsComponent.getElement());
 
-// renderComponent(tripEventsList, getTripEventEditComponent(events[0]));
-
 events
-  .slice(1, EVENTS_COUNT)
+  .slice(0, EVENTS_COUNT)
   .forEach((event) => renderComponent(tripEventsComponent.getElement(), new TripEventComponent(event).getElement()));
 
 
-// const tripCost = events.reduce((acc, value) => acc + value.price, 0);
-// tripInfo.querySelector(`.trip-info__cost-value`).textContent = tripCost;
+const tripCost = events.reduce((acc, value) => acc + value.price, 0);
+tripInfo.querySelector(`.trip-info__cost-value`).textContent = tripCost;
