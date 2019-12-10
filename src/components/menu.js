@@ -1,17 +1,5 @@
 import {createElement} from '../utils.js';
 
-const createMenuTemplate = (items) => {
-  return `
-    <nav class="trip-controls__trip-tabs  trip-tabs">
-      ${items
-        .map((item, index) => {
-          return `<a class="trip-tabs__btn ${index === 0 ? `trip-tabs__btn--active` : ``}" href="#">${item}</a>`;
-        })
-        .join(``)}
-    </nav>
-  `;
-};
-
 export default class Menu {
   constructor(items) {
     this._items = items;
@@ -19,7 +7,15 @@ export default class Menu {
   }
 
   getTemplate() {
-    return createMenuTemplate(this._items);
+    return `
+      <nav class="trip-controls__trip-tabs  trip-tabs">
+        ${this._items
+          .map((item, index) => {
+            return `<a class="trip-tabs__btn ${index === 0 ? `trip-tabs__btn--active` : ``}" href="#">${item}</a>`;
+          })
+          .join(``)}
+      </nav>
+    `;
   }
 
   getElement() {

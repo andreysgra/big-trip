@@ -52,17 +52,23 @@ const createDestinationMarkup = (destinations) => {
     .join(``);
 };
 
-const createTripEventEditTemplate = (event) => {
-  const {type, city, photos, offers, description, startDate, endDate, price} = event;
+export default class TripEventEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
 
-  const photosMarkup = createEventPhotosMarkup(photos);
-  const offersMarkup = createOffersMarkup(offers);
+  getTemplate() {
+    const {type, city, photos, offers, description, startDate, endDate, price} = this._event;
 
-  const {transfers, activities} = EVENT_TYPES;
-  const cities = createDestinationMarkup(CITIES);
+    const photosMarkup = createEventPhotosMarkup(photos);
+    const offersMarkup = createOffersMarkup(offers);
 
-  return `
-    <li class="trip-events__item">
+    const {transfers, activities} = EVENT_TYPES;
+    const cities = createDestinationMarkup(CITIES);
+
+    return `
+      <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -154,18 +160,8 @@ const createTripEventEditTemplate = (event) => {
           </section>
         </section>
       </form>
-    </li>
-  `;
-};
-
-export default class TripEventEdit {
-  constructor(event) {
-    this._event = event;
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createTripEventEditTemplate(this._event);
+      </li>
+    `;
   }
 
   getElement() {
@@ -178,5 +174,9 @@ export default class TripEventEdit {
 
   removeElement() {
     this._element = null;
+  }
+
+  setSubmitFormHandler(handler) {
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, handler);
   }
 }

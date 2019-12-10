@@ -19,17 +19,23 @@ const createOffersMarkup = (offers) => {
     .join(``);
 };
 
-const createTripEventTemplate = (event) => {
-  const {type, city, offers, startDate, endDate, price} = event;
+export default class TripEvent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
 
-  const offersMarkup = createOffersMarkup(offers);
+  getTemplate() {
+    const {type, city, offers, startDate, endDate, price} = this._event;
 
-  const startTime = formatTime(startDate);
-  const endTime = formatTime(endDate);
-  const duration = formatDuration(endDate - startDate);
+    const offersMarkup = createOffersMarkup(offers);
 
-  return `
-    <li class="trip-events__item">
+    const startTime = formatTime(startDate);
+    const endTime = formatTime(endDate);
+    const duration = formatDuration(endDate - startDate);
+
+    return `
+      <li class="trip-events__item">
       <div class="event">
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event ${type} icon">
@@ -58,18 +64,8 @@ const createTripEventTemplate = (event) => {
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>
-  `;
-};
-
-export default class TripEvent {
-  constructor(event) {
-    this._event = event;
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createTripEventTemplate(this._event);
+      </li>
+    `;
   }
 
   getElement() {
@@ -82,5 +78,9 @@ export default class TripEvent {
 
   removeElement() {
     this._element = null;
+  }
+
+  setRollupButtonHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 }

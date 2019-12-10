@@ -1,10 +1,16 @@
 import {createElement} from '../utils.js';
 
-const createFilterTemplate = (filters) => {
-  return `
-    <form class="trip-filters" action="#" method="get">
-      <div class="trip-filters__filter">
-        ${filters
+export default class Filter {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `
+      <form class="trip-filters" action="#" method="get">
+        <div class="trip-filters__filter">
+          ${this._filters
           .map((filter, index) => {
             return `
               <input id="filter-${filter}" class="trip-filters__filter-input visually-hidden" type="radio" name="trip-filter"
@@ -13,19 +19,9 @@ const createFilterTemplate = (filters) => {
             `;
           })
           .join(``)}
-      </div>
-    </form>
-  `;
-};
-
-export default class Filter {
-  constructor(filters) {
-    this._filters = filters;
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createFilterTemplate(this._filters);
+        </div>
+      </form>
+    `;
   }
 
   getElement() {

@@ -22,18 +22,6 @@ const getDates = (startDate, endDate) => {
   return `${month} ${startDay} &nbsp;&mdash;&nbsp; ${endDay}`;
 };
 
-const createTripInfoTemplate = (events) => {
-  return `
-    <div class="trip-info__main">
-      <h1 class="trip-info__title">
-        ${getTitle(events)}
-      </h1>
-
-      <p class="trip-info__dates">${getDates(events[0].startDate, events[events.length - 1].endDate)}</p>
-    </div>
-  `;
-};
-
 export default class TripInfo {
   constructor(events) {
     this._events = events;
@@ -41,7 +29,17 @@ export default class TripInfo {
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._events);
+    const dates = getDates(this._events[0].startDate, this._events[this._events.length - 1].endDate);
+
+    return `
+      <div class="trip-info__main">
+        <h1 class="trip-info__title">
+          ${getTitle(this._events)}
+        </h1>
+
+        <p class="trip-info__dates">${dates}</p>
+      </div>
+    `;
   }
 
   getElement() {

@@ -13,27 +13,41 @@ import {generateEvents} from './mock/event.js';
 
 const EVENTS_COUNT = 4;
 
+let lastEvent = null;
+let lastEditEvent = null;
+
 const events = generateEvents(EVENTS_COUNT);
 
 const renderEvent = (event) => {
-  const tripEventComponent = new TripEventComponent(event);
-  const tripEventEditComponent = new TripEventEditComponent(event);
+  const eventComponent = new TripEventComponent(event);
+  const eventEditComponent = new TripEventEditComponent(event);
 
-  const buttonRollupElement = tripEventComponent.getElement().querySelector(`.event__rollup-btn`);
-  const formEditElement = tripEventEditComponent.getElement().querySelector(`.event--edit`);
-
-  const buttonEditClickHandler = () => {
-    tripEventsListElement.replaceChild(tripEventEditComponent.getElement(), tripEventComponent.getElement());
+  const eventReplaceComponent = (newComponent, oldComponent) => {
+    tripEventsListElement.replaceChild(newComponent.getElement(), oldComponent.getElement());
   };
 
-  const formEditSubmitHandler = () => {
-    tripEventsListElement.replaceChild(tripEventComponent.getElement(), tripEventEditComponent.getElement());
+  const eventEditHandler = () => {
+    if (lastEditEvent) {
+      eventReplaceComponent(lastEvent, lastEditEvent);
+    }
+
+    eventReplaceComponent(eventEditComponent, eventComponent);
+
+    lastEvent = eventComponent;
+    lastEditEvent = eventEditComponent;
   };
 
-  buttonRollupElement.addEventListener(`click`, buttonEditClickHandler);
-  formEditElement.addEventListener(`submit`, formEditSubmitHandler);
+  const eventSubmitHadler = () => {
+    eventReplaceComponent(eventComponent, eventEditComponent);
 
-  renderComponent(tripEventsListElement, tripEventComponent.getElement());
+    lastEvent = null;
+    lastEditEvent = null;
+  };
+
+  eventComponent.setRollupButtonHandler(eventEditHandler);
+  eventEditComponent.setSubmitFormHandler(eventSubmitHadler);
+
+  renderComponent(tripEventsListElement, eventComponent.getElement());
 };
 
 const tripInfo = document.querySelector(`.trip-main__trip-info`);
