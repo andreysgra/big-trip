@@ -1,8 +1,16 @@
-const getFiltersComponent = (filters) => {
-  return `
-    <form class="trip-filters" action="#" method="get">
-      <div class="trip-filters__filter">
-        ${filters
+import {createElement} from '../utils.js';
+
+export default class Filter {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `
+      <form class="trip-filters" action="#" method="get">
+        <div class="trip-filters__filter">
+          ${this._filters
           .map((filter, index) => {
             return `
               <input id="filter-${filter}" class="trip-filters__filter-input visually-hidden" type="radio" name="trip-filter"
@@ -11,11 +19,20 @@ const getFiltersComponent = (filters) => {
             `;
           })
           .join(``)}
-      </div>
-    </form>
-  `;
-};
+        </div>
+      </form>
+    `;
+  }
 
-export {
-  getFiltersComponent
-};
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

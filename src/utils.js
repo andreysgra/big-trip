@@ -1,20 +1,40 @@
-const renderComponent = (container, component, position = `beforeend`) => {
-  container.insertAdjacentHTML(position, component);
+import {RenderPosition} from './const.js';
+
+const addLeadZero = (value) => {
+  return value < 10 ? `0${value}` : String(value);
 };
 
-const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+export const createElement = (template) => {
+  const element = document.createElement(`div`);
 
-const getRandomArrayItem = (array) => array[getRandomNumber(0, array.length)];
+  element.innerHTML = template;
 
-const getRandomBool = () => Math.random() > 0.5;
+  return element.firstElementChild;
+};
 
-const getRandomDate = () => {
+export const renderComponent = (container, element, position = RenderPosition.BEFOREEND) => {
+  switch (position) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+  }
+};
+
+export const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+
+export const getRandomArrayItem = (array) => array[getRandomNumber(0, array.length)];
+
+export const getRandomBool = () => Math.random() > 0.5;
+
+export const getRandomDate = () => {
   const day = 24 * 3600 * 1000;
 
   return getRandomNumber(Date.now(), Date.now() + day);
 };
 
-const shuffle = (array) => {
+export const shuffle = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     let random = Math.floor(Math.random() * (i + 1));
     let temp = array[random];
@@ -26,11 +46,7 @@ const shuffle = (array) => {
   return array;
 };
 
-const addLeadZero = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
-
-const formatDate = (timestamp) => {
+export const formatDate = (timestamp) => {
   const date = new Date(timestamp);
 
   const day = addLeadZero(date.getDate());
@@ -40,7 +56,7 @@ const formatDate = (timestamp) => {
   return `${day}/${month}/${year}`;
 };
 
-const formatTime = (timestamp) => {
+export const formatTime = (timestamp) => {
   const date = new Date(timestamp);
 
   const hours = addLeadZero(date.getHours());
@@ -49,7 +65,7 @@ const formatTime = (timestamp) => {
   return `${hours}:${minutes}`;
 };
 
-const formatDuration = (time) => {
+export const formatDuration = (time) => {
   const millisecondsInMinute = 60 * 1000;
   const millisecondsInHour = millisecondsInMinute * 60;
 
@@ -57,16 +73,4 @@ const formatDuration = (time) => {
   const minutes = addLeadZero(Math.floor(time % millisecondsInHour / millisecondsInMinute));
 
   return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
-};
-
-export {
-  renderComponent,
-  getRandomNumber,
-  getRandomArrayItem,
-  getRandomBool,
-  getRandomDate,
-  shuffle,
-  formatDate,
-  formatTime,
-  formatDuration
 };

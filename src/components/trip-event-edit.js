@@ -1,3 +1,4 @@
+import {createElement} from '../utils.js';
 import {getRandomBool, formatDate, formatTime} from '../utils.js';
 import {EVENT_TYPES, CITIES} from '../const.js';
 
@@ -51,17 +52,23 @@ const createDestinationMarkup = (destinations) => {
     .join(``);
 };
 
-const getTripEventEditComponent = (event) => {
-  const {type, city, photos, offers, description, startDate, endDate, price} = event;
+export default class TripEventEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
 
-  const photosMarkup = createEventPhotosMarkup(photos);
-  const offersMarkup = createOffersMarkup(offers);
+  getTemplate() {
+    const {type, city, photos, offers, description, startDate, endDate, price} = this._event;
 
-  const {transfers, activities} = EVENT_TYPES;
-  const cities = createDestinationMarkup(CITIES);
+    const photosMarkup = createEventPhotosMarkup(photos);
+    const offersMarkup = createOffersMarkup(offers);
 
-  return `
-    <li class="trip-events__item">
+    const {transfers, activities} = EVENT_TYPES;
+    const cities = createDestinationMarkup(CITIES);
+
+    return `
+      <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -153,8 +160,23 @@ const getTripEventEditComponent = (event) => {
           </section>
         </section>
       </form>
-    </li>
-  `;
-};
+      </li>
+    `;
+  }
 
-export {getTripEventEditComponent};
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  setSubmitFormHandler(handler) {
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, handler);
+  }
+}
