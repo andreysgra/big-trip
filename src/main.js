@@ -14,6 +14,7 @@ import {generateEvents} from './mock/event.js';
 
 const EVENTS_COUNT = 10;
 
+let lastContainer = null;
 let lastEvent = null;
 let lastEditEvent = null;
 
@@ -30,6 +31,7 @@ const renderEvent = (container, event) => {
   const replaceEventToEdit = () => {
     replaceElement(container.getElement(), eventComponent.getElement(), eventEditComponent.getElement());
 
+    lastContainer = null;
     lastEvent = null;
     lastEditEvent = null;
   };
@@ -44,11 +46,12 @@ const renderEvent = (container, event) => {
 
   const eventEditHandler = () => {
     if (lastEditEvent) {
-      replaceElement(container.getElement(), lastEvent.getElement(), lastEditEvent.getElement());
+      replaceElement(lastContainer.getElement(), lastEvent.getElement(), lastEditEvent.getElement());
     }
 
     replaceElement(container.getElement(), eventEditComponent.getElement(), eventComponent.getElement());
 
+    lastContainer = container;
     lastEvent = eventComponent;
     lastEditEvent = eventEditComponent;
 
