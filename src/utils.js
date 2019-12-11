@@ -78,3 +78,9 @@ export const formatDuration = (time) => {
 
   return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
 };
+
+export const addEscapeEvent = (evt, action) => {
+  if (evt.key === `Escape` || evt.key === `Esc`) {
+    action();
+  }
+};

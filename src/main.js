@@ -7,7 +7,7 @@ import TripDayComponent from './components/trip-day.js';
 import TripEventsComponent from './components/trip-events.js';
 import TripEventComponent from './components/trip-event.js';
 import TripEventEditComponent from './components/trip-event-edit.js';
-import {renderComponent, replaceElement} from './utils.js';
+import {renderComponent, replaceElement, addEscapeEvent} from './utils.js';
 import {FILTERS, MENU_ITEMS, RenderPosition} from './const.js';
 import {generateEvents} from './mock/event.js';
 
@@ -26,6 +26,21 @@ const renderEvent = (container, event) => {
   const eventComponent = new TripEventComponent(event);
   const eventEditComponent = new TripEventEditComponent(event);
 
+  const replaceEventToEdit = () => {
+    replaceElement(container.getElement(), eventComponent.getElement(), eventEditComponent.getElement());
+
+    lastEvent = null;
+    lastEditEvent = null;
+  };
+
+  const documentEscPressHandler = (evt) => {
+    if (container.getElement().contains(eventEditComponent.getElement())) {
+      addEscapeEvent(evt, replaceEventToEdit);
+    }
+
+    document.removeEventListener(`keydown`, documentEscPressHandler);
+  };
+
   const eventEditHandler = () => {
     if (lastEditEvent) {
       replaceElement(container.getElement(), lastEvent.getElement(), lastEditEvent.getElement());
@@ -35,13 +50,12 @@ const renderEvent = (container, event) => {
 
     lastEvent = eventComponent;
     lastEditEvent = eventEditComponent;
+
+    document.addEventListener(`keydown`, documentEscPressHandler);
   };
 
   const eventSubmitHadler = () => {
-    replaceElement(container.getElement(), eventComponent.getElement(), eventEditComponent.getElement());
-
-    lastEvent = null;
-    lastEditEvent = null;
+    replaceEventToEdit();
   };
 
   eventComponent.setRollupButtonHandler(eventEditHandler);
