@@ -1,16 +1,22 @@
 import {createElement} from '../utils.js';
 
 export default class TripDay {
-  constructor() {
+  constructor(date, count) {
+    this._date = date;
+    this._count = count;
     this._element = null;
   }
 
   getTemplate() {
+    const date = new Date(this._date).toLocaleString(`en-US`, {month: `short`});
+    const day = new Date(this._date).getDate();
     return `
       <li class="trip-days__item  day">
         <div class="day__info">
-          <span class="day__counter">1</span>
-          <time class="day__date" datetime="2019-03-18">MAR 18</time>
+          <span class="day__counter">${this._count}</span>
+          <time class="day__date" datetime="${new Date(this._date)}">
+            ${date} ${day}
+          </time>
         </div>
       </li>
     `;

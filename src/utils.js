@@ -12,6 +12,10 @@ export const createElement = (template) => {
   return element.firstElementChild;
 };
 
+export const replaceElement = (container, newElement, oldElement) => {
+  container.replaceChild(newElement, oldElement);
+};
+
 export const renderComponent = (container, element, position = RenderPosition.BEFOREEND) => {
   switch (position) {
     case RenderPosition.AFTERBEGIN:
@@ -31,7 +35,7 @@ export const getRandomBool = () => Math.random() > 0.5;
 export const getRandomDate = () => {
   const day = 24 * 3600 * 1000;
 
-  return getRandomNumber(Date.now(), Date.now() + day);
+  return getRandomNumber(Date.now(), Date.now() + day * 3);
 };
 
 export const shuffle = (array) => {

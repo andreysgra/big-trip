@@ -51,7 +51,10 @@ const generateEvent = () => {
 };
 
 const generateEvents = (count) => {
-  return [...Array(count)].map(() => generateEvent());
+  return [...Array(count)]
+    .map(() => generateEvent())
+    .sort((a, b) => a.startDate - b.startDate);
 };
+
 
 export {generateEvents};
