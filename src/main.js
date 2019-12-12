@@ -29,7 +29,8 @@ const renderEvent = (container, event) => {
   const eventEditComponent = new TripEventEditComponent(event);
 
   const replaceEventToEdit = () => {
-    replaceElement(container.getElement(), eventComponent.getElement(), eventEditComponent.getElement());
+    replaceElement(lastContainer.getElement(), lastEvent.getElement(), lastEditEvent.getElement());
+    document.removeEventListener(`keydown`, documentEscPressHandler);
 
     lastContainer = null;
     lastEvent = null;
@@ -40,13 +41,11 @@ const renderEvent = (container, event) => {
     if (container.getElement().contains(eventEditComponent.getElement())) {
       addEscapeEvent(evt, replaceEventToEdit);
     }
-
-    document.removeEventListener(`keydown`, documentEscPressHandler);
   };
 
   const eventEditHandler = () => {
     if (lastEditEvent) {
-      replaceElement(lastContainer.getElement(), lastEvent.getElement(), lastEditEvent.getElement());
+      replaceEventToEdit();
     }
 
     replaceElement(container.getElement(), eventEditComponent.getElement(), eventComponent.getElement());
