@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {getRandomBool, formatDate, formatTime} from '../utils.js';
+import {getRandomBool, formatDate, formatTime} from '../utils/common.js';
 import {EVENT_TYPES, CITIES} from '../const.js';
 
 const createOffersMarkup = (offers) => {

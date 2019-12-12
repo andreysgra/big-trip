@@ -1,29 +1,5 @@
-import {RenderPosition} from './const.js';
-
 const addLeadZero = (value) => {
   return value < 10 ? `0${value}` : String(value);
-};
-
-export const createElement = (template) => {
-  const element = document.createElement(`div`);
-
-  element.innerHTML = template;
-
-  return element.firstElementChild;
-};
-
-export const replaceElement = (container, newElement, oldElement) => {
-  container.replaceChild(newElement, oldElement);
-};
-
-export const renderComponent = (container, element, position = RenderPosition.BEFOREEND) => {
-  switch (position) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-  }
 };
 
 export const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min)) + min;

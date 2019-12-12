@@ -62,9 +62,3 @@ export const MENU_ITEMS = [
   `Table`,
   `Stats`
 ];
-
-
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};

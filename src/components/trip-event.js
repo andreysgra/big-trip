@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTime, formatDuration} from '../utils.js';
+import {formatTime, formatDuration} from '../utils/common.js';
 
 const OFFERS_MAX_VIEWING = 3;
 

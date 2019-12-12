@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomNumber, getRandomDate, shuffle} from '../utils.js';
+import {getRandomArrayItem, getRandomNumber, getRandomDate, shuffle} from '../utils/common.js';
 import {EVENT_TYPES, CITIES, OFFERS} from '../const.js';
 
 const DESCRIPTIONS = [
