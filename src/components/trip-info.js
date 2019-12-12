@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const SHOWING_CITIES_COUNT = 3;
 
@@ -22,10 +22,10 @@ const getDates = (startDate, endDate) => {
   return `${month} ${startDay} &nbsp;&mdash;&nbsp; ${endDay}`;
 };
 
-export default class TripInfo {
+export default class TripInfo extends AbstractComponent {
   constructor(events) {
+    super();
     this._events = events;
-    this._element = null;
   }
 
   getTemplate() {
@@ -40,17 +40,5 @@ export default class TripInfo {
         <p class="trip-info__dates">${dates}</p>
       </div>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
