@@ -1,10 +1,10 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
-export default class TripDay {
+export default class TripDay extends AbstractComponent {
   constructor(date, count) {
+    super();
     this._date = date;
     this._count = count;
-    this._element = null;
   }
 
   getTemplate() {
@@ -20,17 +20,5 @@ export default class TripDay {
         </div>
       </li>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
