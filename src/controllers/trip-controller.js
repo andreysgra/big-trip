@@ -7,51 +7,6 @@ import TripEventComponent from '../components/trip-event.js';
 import TripEventEditComponent from '../components/trip-event-edit.js';
 import NoEventsComponent from '../components/no-events.js';
 import {renderComponent, replaceComponent, RenderPosition} from '../utils/render.js';
-import {addEscapeEvent} from '../utils/common.js';
-
-let lastEvent = null;
-let lastEditEvent = null;
-
-const renderEvent = (container, event) => {
-  const eventComponent = new TripEventComponent(event);
-  const eventEditComponent = new TripEventEditComponent(event);
-
-  const replaceEventToEdit = () => {
-    replaceComponent(lastEvent, lastEditEvent);
-    document.removeEventListener(`keydown`, documentEscPressHandler);
-
-    lastEvent = null;
-    lastEditEvent = null;
-  };
-
-  const documentEscPressHandler = (evt) => {
-    if (container.getElement().contains(eventEditComponent.getElement())) {
-      addEscapeEvent(evt, replaceEventToEdit);
-    }
-  };
-
-  const eventEditHandler = () => {
-    if (lastEditEvent) {
-      replaceEventToEdit();
-    }
-
-    replaceComponent(eventEditComponent, eventComponent);
-
-    lastEvent = eventComponent;
-    lastEditEvent = eventEditComponent;
-
-    document.addEventListener(`keydown`, documentEscPressHandler);
-  };
-
-  const eventSubmitHadler = () => {
-    replaceEventToEdit();
-  };
-
-  eventComponent.setRollupButtonHandler(eventEditHandler);
-  eventEditComponent.setSubmitFormHandler(eventSubmitHadler);
-
-  renderComponent(container.getElement(), eventComponent);
-};
 
 export default class TripController {
   constructor(container) {
@@ -59,6 +14,51 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._tripSortComponent = new TripSortComponent();
     this._tripDaysComponent = new TripDaysComponent();
+    this._oldTaskComponent = null;
+    this._oldEditTaskComponent = null;
+  }
+
+  _replaceEditToTask() {
+    replaceComponent(this._oldTaskComponent, this._oldEditTaskComponent);
+  }
+
+  _resetTaskEdit() {
+    this._oldEditTaskComponent = null;
+  }
+
+  _renderEvent(container, event) {
+    const eventComponent = new TripEventComponent(event);
+    const eventEditComponent = new TripEventEditComponent(event);
+
+    const documentEscPressHandler = (evt) => {
+      if (container.getElement().contains(eventEditComponent.getElement())) {
+        if (evt.key === `Escape` || evt.key === `Esc`) {
+          this._replaceEditToTask();
+          this._resetTaskEdit();
+          document.removeEventListener(`keydown`, documentEscPressHandler);
+        }
+      }
+    };
+
+    eventComponent.setRollupButtonHandler(() => {
+      if (this._oldEditTaskComponent) {
+        this._replaceEditToTask();
+      }
+
+      replaceComponent(eventEditComponent, eventComponent);
+
+      this._oldTaskComponent = eventComponent;
+      this._oldEditTaskComponent = eventEditComponent;
+
+      document.addEventListener(`keydown`, documentEscPressHandler);
+    });
+
+    eventEditComponent.setSubmitFormHandler(() => {
+      this._replaceEditToTask();
+      this._resetTaskEdit();
+    });
+
+    renderComponent(container.getElement(), eventComponent);
   }
 
   render(events) {
@@ -88,7 +88,7 @@ export default class TripController {
 
       events
         .filter((event) => new Date(event.startDate).toDateString() === date)
-        .forEach((event) => renderEvent(tripEventsComponent, event));
+        .forEach((event) => this._renderEvent(tripEventsComponent, event));
     });
 
     const tripCost = events.reduce((acc, value) => acc + value.price, 0);
