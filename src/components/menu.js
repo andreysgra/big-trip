@@ -1,9 +1,9 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
-export default class Menu {
+export default class Menu extends AbstractComponent {
   constructor(items) {
+    super();
     this._items = items;
-    this._element = null;
   }
 
   getTemplate() {
@@ -16,17 +16,5 @@ export default class Menu {
           .join(``)}
       </nav>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,5 +1,5 @@
-import {createElement} from '../utils.js';
-import {formatTime, formatDuration} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
+import {formatTime, formatDuration} from '../utils/common.js';
 
 const OFFERS_MAX_VIEWING = 3;
 
@@ -19,10 +19,10 @@ const createOffersMarkup = (offers) => {
     .join(``);
 };
 
-export default class TripEvent {
+export default class TripEvent extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
@@ -66,18 +66,6 @@ export default class TripEvent {
       </div>
       </li>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   setRollupButtonHandler(handler) {

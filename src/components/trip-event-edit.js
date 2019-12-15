@@ -1,5 +1,5 @@
-import {createElement} from '../utils.js';
-import {getRandomBool, formatDate, formatTime} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
+import {getRandomBool, formatDate, formatTime} from '../utils/common.js';
 import {EVENT_TYPES, CITIES} from '../const.js';
 
 const createOffersMarkup = (offers) => {
@@ -52,10 +52,10 @@ const createDestinationMarkup = (destinations) => {
     .join(``);
 };
 
-export default class TripEventEdit {
+export default class TripEventEdit extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
@@ -162,18 +162,6 @@ export default class TripEventEdit {
       </form>
       </li>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   setSubmitFormHandler(handler) {
