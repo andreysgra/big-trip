@@ -1,5 +1,5 @@
 import TripInfoComponent from '../components/trip-info.js';
-import TripSortComponent from '../components/trip-sort.js';
+import TripSortComponent, {SortType} from '../components/trip-sort.js';
 import TripDaysComponent from '../components/trip-days.js';
 import TripDayComponent from '../components/trip-day.js';
 import TripEventsComponent from '../components/trip-events.js';
@@ -61,12 +61,31 @@ export default class TripController {
     renderComponent(container.getElement(), eventComponent);
   }
 
+  _renderEvents(events, defaultSorting = true) {
+    const dates = defaultSorting
+      ? [...new Set(events.map((event) => new Date(event.startDate).toDateString()))]
+      : [``];
+
+    dates.forEach((date, index) => {
+      const tripDayComponent = defaultSorting
+        ? new TripDayComponent(date, index + 1)
+        : new TripDayComponent();
+
+      renderComponent(this._tripDaysComponent.getElement(), tripDayComponent);
+
+      const tripEventsComponent = new TripEventsComponent();
+      renderComponent(tripDayComponent.getElement(), tripEventsComponent);
+
+      events
+        .filter((event) => defaultSorting
+          ? new Date(event.startDate).toDateString() === date
+          : event)
+        .forEach((event) => this._renderEvent(tripEventsComponent, event));
+    });
+  }
+
   render(events) {
     const container = this._container;
-
-    const dates = [
-      ...new Set(events.map((event) => new Date(event.startDate).toDateString()))
-    ];
 
     if (events.length === 0) {
       renderComponent(container, this._noEventsComponent);
@@ -79,19 +98,30 @@ export default class TripController {
     renderComponent(container, this._tripSortComponent);
     renderComponent(container, this._tripDaysComponent);
 
-    dates.forEach((date, index) => {
-      const tripDayComponent = new TripDayComponent(date, index + 1);
-      renderComponent(this._tripDaysComponent.getElement(), tripDayComponent);
+    this._renderEvents(events);
 
-      const tripEventsComponent = new TripEventsComponent();
-      renderComponent(tripDayComponent.getElement(), tripEventsComponent);
+    this._tripSortComponent.setSortTypeChangeHandler((sortType) => {
+      let sortedEvents = [];
+      const defaultSorting = sortType === SortType.DEFAULT;
 
-      events
-        .filter((event) => new Date(event.startDate).toDateString() === date)
-        .forEach((event) => this._renderEvent(tripEventsComponent, event));
+      switch (sortType) {
+        case SortType.TIME_DOWN:
+          sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+          break;
+        case SortType.PRICE_DOWN:
+          sortedEvents = events.slice().sort((a, b) => b.price - a.price);
+          break;
+        case SortType.DEFAULT:
+          sortedEvents = events.slice();
+          break;
+      }
+
+      this._tripDaysComponent.getElement().innerHTML = ``;
+      this._renderEvents(sortedEvents, defaultSorting);
     });
 
-    const tripCost = events.reduce((acc, value) => acc + value.price, 0);
-    tripInfo.querySelector(`.trip-info__cost-value`).textContent = tripCost;
+    tripInfo
+      .querySelector(`.trip-info__cost-value`)
+      .textContent = events.reduce((acc, value) => acc + value.price, 0);
   }
 }
