@@ -164,7 +164,11 @@ export default class TripEventEdit extends AbstractComponent {
     `;
   }
 
-  setSubmitFormHandler(handler) {
-    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, handler);
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`.event--edit`)
+      .addEventListener(`submit`, (evt) => {
+        evt.preventDefault();
+        handler();
+      });
   }
 }
