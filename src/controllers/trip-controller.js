@@ -12,6 +12,7 @@ export default class TripController {
     this._container = container;
 
     this._events = [];
+    this._eventControllers = [];
 
     this._noEventsComponent = new NoEventsComponent();
     this._tripSortComponent = new TripSortComponent();
@@ -19,12 +20,13 @@ export default class TripController {
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
 
     this._tripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  _renderEvents(events, defaultSorting = true) {
-    // const eventControllers = [];
+  _renderEvents(events, onDataChange, onViewChange, defaultSorting = true) {
+    const eventControllers = [];
     const dates = defaultSorting
       ? [...new Set(events.map((event) => new Date(event.startDate).toDateString()))]
       : [``];
@@ -44,14 +46,14 @@ export default class TripController {
           ? new Date(event.startDate).toDateString() === date
           : event)
         .forEach((event) => {
-          const eventController = new EventController(tripEventsComponent.getElement(), this._onDataChange);
+          const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange);
 
           eventController.render(event);
-          // eventControllers.push(eventController);
+          eventControllers.push(eventController);
         });
     });
 
-    // return eventControllers;
+    return eventControllers;
   }
 
   _onDataChange(eventController, oldData, newData) {
@@ -64,6 +66,10 @@ export default class TripController {
     this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
 
     eventController.render(this._events[index]);
+  }
+
+  _onViewChange() {
+    this._eventControllers.forEach((it) => it.setDefaultView());
   }
 
   _onSortTypeChange(sortType) {
@@ -83,7 +89,7 @@ export default class TripController {
     }
 
     this._tripDaysComponent.getElement().innerHTML = ``;
-    this._renderEvents(sortedEvents, defaultSorting);
+    this._eventControllers = this._renderEvents(sortedEvents, this._onDataChange, this._onViewChange, defaultSorting);
   }
 
   render(events) {
@@ -102,7 +108,7 @@ export default class TripController {
     renderComponent(container, this._tripSortComponent);
     renderComponent(container, this._tripDaysComponent);
 
-    this._renderEvents(this._events);
+    this._eventControllers = this._renderEvents(this._events, this._onDataChange, this._onViewChange);
 
     tripInfo
       .querySelector(`.trip-info__cost-value`)

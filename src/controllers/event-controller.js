@@ -2,10 +2,20 @@ import TripEventComponent from '../components/trip-event.js';
 import TripEventEditComponent from '../components/trip-event-edit.js';
 import {renderComponent, replaceComponent} from '../utils/render.js';
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class EventController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
+
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
+
+    this._mode = Mode.DEFAULT;
+
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
@@ -15,12 +25,14 @@ export default class EventController {
     // this._taskEditComponent.reset();
 
     replaceComponent(this._eventComponent, this._eventEditComponent);
-    // this._mode = Mode.DEFAULT;
+    this._mode = Mode.DEFAULT;
   }
 
   _replaceEventToEdit() {
+    this._onViewChange();
+
     replaceComponent(this._eventEditComponent, this._eventComponent);
-    // this._mode = Mode.EDIT;
+    this._mode = Mode.EDIT;
   }
 
   _onEscKeyDown(evt) {
@@ -45,6 +57,7 @@ export default class EventController {
     });
 
     this._eventEditComponent.setSubmitHandler(() => this._replaceEditToEvent());
+    this._eventEditComponent.setRollupButtonHandler(() => this._replaceEditToEvent());
 
     this._eventEditComponent.setFavoriteCheckboxChangeHandler(() => {
       this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
@@ -55,6 +68,12 @@ export default class EventController {
       replaceComponent(this._eventEditComponent, oldEventEditComponent);
     } else {
       renderComponent(this._container, this._eventComponent);
+    }
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceEditToEvent();
     }
   }
 }
