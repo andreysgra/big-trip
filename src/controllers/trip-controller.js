@@ -16,7 +16,9 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._tripSortComponent = new TripSortComponent();
     this._tripDaysComponent = new TripDaysComponent();
+
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._tripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
@@ -42,7 +44,7 @@ export default class TripController {
           ? new Date(event.startDate).toDateString() === date
           : event)
         .forEach((event) => {
-          const eventController = new EventController(tripEventsComponent.getElement());
+          const eventController = new EventController(tripEventsComponent.getElement(), this._onDataChange);
 
           eventController.render(event);
           // eventControllers.push(eventController);
@@ -50,6 +52,18 @@ export default class TripController {
     });
 
     // return eventControllers;
+  }
+
+  _onDataChange(eventController, oldData, newData) {
+    const index = this._events.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
+
+    eventController.render(this._events[index]);
   }
 
   _onSortTypeChange(sortType) {

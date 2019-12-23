@@ -3,8 +3,9 @@ import TripEventEditComponent from '../components/trip-event-edit.js';
 import {renderComponent, replaceComponent} from '../utils/render.js';
 
 export default class EventController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
+    this._onDataChange = onDataChange;
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
@@ -44,6 +45,10 @@ export default class EventController {
     });
 
     this._eventEditComponent.setSubmitHandler(() => this._replaceEditToEvent());
+
+    this._eventEditComponent.setFavoriteCheckboxChangeHandler(() => {
+      this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+    });
 
     if (oldEventEditComponent && oldEventComponent) {
       replaceComponent(this._eventComponent, oldEventComponent);
