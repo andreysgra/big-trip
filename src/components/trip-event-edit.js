@@ -2,6 +2,9 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDate, formatTime} from '../utils/format.js';
 import {OfferType} from '../const.js';
 import {Destinations, Offers} from '../mock/event.js';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/material_blue.css";
 
 const createOffersMarkup = (type, offers) => {
   const offersList = Offers.find((offer) => {
@@ -64,12 +67,56 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this._event = event;
     this._type = event.type;
     this._destination = Object.assign({}, event.destination);
+    this._flatpickrStartDate = null;
+    this._flatpickrEndDate = null;
 
+    this._applyFlatpickr();
     this._subscribeOnEvents();
 
     this._submitHandler = null;
     this._rollupButtonClickHandler = null;
     this._favoriteCheckboxChangeHandler = null;
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickrStartDate && this._flatpickrEndDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrStartDate = null;
+      this._flatpickrEndDate.destroy();
+      this._flatpickrEndDate = null;
+    }
+
+    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+
+    const flatpickrOptions = {
+      allowInput: true,
+      dateFormat: `d/m/y H:i`,
+      enableTime: true,
+      minDate: `today`
+    };
+
+    this._flatpickrStartDate = flatpickr(startDateElement,
+        Object.assign(
+            {},
+            flatpickrOptions,
+            {
+              defaultDate: this._event.startDate
+            }
+        )
+    );
+
+    this._flatpickrEndDate = flatpickr(endDateElement,
+        Object.assign(
+            {},
+            flatpickrOptions,
+            {
+              defaultDate: this._event.endDate,
+              minDate: this._event.startDate
+            }
+        )
+    );
+
   }
 
   _subscribeOnEvents() {
@@ -210,10 +257,12 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this.setRollupButtonClickHandler(this._rollupButtonClickHandler);
     this.setFavoriteCheckboxChangeHandler(this._favoriteCheckboxChangeHandler);
     this._subscribeOnEvents();
+    // this._applyFlatpickr();
   }
 
   rerender() {
     super.rerender();
+    this._applyFlatpickr();
   }
 
   reset() {
