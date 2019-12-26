@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {formatDate, formatTime} from '../utils/common.js';
+import {formatDate, formatTime} from '../utils/format.js';
 import {OfferType} from '../const.js';
 import {Destinations, Offers} from '../mock/event.js';
 

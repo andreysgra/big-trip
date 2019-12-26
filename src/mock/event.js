@@ -1,9 +1,15 @@
-import {getRandomNumber, getRandomDate, getRandomBool, shuffle} from '../utils/common.js';
+import {getRandomNumber, getRandomBool, shuffle} from '../utils/common.js';
 import {OfferType} from '../const.js';
 import {DESCRIPTIONS, CITIES, OFFERS} from './const.js';
 
 const EVENTS_COUNT = 10;
 const OFFERS_MAX_COUNT = 5;
+
+const generateDate = () => {
+  const day = 24 * 3600 * 1000;
+
+  return getRandomNumber(Date.now(), Date.now() + day * 7);
+};
 
 const generateOffers = () => {
   const count = getRandomNumber(0, OFFERS_MAX_COUNT + 1);
@@ -49,8 +55,8 @@ export const Offers = [...OfferType.TRANSFERS, ...OfferType.ACTIVITIES]
   });
 
 const generateEvent = () => {
-  const firstDate = getRandomDate();
-  const secondDate = getRandomDate();
+  const firstDate = generateDate();
+  const secondDate = generateDate();
   const destination = Destinations[getRandomNumber(0, Destinations.length)];
   const offersList = Offers[getRandomNumber(0, Offers.length)];
   const offersCount = getRandomNumber(0, offersList.offers.length);
@@ -68,6 +74,5 @@ const generateEvent = () => {
 
 export const generateEvents = () => {
   return [...Array(EVENTS_COUNT)]
-    .map(() => generateEvent())
-    .sort((a, b) => a.startDate - b.startDate);
+    .map(() => generateEvent());
 };
