@@ -6,6 +6,7 @@ import TripEventsComponent from '../components/trip-events.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventController from './event-controller.js';
 import {renderComponent, RenderPosition} from '../utils/render.js';
+import {formatFullDate} from '../utils/format.js';
 
 export default class TripController {
   constructor(container) {
@@ -27,8 +28,9 @@ export default class TripController {
 
   _renderEvents(events, onDataChange, onViewChange, defaultSorting = true) {
     const eventControllers = [];
+
     const dates = defaultSorting
-      ? [...new Set(events.map((event) => new Date(event.startDate).toDateString()))]
+      ? [...new Set(events.map((event) => formatFullDate(event.startDate)))]
       : [``];
 
     dates.forEach((date, index) => {
@@ -43,7 +45,7 @@ export default class TripController {
 
       events
         .filter((event) => defaultSorting
-          ? new Date(event.startDate).toDateString() === date
+          ? formatFullDate(event.startDate) === date
           : event)
         .forEach((event) => {
           const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange);

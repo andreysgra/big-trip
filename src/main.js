@@ -12,7 +12,9 @@ renderComponent(tripControls, new FilterComponent(FILTERS));
 
 const tripEvents = document.querySelector(`.trip-events`);
 
-const events = generateEvents();
+const events = generateEvents()
+  .slice()
+  .sort((a, b) => a.startDate - b.startDate);
 
 const tripController = new TripController(tripEvents);
 tripController.render(events);

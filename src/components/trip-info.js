@@ -1,4 +1,5 @@
 import AbstractComponent from './abstract-component.js';
+import {formatMonth, formatDay} from '../utils/format.js';
 
 const SHOWING_CITIES_COUNT = 3;
 
@@ -15,11 +16,12 @@ const getTitle = (events) => {
 };
 
 const getDates = (startDate, endDate) => {
-  const month = new Date(startDate).toLocaleString(`en-US`, {month: `short`});
-  const startDay = new Date(startDate).getDate();
-  const endDay = new Date(endDate).getDate();
+  const startMonth = formatMonth(startDate);
+  const endMonth = startMonth !== formatMonth(endDate) ? formatMonth(endDate) : ``;
+  const startDay = formatDay(startDate);
+  const endDay = formatDay(endDate);
 
-  return `${month} ${startDay} &nbsp;&mdash;&nbsp; ${endDay}`;
+  return `${startMonth} ${startDay} &nbsp;&mdash;&nbsp; ${endMonth} ${endDay}`;
 };
 
 export default class TripInfo extends AbstractComponent {
@@ -29,7 +31,7 @@ export default class TripInfo extends AbstractComponent {
   }
 
   getTemplate() {
-    const dates = getDates(this._events[0].startDate, this._events[this._events.length - 1].endDate);
+    const dates = getDates(this._events[0].startDate, this._events[this._events.length - 1].startDate);
 
     return `
       <div class="trip-info__main">

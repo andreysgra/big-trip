@@ -1,4 +1,5 @@
 import AbstractComponent from './abstract-component.js';
+import {formatFullDate, formatMonth, formatDay} from '../utils/format.js';
 
 export default class TripDay extends AbstractComponent {
   constructor(date = null, count = 0) {
@@ -8,10 +9,9 @@ export default class TripDay extends AbstractComponent {
   }
 
   getTemplate() {
-    const date = new Date(this._date);
-    const month = this._date ? date.toLocaleString(`en-US`, {month: `short`}) : ``;
-    const day = this._date ? date.getDate() : ``;
-    const datetime = this._date ? date : ``;
+    const month = this._date ? formatMonth(this._date) : ``;
+    const day = this._date ? formatDay(this._date) : ``;
+    const datetime = this._date ? formatFullDate(this._date) : ``;
 
     return `
       <li class="trip-days__item  day">
