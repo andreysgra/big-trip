@@ -1,19 +1,24 @@
-import AbstractComponent from './abstract-component.js';
-import {getRandomBool, formatDate, formatTime} from '../utils/common.js';
-import {EVENT_TYPES, CITIES} from '../const.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
+import {formatDate, formatTime} from '../utils/common.js';
+import {OfferType} from '../const.js';
+import {Destinations, Offers} from '../mock/event.js';
 
-const createOffersMarkup = (offers) => {
-  return offers
+const createOffersMarkup = (type, offers) => {
+  const offersList = Offers.find((offer) => {
+    return type === offer.type;
+  });
+
+  return offersList.offers
     .map((offer) => {
-      const {type, title, price} = offer;
+      const isCheckedOffer = offers.some((it) => it.type === offer.type);
 
       return `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="event-offer-${type}" ${getRandomBool() ? `checked` : ``}>
-          <label class="event__offer-label" for="event-offer-${type}-1">
-            <span class="event__offer-title">${title}</span>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-1" type="checkbox" name="event-offer-${offer.type}" ${isCheckedOffer ? `checked` : ``}>
+          <label class="event__offer-label" for="event-offer-${offer.type}-1">
+            <span class="event__offer-title">${offer.title}</span>
             &plus;
-            &euro;&nbsp;<span class="event__offer-price">${price}</span>
+            &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
           </label>
         </div>
       `;
@@ -21,10 +26,10 @@ const createOffersMarkup = (offers) => {
     .join(``);
 };
 
-const createEventPhotosMarkup = (photos) => {
-  return photos
-    .map((photo) => {
-      return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+const createPicturesMarkup = (pictures) => {
+  return pictures
+    .map((picture) => {
+      return `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
     })
     .join(``);
 };
@@ -46,26 +51,62 @@ const createDestinationMarkup = (destinations) => {
   return destinations
     .map((destination) => {
       return `
-        <option value="${destination}"></option>
+        <option value="${destination.name}"></option>
       `;
     })
     .join(``);
 };
 
-export default class TripEventEdit extends AbstractComponent {
+export default class TripEventEdit extends AbstractSmartComponent {
   constructor(event) {
     super();
+
     this._event = event;
+    this._type = event.type;
+    this._destination = Object.assign({}, event.destination);
+
+    this._subscribeOnEvents();
+
+    this._submitHandler = null;
+    this._rollupButtonClickHandler = null;
+    this._favoriteCheckboxChangeHandler = null;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`)
+      .addEventListener(`change`, (evt) => {
+        this._type = evt.target.value;
+
+        this.rerender();
+      });
+
+    element.querySelector(`.event__input--destination`)
+      .addEventListener(`change`, (evt) => {
+        const destination = Destinations.find((it) => {
+          return it.name === evt.target.value;
+        });
+
+        if (!destination) {
+          return;
+        }
+
+        this._destination = destination;
+
+        this.rerender();
+      });
   }
 
   getTemplate() {
-    const {type, city, photos, offers, description, startDate, endDate, price, isFavorite} = this._event;
+    const {offers, startDate, endDate, price, isFavorite} = this._event;
+    const {name, description, pictures} = this._destination;
 
-    const photosMarkup = createEventPhotosMarkup(photos);
-    const offersMarkup = createOffersMarkup(offers);
+    const picturesMarkup = createPicturesMarkup(pictures);
+    const offersMarkup = createOffersMarkup(this._type, offers);
 
-    const {transfers, activities} = EVENT_TYPES;
-    const cities = createDestinationMarkup(CITIES);
+    const {TRANSFERS, ACTIVITIES} = OfferType;
+    const cities = createDestinationMarkup(Destinations);
 
     return `
       <li class="trip-events__item">
@@ -74,28 +115,28 @@ export default class TripEventEdit extends AbstractComponent {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event ${type} icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event ${this._type} icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Transfer</legend>
-                ${createEventTypesMarkup(transfers, type)}
+                ${createEventTypesMarkup(TRANSFERS, this._type)}
               </fieldset>
 
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Activity</legend>
-                ${createEventTypesMarkup(activities, type)}
+                ${createEventTypesMarkup(ACTIVITIES, this._type)}
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${type} at
+              ${this._type} at
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
@@ -154,7 +195,7 @@ export default class TripEventEdit extends AbstractComponent {
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                ${photosMarkup}
+                ${picturesMarkup}
               </div>
             </div>
           </section>
@@ -164,19 +205,46 @@ export default class TripEventEdit extends AbstractComponent {
     `;
   }
 
-  setSubmitHandler(handler) {
-    this.getElement().querySelector(`.event--edit`)
-      .addEventListener(`submit`, (evt) => {
-        evt.preventDefault();
-        handler();
-      });
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this.setRollupButtonClickHandler(this._rollupButtonClickHandler);
+    this.setFavoriteCheckboxChangeHandler(this._favoriteCheckboxChangeHandler);
+    this._subscribeOnEvents();
   }
 
-  setRollupButtonHandler(handler) {
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+  rerender() {
+    super.rerender();
+  }
+
+  reset() {
+    const event = this._event;
+
+    this._type = event.type;
+    this._destination = Object.assign({}, event.destination);
+    this.rerender();
+  }
+
+  setSubmitHandler(handler) {
+    this.getElement()
+      .querySelector(`.event--edit`)
+      .addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  setRollupButtonClickHandler(handler) {
+    this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+
+    this._rollupButtonClickHandler = handler;
   }
 
   setFavoriteCheckboxChangeHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, handler);
+    this.getElement()
+      .querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, handler);
+
+    this._favoriteCheckboxChangeHandler = handler;
   }
 }

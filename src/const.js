@@ -1,5 +1,5 @@
-export const EVENT_TYPES = {
-  transfers: [
+export const OfferType = {
+  TRANSFERS: [
     `bus`,
     `drive`,
     `flight`,
@@ -8,49 +8,12 @@ export const EVENT_TYPES = {
     `train`,
     `transport`
   ],
-  activities: [
+  ACTIVITIES: [
     `check-in`,
     `restaurant`,
     `sightseeing`
   ]
 };
-
-export const CITIES = [
-  `Amsterdam`,
-  `Rotterdam`,
-  `Berlin`,
-  `Vienna`,
-  `Prague`,
-  `Paris`
-];
-
-export const OFFERS = [
-  {
-    type: `luggage`,
-    title: `Add luggage`,
-    price: 10
-  },
-  {
-    type: `comfort`,
-    title: `Switch to comfort class`,
-    price: 150
-  },
-  {
-    type: `meal`,
-    title: `Add meal`,
-    price: 2
-  },
-  {
-    type: `seats`,
-    title: `Choose seats`,
-    price: 9
-  },
-  {
-    type: `train`,
-    title: `Travel by train`,
-    price: 40
-  }
-];
 
 export const FILTERS = [
   `everything`,

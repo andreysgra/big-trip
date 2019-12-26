@@ -4,11 +4,11 @@ const SHOWING_CITIES_COUNT = 3;
 
 const getTitle = (events) => {
   if (events.length > SHOWING_CITIES_COUNT) {
-    return `${events[0].city} &mdash; ... &mdash; ${events[events.length - 1].city}`;
+    return `${events[0].destination.name} &mdash; ... &mdash; ${events[events.length - 1].destination.name}`;
   } else {
     return events
       .map((event, index) => {
-        return `${event.city} ${index < events.length - 1 ? `-` : ``} `;
+        return `${event.destination.name} ${index < events.length - 1 ? `-` : ``} `;
       })
       .join(``);
   }

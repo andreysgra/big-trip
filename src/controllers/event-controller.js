@@ -22,7 +22,9 @@ export default class EventController {
   }
 
   _replaceEditToEvent() {
-    // this._taskEditComponent.reset();
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+
+    this._eventEditComponent.reset();
 
     replaceComponent(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
@@ -51,13 +53,17 @@ export default class EventController {
     this._eventComponent = new TripEventComponent(event);
     this._eventEditComponent = new TripEventEditComponent(event);
 
-    this._eventComponent.setRollupButtonHandler(() => {
+    this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setSubmitHandler(() => this._replaceEditToEvent());
-    this._eventEditComponent.setRollupButtonHandler(() => this._replaceEditToEvent());
+    this._eventEditComponent.setSubmitHandler((evt) => {
+      evt.preventDefault();
+      this._replaceEditToEvent();
+    });
+
+    this._eventEditComponent.setRollupButtonClickHandler(() => this._replaceEditToEvent());
 
     this._eventEditComponent.setFavoriteCheckboxChangeHandler(() => {
       this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));

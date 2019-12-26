@@ -1,29 +1,15 @@
-import {getRandomArrayItem, getRandomNumber, getRandomDate, getRandomBool, shuffle} from '../utils/common.js';
-import {EVENT_TYPES, CITIES, OFFERS} from '../const.js';
+import {getRandomNumber, getRandomDate, getRandomBool, shuffle} from '../utils/common.js';
+import {OfferType} from '../const.js';
+import {DESCRIPTIONS, CITIES, OFFERS} from './const.js';
 
-const DESCRIPTIONS = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-  `Fusce tristique felis at fermentum pharetra.`,
-  `Aliquam id orci ut lectus varius viverra.`,
-  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-  `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-  `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-  `Aliquam erat volutpat.`,
-  `Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`
-];
-
-const generatePhotos = () => {
-  const count = getRandomNumber(1, 6);
-
-  return [...Array(count)].map(() => `http://picsum.photos/300/150?r=${Math.random()}`);
-};
+const EVENTS_COUNT = 10;
+const OFFERS_MAX_COUNT = 5;
 
 const generateOffers = () => {
-  const count = getRandomNumber(0, 6);
+  const count = getRandomNumber(0, OFFERS_MAX_COUNT + 1);
 
-  return [...Array(count)].map((it, i) => OFFERS[i]);
+  return shuffle(OFFERS.slice())
+    .slice(0, count);
 };
 
 const generateDescription = (descriptions) => {
@@ -34,16 +20,45 @@ const generateDescription = (descriptions) => {
     .join(` `);
 };
 
+const generatePictures = (description) => {
+  const count = getRandomNumber(1, 6);
+
+  return [...Array(count)]
+    .map(() => {
+      return {
+        src: `http://picsum.photos/300/150?r=${Math.random()}`,
+        description
+      };
+    });
+};
+
+export const Destinations = CITIES.map((city) => {
+  return {
+    name: city,
+    description: generateDescription(DESCRIPTIONS),
+    pictures: generatePictures(city)
+  };
+});
+
+export const Offers = [...OfferType.TRANSFERS, ...OfferType.ACTIVITIES]
+  .map((type) => {
+    return {
+      type,
+      offers: generateOffers()
+    };
+  });
+
 const generateEvent = () => {
   const firstDate = getRandomDate();
   const secondDate = getRandomDate();
+  const destination = Destinations[getRandomNumber(0, Destinations.length)];
+  const offersList = Offers[getRandomNumber(0, Offers.length)];
+  const offersCount = getRandomNumber(0, offersList.offers.length);
 
   return {
-    type: getRandomArrayItem([...EVENT_TYPES.transfers, ...EVENT_TYPES.activities]),
-    city: getRandomArrayItem(CITIES),
-    photos: generatePhotos(),
-    offers: generateOffers(),
-    description: generateDescription(DESCRIPTIONS),
+    type: offersList.type,
+    destination,
+    offers: offersList.offers.slice(0, offersCount),
     startDate: Math.min(firstDate, secondDate),
     endDate: Math.max(firstDate, secondDate),
     price: getRandomNumber(10, 200),
@@ -51,11 +66,8 @@ const generateEvent = () => {
   };
 };
 
-const generateEvents = (count) => {
-  return [...Array(count)]
+export const generateEvents = () => {
+  return [...Array(EVENTS_COUNT)]
     .map(() => generateEvent())
     .sort((a, b) => a.startDate - b.startDate);
 };
-
-
-export {generateEvents};
