@@ -1,5 +1,5 @@
 import TripInfoComponent from '../components/trip-info.js';
-import TripSortComponent, {SortType} from '../components/trip-sort.js';
+import TripSortComponent from '../components/trip-sort.js';
 import TripDaysComponent from '../components/trip-days.js';
 import TripDayComponent from '../components/trip-day.js';
 import TripEventsComponent from '../components/trip-events.js';
@@ -7,6 +7,7 @@ import NoEventsComponent from '../components/no-events.js';
 import EventController from './event-controller.js';
 import {renderComponent, RenderPosition} from '../utils/render.js';
 import {formatFullDate} from '../utils/format.js';
+import {SortType} from '../const.js';
 
 export default class TripController {
   constructor(container) {
@@ -76,7 +77,7 @@ export default class TripController {
 
   _onSortTypeChange(sortType) {
     let sortedEvents = [];
-    const defaultSorting = sortType === SortType.DEFAULT;
+    const isDefaultSorting = sortType === SortType.DEFAULT;
 
     switch (sortType) {
       case SortType.TIME_DOWN:
@@ -91,7 +92,7 @@ export default class TripController {
     }
 
     this._tripDaysComponent.getElement().innerHTML = ``;
-    this._eventControllers = this._renderEvents(sortedEvents, this._onDataChange, this._onViewChange, defaultSorting);
+    this._eventControllers = this._renderEvents(sortedEvents, this._onDataChange, this._onViewChange, isDefaultSorting);
   }
 
   render(events) {

@@ -5,7 +5,9 @@ const SHOWING_CITIES_COUNT = 3;
 
 const getTitle = (events) => {
   if (events.length > SHOWING_CITIES_COUNT) {
-    return `${events[0].destination.name} &mdash; ... &mdash; ${events[events.length - 1].destination.name}`;
+    return `
+      ${events[0].destination.name} &mdash; ... &mdash; ${events[events.length - 1].destination.name}
+    `;
   } else {
     return events
       .map((event, index) => {
@@ -35,9 +37,7 @@ export default class TripInfo extends AbstractComponent {
 
     return `
       <div class="trip-info__main">
-        <h1 class="trip-info__title">
-          ${getTitle(this._events)}
-        </h1>
+        <h1 class="trip-info__title">${getTitle(this._events)}</h1>
 
         <p class="trip-info__dates">${dates}</p>
       </div>

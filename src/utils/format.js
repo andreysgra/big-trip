@@ -4,11 +4,13 @@ const addLeadZero = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
 
-export const formatDate = (timestamp) => moment(timestamp).format(`DD/MM/YY`);
-
 export const formatFullDate = (timestamp) => moment(timestamp).format(`YYYY-MM-DD`);
 
+export const formatDate = (timestamp) => moment(timestamp).format(`DD/MM/YY`);
+
 export const formatTime = (timestamp) => moment(timestamp).format(`HH:mm`);
+
+export const formatDateTime = (timestamp) => moment(timestamp).format();
 
 export const formatMonth = (timestamp) => moment(timestamp).format(`MMM`);
 

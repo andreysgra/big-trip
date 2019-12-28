@@ -1,5 +1,25 @@
 import AbstractComponent from './abstract-component.js';
 
+const createFiltersMarkup = ((filters) => {
+  return filters
+    .map((filter, index) => {
+      return `
+        <input
+          id="filter-${filter}"
+          class="trip-filters__filter-input visually-hidden"
+          type="radio"
+          name="trip-filter"
+          value="${filter}"
+          ${index === 0 ? `checked` : ``}
+        >
+        <label class="trip-filters__filter-label" for="filter-${filter}">
+          ${filter}
+        </label>
+      `;
+    })
+    .join(``);
+});
+
 export default class Filter extends AbstractComponent {
   constructor(filters) {
     super();
@@ -10,15 +30,7 @@ export default class Filter extends AbstractComponent {
     return `
       <form class="trip-filters" action="#" method="get">
         <div class="trip-filters__filter">
-          ${this._filters
-          .map((filter, index) => {
-            return `
-              <input id="filter-${filter}" class="trip-filters__filter-input visually-hidden" type="radio" name="trip-filter"
-                value="${filter}" ${index === 0 ? `checked` : ``}>
-              <label class="trip-filters__filter-label" for="filter-${filter}">${filter}</label>
-            `;
-          })
-          .join(``)}
+          ${createFiltersMarkup(this._filters)}
         </div>
       </form>
     `;

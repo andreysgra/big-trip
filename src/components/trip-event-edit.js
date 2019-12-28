@@ -7,6 +7,40 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 
+const createDestinationsMarkup = (destinations) => {
+  return destinations
+    .map((destination) => {
+      return `
+        <option value="${destination.name}"></option>
+      `;
+    })
+    .join(``);
+};
+
+const createEventTypesMarkup = (types, eventType) => {
+  return types
+    .map((type) => {
+      return `
+        <div class="event__type-item">
+          <input
+            id="event-type-${type}-1"
+            class="event__type-input  visually-hidden"
+            type="radio"
+            name="event-type"
+            value="${type}" ${type === eventType ? `checked` : ``}
+          >
+          <label
+            class="event__type-label  event__type-label--${type}"
+            for="event-type-${type}-1"
+          >
+            ${toUpperCaseFirstLetter(type)}
+          </label>
+        </div>
+      `;
+    })
+    .join(``);
+};
+
 const createOffersMarkup = (eventType, offers) => {
   const offersList = Offers.find((offer) => {
     return eventType === (offer.type);
@@ -18,11 +52,24 @@ const createOffersMarkup = (eventType, offers) => {
 
       return `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-1" type="checkbox" name="event-offer-${offer.type}" ${isCheckedOffer ? `checked` : ``}>
-          <label class="event__offer-label" for="event-offer-${offer.type}-1">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+          <input
+            class="event__offer-checkbox  visually-hidden"
+            id="event-offer-${offer.type}-1"
+            type="checkbox"
+            name="event-offer-${offer.type}" ${isCheckedOffer ? `checked` : ``}
+          >
+          <label
+            class="event__offer-label"
+            for="event-offer-${offer.type}-1"
+          >
+            <span class="event__offer-title">
+              ${offer.title}
+            </span>
+              &plus;
+              &euro;&nbsp;
+            <span class="event__offer-price">
+              ${offer.price}
+            </span>
           </label>
         </div>
       `;
@@ -33,29 +80,8 @@ const createOffersMarkup = (eventType, offers) => {
 const createPicturesMarkup = (pictures) => {
   return pictures
     .map((picture) => {
-      return `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
-    })
-    .join(``);
-};
-
-const createEventTypesMarkup = (types, eventType) => {
-  return types
-    .map((type) => {
       return `
-        <div class="event__type-item">
-          <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === eventType ? `checked` : ``}>
-          <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${toUpperCaseFirstLetter(type)}</label>
-        </div>
-      `;
-    })
-    .join(``);
-};
-
-const createDestinationMarkup = (destinations) => {
-  return destinations
-    .map((destination) => {
-      return `
-        <option value="${destination.name}"></option>
+        <img class="event__photo" src="${picture.src}" alt="${picture.description}">
       `;
     })
     .join(``);
@@ -154,7 +180,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
     const offersMarkup = createOffersMarkup(this._type, offers);
 
     const {TRANSFERS, ACTIVITIES} = EventType;
-    const cities = createDestinationMarkup(Destinations);
+    const cities = createDestinationsMarkup(Destinations);
 
     return `
       <li class="trip-events__item">
@@ -234,7 +260,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${offersMarkup}
+            ${offersMarkup}
           </section>
 
           <section class="event__section  event__section--destination">
@@ -273,12 +299,12 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this.rerender();
   }
 
-  setSubmitHandler(handler) {
+  setFavoriteCheckboxChangeHandler(handler) {
     this.getElement()
-      .querySelector(`.event--edit`)
-      .addEventListener(`submit`, handler);
+      .querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, handler);
 
-    this._submitHandler = handler;
+    this._favoriteCheckboxChangeHandler = handler;
   }
 
   setRollupButtonClickHandler(handler) {
@@ -289,11 +315,11 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this._rollupButtonClickHandler = handler;
   }
 
-  setFavoriteCheckboxChangeHandler(handler) {
+  setSubmitHandler(handler) {
     this.getElement()
-      .querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`change`, handler);
+      .querySelector(`.event--edit`)
+      .addEventListener(`submit`, handler);
 
-    this._favoriteCheckboxChangeHandler = handler;
+    this._submitHandler = handler;
   }
 }
