@@ -62,6 +62,7 @@ const generateEvent = () => {
   const offersCount = getRandomNumber(0, offersList.offers.length);
 
   return {
+    id: String(new Date() + Math.random()),
     type: offersList.type,
     destination,
     offers: offersList.offers.slice(0, offersCount),
