@@ -1,5 +1,5 @@
 import {getRandomNumber, getRandomBool, shuffle} from '../utils/common.js';
-import {OfferType} from '../const.js';
+import {EventType} from '../const.js';
 import {DESCRIPTIONS, CITIES, OFFERS} from './const.js';
 
 const EVENTS_COUNT = 10;
@@ -46,7 +46,7 @@ export const Destinations = CITIES.map((city) => {
   };
 });
 
-export const Offers = [...OfferType.TRANSFERS, ...OfferType.ACTIVITIES]
+export const Offers = [...EventType.TRANSFERS, ...EventType.ACTIVITIES]
   .map((type) => {
     return {
       type,

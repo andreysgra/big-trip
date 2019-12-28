@@ -114,6 +114,10 @@ export default class TripController {
 
     tripInfo
       .querySelector(`.trip-info__cost-value`)
-      .textContent = events.reduce((acc, value) => acc + value.price, 0);
+      .textContent = events
+      .reduce((totalCost, value) => totalCost + value.price +
+          value.offers
+            .reduce((totalOffersCost, offer) => totalOffersCost + offer.price, 0),
+      0);
   }
 }

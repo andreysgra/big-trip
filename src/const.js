@@ -1,4 +1,4 @@
-export const OfferType = {
+export const EventType = {
   TRANSFERS: [
     `bus`,
     `drive`,

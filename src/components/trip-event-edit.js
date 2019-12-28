@@ -1,14 +1,15 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDate, formatTime} from '../utils/format.js';
-import {OfferType} from '../const.js';
+import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
+import {EventType} from '../const.js';
 import {Destinations, Offers} from '../mock/event.js';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 
-const createOffersMarkup = (type, offers) => {
+const createOffersMarkup = (eventType, offers) => {
   const offersList = Offers.find((offer) => {
-    return type === offer.type;
+    return eventType === (offer.type);
   });
 
   return offersList.offers
@@ -43,7 +44,7 @@ const createEventTypesMarkup = (types, eventType) => {
       return `
         <div class="event__type-item">
           <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === eventType ? `checked` : ``}>
-          <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+          <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${toUpperCaseFirstLetter(type)}</label>
         </div>
       `;
     })
@@ -152,7 +153,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
     const picturesMarkup = createPicturesMarkup(pictures);
     const offersMarkup = createOffersMarkup(this._type, offers);
 
-    const {TRANSFERS, ACTIVITIES} = OfferType;
+    const {TRANSFERS, ACTIVITIES} = EventType;
     const cities = createDestinationMarkup(Destinations);
 
     return `
@@ -181,7 +182,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${this._type} at
+              ${formatEventTypePlaceholder(this._type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -257,7 +258,6 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this.setRollupButtonClickHandler(this._rollupButtonClickHandler);
     this.setFavoriteCheckboxChangeHandler(this._favoriteCheckboxChangeHandler);
     this._subscribeOnEvents();
-    // this._applyFlatpickr();
   }
 
   rerender() {
