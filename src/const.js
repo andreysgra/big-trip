@@ -21,11 +21,16 @@ export const SortType = {
   PRICE_DOWN: `price`
 };
 
-export const FILTERS = [
-  `everything`,
-  `future`,
-  `past`
-];
+export const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};
 
 export const MENU_ITEMS = [
   `Table`,

@@ -1,11 +1,7 @@
 import TripEventComponent from '../components/trip-event.js';
 import TripEventEditComponent from '../components/trip-event-edit.js';
 import {renderComponent, replaceComponent} from '../utils/render.js';
-
-const Mode = {
-  DEFAULT: `default`,
-  EDIT: `edit`,
-};
+import {Mode} from '../const.js';
 
 export default class EventController {
   constructor(container, onDataChange, onViewChange) {

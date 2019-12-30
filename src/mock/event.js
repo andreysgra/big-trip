@@ -8,7 +8,7 @@ const OFFERS_MAX_COUNT = 5;
 const generateDate = () => {
   const day = 24 * 3600 * 1000;
 
-  return getRandomNumber(Date.now(), Date.now() + day * 7);
+  return Date.now() + getRandomNumber(-day, day * 3);
 };
 
 const generateOffers = () => {
