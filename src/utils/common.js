@@ -1,3 +1,5 @@
+import {EventType} from '../const.js';
+
 export const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
 export const getRandomArrayItem = (array) => array[getRandomNumber(0, array.length)];
@@ -14,4 +16,18 @@ export const shuffle = (array) => {
   }
 
   return array;
+};
+
+export const toUpperCaseFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+export const formatEventTypePlaceholder = (eventType) => {
+  const isTransfer = Object.keys(EventType)
+    .some((category) => {
+      return EventType[category]
+        .includes(eventType) && category === `TRANSFERS`;
+    });
+
+  return isTransfer
+    ? toUpperCaseFirstLetter(`${eventType} to`)
+    : toUpperCaseFirstLetter(`${eventType} in`);
 };

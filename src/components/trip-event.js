@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTime, formatDuration} from '../utils/format.js';
+import {formatDateTime, formatTime, formatDuration} from '../utils/format.js';
+import {formatEventTypePlaceholder} from '../utils/common.js';
 
 const OFFERS_MAX_VIEWING = 3;
 
@@ -10,8 +11,9 @@ const createOffersMarkup = (offers) => {
       return `
         <li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
-          &plus;
-          &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+            &plus;
+            &euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
         </li>
       `;
     })
@@ -31,6 +33,8 @@ export default class TripEvent extends AbstractComponent {
 
     const startTime = formatTime(startDate);
     const endTime = formatTime(endDate);
+    const startDateTime = formatDateTime(startDate);
+    const endDateTime = formatDateTime(endDate);
     const duration = formatDuration(endDate - startDate);
 
     return `
@@ -39,13 +43,13 @@ export default class TripEvent extends AbstractComponent {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event ${type} icon">
         </div>
-        <h3 class="event__title">${type} to ${destination.name}</h3>
+        <h3 class="event__title">${formatEventTypePlaceholder(type)} ${destination.name}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">${startTime}</time>
+            <time class="event__start-time" datetime="${startDateTime}">${startTime}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">${endTime}</time>
+            <time class="event__end-time" datetime="${endDateTime}">${endTime}</time>
           </p>
           <p class="event__duration">${duration}</p>
         </div>

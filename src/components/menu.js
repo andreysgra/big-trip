@@ -10,10 +10,10 @@ export default class Menu extends AbstractComponent {
     return `
       <nav class="trip-controls__trip-tabs  trip-tabs">
         ${this._items
-          .map((item, index) => {
-            return `<a class="trip-tabs__btn ${index === 0 ? `trip-tabs__btn--active` : ``}" href="#">${item}</a>`;
-          })
-          .join(``)}
+            .map((item, index) => {
+              return `<a class="trip-tabs__btn ${index === 0 ? `trip-tabs__btn--active` : ``}" href="#">${item}</a>`;
+            })
+            .join(``)}
       </nav>
     `;
   }
