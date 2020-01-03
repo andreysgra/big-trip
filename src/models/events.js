@@ -10,12 +10,35 @@ export default class Events {
     this._filterChangeHandlers = [];
   }
 
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
+  }
+
+  addEvent(event) {
+    this._events = [].concat(event, this._events);
+    this._callHandlers(this._dataChangeHandlers);
+  }
+
   getEvents() {
     return getEventsByFilter(this._events, this._activeFilterType);
   }
 
   getEventsAll() {
     return this._events;
+  }
+
+  removeEvent(id) {
+    const index = this._events.findIndex((it) => it.id === id);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), this._events.slice(index + 1));
+
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
   }
 
   setDataChangeHandler(handler) {
@@ -28,7 +51,7 @@ export default class Events {
 
   setFilter(filterType) {
     this._activeFilterType = filterType;
-    this._filterChangeHandlers.forEach((handler) => handler());
+    this._callHandlers(this._filterChangeHandlers);
   }
 
   setFilterChangeHandler(handler) {
@@ -43,8 +66,7 @@ export default class Events {
     }
 
     this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
-
-    this._dataChangeHandlers.forEach((handler) => handler());
+    this._callHandlers(this._dataChangeHandlers);
 
     return true;
   }

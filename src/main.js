@@ -24,3 +24,8 @@ const tripEvents = document.querySelector(`.trip-events`);
 
 const tripController = new TripController(tripEvents, eventsModel);
 tripController.render();
+
+document.querySelector(`.trip-main__event-add-btn`)
+  .addEventListener(`click`, () => {
+    tripController.createEvent();
+  });

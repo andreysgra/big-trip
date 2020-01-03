@@ -31,52 +31,42 @@ export const CITIES = [
 
 export const OFFERS = [
   {
-    type: `luggage`,
     title: `Add luggage`,
     price: 10
   },
   {
-    type: `comfort`,
     title: `Switch to comfort class`,
     price: 150
   },
   {
-    type: `meal`,
     title: `Add meal`,
     price: 2
   },
   {
-    type: `seats`,
     title: `Choose seats`,
     price: 9
   },
   {
-    type: `train`,
     title: `Travel by train`,
     price: 40
   },
   {
-    type: `radio-station`,
     title: `Choose the radio station`,
     price: 10
   },
   {
-    type: `comfort-class`,
     title: `Upgrade to comfort class`,
     price: 140
   },
   {
-    type: `business-lounge`,
     title: `Business lounge`,
     price: 140
   },
   {
-    type: `breakfast`,
     title: `Add breakfast`,
     price: 170
   },
   {
-    type: `vip`,
     title: `Choose VIP area`,
     price: 130
   }

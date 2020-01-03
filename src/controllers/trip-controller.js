@@ -7,7 +7,7 @@ import NoEventsComponent from '../components/no-events.js';
 import EventController from './event-controller.js';
 import {renderComponent, RenderPosition} from '../utils/render.js';
 import {formatFullDate} from '../utils/format.js';
-import {SortType} from '../const.js';
+import {SortType, Mode, EmptyEvent} from '../const.js';
 
 const renderEvents = (container, events, onDataChange, onViewChange, defaultSorting) => {
   const eventControllers = [];
@@ -33,7 +33,7 @@ const renderEvents = (container, events, onDataChange, onViewChange, defaultSort
       .forEach((event) => {
         const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange);
 
-        eventController.render(event);
+        eventController.render(event, Mode.DEFAULT);
         eventControllers.push(eventController);
       });
   });
@@ -47,6 +47,7 @@ export default class TripController {
     this._eventControllers = [];
     this._eventsModel = eventsModel;
     this._isDefaultSorting = true;
+    this._creatingEvent = null;
 
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysComponent = new TripDaysComponent();
@@ -61,17 +62,48 @@ export default class TripController {
     this._tripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  _onDataChange(eventController, oldData, newData) {
-    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+  _calculateTotalTripCost() {
+    const totalPrice = this._eventsModel.getEvents()
+      .reduce((totalCost, value) => totalCost + value.price +
+        value.offers
+          .reduce((totalOffersCost, offer) => totalOffersCost + offer.price, 0),
+      0);
 
-    if (isSuccess) {
-      eventController.render(newData);
+    document.querySelector(`.trip-info__cost-value`).textContent = totalPrice;
+  }
+
+  _onDataChange(eventController, oldData, newData) {
+    if (oldData === EmptyEvent) {
+      this._creatingEvent = null;
+
+      if (newData === null) {
+        eventController.destroy();
+        this._updateEvents();
+      } else {
+        this._eventsModel.addEvent(newData);
+        eventController.render(newData, Mode.DEFAULT);
+
+        this._eventControllers = [].concat(eventController, this._eventControllers);
+
+        this._removeEvents();
+        this._renderEvents(this._eventsModel.getEvents());
+      }
+    } else if (newData === null) {
+      this._eventsModel.removeEvent(oldData.id);
+      this._updateEvents();
+    } else {
+      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+
+      if (isSuccess) {
+        eventController.render(newData, Mode.DEFAULT);
+      }
     }
+
+    this._calculateTotalTripCost();
   }
 
   _onFilterChange() {
-    this._removeEvents();
-    this._renderEvents(this._eventsModel.getEvents());
+    this._updateEvents();
   }
 
   _onSortTypeChange(sortType) {
@@ -102,11 +134,28 @@ export default class TripController {
 
   _removeEvents() {
     this._tripDaysComponent.getElement().innerHTML = ``;
+    this._eventControllers.forEach((eventController) => eventController.destroy());
     this._eventControllers = [];
   }
 
   _renderEvents(events) {
     this._eventControllers = renderEvents(this._tripDaysComponent.getElement(), events, this._onDataChange, this._onViewChange, this._isDefaultSorting);
+
+    this._calculateTotalTripCost();
+  }
+
+  _updateEvents() {
+    this._removeEvents();
+    this._renderEvents(this._eventsModel.getEvents());
+  }
+
+  createEvent() {
+    if (this._creatingEvent) {
+      return;
+    }
+
+    this._creatingEvent = new EventController(this._tripSortComponent.getElement(), this._onDataChange, this._onViewChange);
+    this._creatingEvent.render(EmptyEvent, Mode.ADDING);
   }
 
   render() {
@@ -125,13 +174,5 @@ export default class TripController {
     renderComponent(container, this._tripDaysComponent);
 
     this._renderEvents(events);
-
-    tripInfo
-      .querySelector(`.trip-info__cost-value`)
-      .textContent = events
-      .reduce((totalCost, value) => totalCost + value.price +
-          value.offers
-            .reduce((totalOffersCost, offer) => totalOffersCost + offer.price, 0),
-      0);
   }
 }
