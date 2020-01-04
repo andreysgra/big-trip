@@ -8,6 +8,7 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 import moment from "moment";
+import he from 'he';
 
 const createDestinationsMarkup = (destinations) => {
   return destinations
@@ -114,7 +115,7 @@ const parseFormData = (form) => {
   return {
     type: formData.get(`event-type`),
     destination: {
-      name: formData.get(`event-destination`),
+      name: he.encode(formData.get(`event-destination`)),
       description,
       pictures
     },
