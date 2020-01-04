@@ -1,6 +1,6 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDate, formatTime} from '../utils/format.js';
-import {toUpperCaseFirstLetter, formatEventTypePlaceholder, getRandomNumber} from '../utils/common.js';
+import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
 import {EventType} from '../const.js';
 import {Destinations, Offers} from '../mock/event.js';
 import {Mode} from '../const.js';
@@ -51,7 +51,7 @@ const createOffersMarkup = (eventType, offers) => {
   return offersList.offers
     .map((offer) => {
       const isCheckedOffer = offers.some((it) => it.title === offer.title);
-      const offerId = getRandomNumber(Date.now(), Date.now() + Math.random() * 1000);
+      const offerId = String(Math.round(Date.now() * Math.random()));
 
       return `
         <div class="event__offer-selector">

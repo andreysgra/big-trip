@@ -74,7 +74,7 @@ export default class EventController {
       evt.preventDefault();
 
       const data = this._eventEditComponent.getData();
-      this._onDataChange(this, event, data);
+      this._onDataChange(this, event, Object.assign({}, data, {id: event.id}));
     });
 
     this._eventEditComponent.setRollupButtonClickHandler(() => this._replaceEditToEvent());

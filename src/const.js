@@ -39,7 +39,7 @@ export const MENU_ITEMS = [
 ];
 
 export const EmptyEvent = {
-  id: String(new Date() + Math.random()),
+  id: String(Math.round(Date.now() * Math.random())),
   type: `bus`,
   destination: {
     name: ``,
