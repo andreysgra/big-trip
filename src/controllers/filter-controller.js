@@ -32,7 +32,7 @@ export default class FilterController {
       .map((filterType) => {
         return {
           name: filterType,
-          checked: filterType === this._activeFilterType,
+          checked: filterType === this._activeFilterType
         };
       });
 

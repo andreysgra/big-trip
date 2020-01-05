@@ -33,6 +33,11 @@ export const FilterType = {
   PAST: `past`
 };
 
+export const MenuItem = {
+  TABLE: `Table`,
+  STATS: `Stats`
+};
+
 export const MENU_ITEMS = [
   `Table`,
   `Stats`

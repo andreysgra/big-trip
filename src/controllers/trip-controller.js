@@ -9,6 +9,8 @@ import {renderComponent, RenderPosition} from '../utils/render.js';
 import {formatFullDate} from '../utils/format.js';
 import {SortType, Mode, EmptyEvent} from '../const.js';
 
+const HIDDEN_CLASS = `visually-hidden`;
+
 const renderEvents = (container, events, onDataChange, onViewChange, defaultSorting) => {
   const eventControllers = [];
 
@@ -158,6 +160,10 @@ export default class TripController {
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
   }
 
+  hide() {
+    this._container.classList.add(HIDDEN_CLASS);
+  }
+
   render() {
     const container = this._container;
     const events = this._eventsModel.getEvents();
@@ -174,5 +180,9 @@ export default class TripController {
     renderComponent(container, this._tripDaysComponent);
 
     this._renderEvents(events);
+  }
+
+  show() {
+    this._container.classList.remove(HIDDEN_CLASS);
   }
 }
