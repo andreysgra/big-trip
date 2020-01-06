@@ -15,16 +15,16 @@ export const EventType = {
   ]
 };
 
-export const SortType = {
-  DEFAULT: `event`,
-  TIME_DOWN: `time`,
-  PRICE_DOWN: `price`
-};
-
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
+};
+
+export const SortType = {
+  DEFAULT: `event`,
+  TIME_DOWN: `time`,
+  PRICE_DOWN: `price`
 };
 
 export const FilterType = {
@@ -34,14 +34,15 @@ export const FilterType = {
 };
 
 export const MenuItem = {
-  TABLE: `Table`,
-  STATS: `Stats`
+  TABLE: `table`,
+  STATS: `stats`
 };
 
-export const MENU_ITEMS = [
-  `Table`,
-  `Stats`
-];
+export const ChartTitle = {
+  MONEY: `money`,
+  TRANSPORT: `transport`,
+  TIME_SPENT: `time spent`
+};
 
 export const EmptyEvent = {
   id: String(Math.round(Date.now() * Math.random())),

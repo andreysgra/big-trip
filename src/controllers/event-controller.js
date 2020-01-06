@@ -34,7 +34,10 @@ export default class EventController {
 
     this._eventEditComponent.reset();
 
-    replaceComponent(this._eventComponent, this._eventEditComponent);
+    if (document.contains(this._eventEditComponent.getElement())) {
+      replaceComponent(this._eventComponent, this._eventEditComponent);
+    }
+
     this._mode = Mode.DEFAULT;
   }
 

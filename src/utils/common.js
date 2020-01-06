@@ -31,3 +31,15 @@ export const formatEventTypePlaceholder = (eventType) => {
     ? toUpperCaseFirstLetter(`${eventType} to`)
     : toUpperCaseFirstLetter(`${eventType} in`);
 };
+
+export const sortObject = (unsortedObject) => {
+  const sortedObject = {};
+
+  Object.keys(unsortedObject)
+    .sort((a, b) => unsortedObject[b] - unsortedObject[a])
+    .forEach((item) => {
+      sortedObject[item] = unsortedObject[item];
+    });
+
+  return sortedObject;
+};
