@@ -13,7 +13,7 @@ const createSortMarkup = (sortType) => {
             type="radio"
             name="trip-sort"
             value="sort-${type}"
-            data-sort-type=${type}
+            data-sort-type="${type}"
             ${index === 0 ? `checked` : ``}
           >
           <label

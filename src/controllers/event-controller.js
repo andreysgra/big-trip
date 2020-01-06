@@ -34,7 +34,10 @@ export default class EventController {
 
     this._eventEditComponent.reset();
 
-    replaceComponent(this._eventComponent, this._eventEditComponent);
+    if (document.contains(this._eventEditComponent.getElement())) {
+      replaceComponent(this._eventComponent, this._eventEditComponent);
+    }
+
     this._mode = Mode.DEFAULT;
   }
 
@@ -74,7 +77,7 @@ export default class EventController {
       evt.preventDefault();
 
       const data = this._eventEditComponent.getData();
-      this._onDataChange(this, event, data);
+      this._onDataChange(this, event, Object.assign({}, data, {id: event.id}));
     });
 
     this._eventEditComponent.setRollupButtonClickHandler(() => this._replaceEditToEvent());
