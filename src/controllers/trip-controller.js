@@ -160,6 +160,8 @@ export default class TripController {
 
     this._creatingEvent = new EventController(this._tripSortComponent.getElement(), this._onDataChange, this._onViewChange);
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
+
+    EmptyEvent.id = String(Math.round(Date.now() * Math.random()));
   }
 
   hide() {

@@ -2,7 +2,7 @@ import {getRandomNumber, getRandomBool, shuffle} from '../utils/common.js';
 import {EventType} from '../const.js';
 import {DESCRIPTIONS, CITIES, OFFERS} from './const.js';
 
-const EVENTS_COUNT = 10;
+const EVENTS_COUNT = 3;
 const OFFERS_MAX_COUNT = 5;
 
 const generateDate = () => {

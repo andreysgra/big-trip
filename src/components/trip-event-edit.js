@@ -381,14 +381,6 @@ export default class TripEventEdit extends AbstractSmartComponent {
   }
 
   reset() {
-    const event = this._event;
-
-    this._type = event.type;
-    this._destination = Object.assign({}, event.destination);
-    this._price = event.price;
-    this._startDate = event.startDate;
-    this._endDate = event.endDate;
-
     this.rerender();
   }
 
