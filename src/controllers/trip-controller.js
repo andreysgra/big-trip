@@ -54,6 +54,7 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._tripSortComponent = new TripSortComponent();
+    this._tripInfoComponent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -101,6 +102,7 @@ export default class TripController {
       }
     }
 
+    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
   }
 
@@ -122,7 +124,7 @@ export default class TripController {
         sortedEvents = events.slice().sort((a, b) => b.price - a.price);
         break;
       case SortType.DEFAULT:
-        sortedEvents = events.slice();
+        sortedEvents = events.slice().sort((a, b) => a.startDate - b.startDate);
         break;
     }
 
@@ -174,7 +176,8 @@ export default class TripController {
     }
 
     const tripInfo = document.querySelector(`.trip-main__trip-info`);
-    renderComponent(tripInfo, new TripInfoComponent(events), RenderPosition.AFTERBEGIN);
+    this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
+    renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
 
     renderComponent(container, this._tripSortComponent);
     renderComponent(container, this._tripDaysComponent);
