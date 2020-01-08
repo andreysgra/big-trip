@@ -27,6 +27,10 @@ export default class Events {
     return this._events;
   }
 
+  isNoEvents() {
+    return this.getEventsAll().length === 0;
+  }
+
   removeEvent(id) {
     const index = this._events.findIndex((it) => it.id === id);
 

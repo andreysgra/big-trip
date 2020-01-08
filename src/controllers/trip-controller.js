@@ -5,7 +5,7 @@ import TripDayComponent from '../components/trip-day.js';
 import TripEventsComponent from '../components/trip-events.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventController from './event-controller.js';
-import {renderComponent, RenderPosition} from '../utils/render.js';
+import {renderComponent, RenderPosition, removeComponent} from '../utils/render.js';
 import {formatFullDate} from '../utils/format.js';
 import {SortType, Mode, EmptyEvent} from '../const.js';
 
@@ -51,7 +51,7 @@ export default class TripController {
     this._isDefaultSorting = true;
     this._creatingEvent = null;
 
-    this._noEventsComponent = new NoEventsComponent();
+    this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
     this._tripSortComponent = new TripSortComponent();
     this._tripInfoComponent = null;
@@ -104,6 +104,7 @@ export default class TripController {
 
     this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
+    this._toggleNoEventsComponent();
   }
 
   _onFilterChange() {
@@ -142,10 +143,37 @@ export default class TripController {
     this._eventControllers = [];
   }
 
+  _removeNoEventsComponent() {
+    if (this._noEventsComponent) {
+      removeComponent(this._noEventsComponent);
+      this._noEventsComponent = null;
+    }
+  }
+
   _renderEvents(events) {
     this._eventControllers = renderEvents(this._tripDaysComponent.getElement(), events, this._onDataChange, this._onViewChange, this._isDefaultSorting);
 
     this._calculateTotalTripCost();
+  }
+
+  _renderTripSortComponent() {
+    if (!this._tripSortComponent) {
+      this._tripSortComponent = new TripSortComponent();
+    }
+
+    renderComponent(this._container, this._tripSortComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _toggleNoEventsComponent() {
+    if (this._eventsModel.isNoEvents()) {
+      this._noEventsComponent = new NoEventsComponent();
+      renderComponent(this._container, this._noEventsComponent);
+
+      removeComponent(this._tripSortComponent);
+      this._tripSortComponent = null;
+    } else {
+      this._removeNoEventsComponent();
+    }
   }
 
   _updateEvents() {
@@ -157,6 +185,9 @@ export default class TripController {
     if (this._creatingEvent) {
       return;
     }
+
+    this._renderTripSortComponent();
+    this._removeNoEventsComponent();
 
     this._creatingEvent = new EventController(this._tripSortComponent.getElement(), this._onDataChange, this._onViewChange);
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
@@ -172,16 +203,11 @@ export default class TripController {
     const container = this._container;
     const events = this._eventsModel.getEvents();
 
-    if (events.length === 0) {
-      renderComponent(container, this._noEventsComponent);
-      return;
-    }
-
     const tripInfo = document.querySelector(`.trip-main__trip-info`);
     this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
     renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
 
-    renderComponent(container, this._tripSortComponent);
+    this._renderTripSortComponent();
     renderComponent(container, this._tripDaysComponent);
 
     this._renderEvents(events);
