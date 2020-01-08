@@ -1,7 +1,7 @@
 import {getEventsByFilter} from '../utils/filter.js';
 import {FilterType} from '../const.js';
 
-export default class Events {
+export default class EventsModel {
   constructor() {
     this._events = [];
     this._activeFilterType = FilterType.EVERYTHING;

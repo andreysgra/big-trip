@@ -1,6 +1,6 @@
 import TripController from './controllers/trip-controller.js';
 import FilterController from './controllers/filter-controller.js';
-import EventsModel from './models/events.js';
+import EventsModel from './models/events-model.js';
 import MenuComponent from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
 import {renderComponent, RenderPosition} from './utils/render.js';
