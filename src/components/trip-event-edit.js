@@ -2,13 +2,11 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDate, formatTime} from '../utils/format.js';
 import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
 import {EventType} from '../const.js';
-import {Destinations, Offers} from '../mock/event.js';
 import {Mode} from '../const.js';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 import moment from "moment";
-import he from 'he';
 
 const createDestinationsMarkup = (destinations) => {
   return destinations
@@ -44,14 +42,14 @@ const createEventTypesMarkup = (types, eventType) => {
     .join(``);
 };
 
-const createOffersMarkup = (eventType, offers) => {
-  const offersList = Offers.find((offer) => {
+const createOffersMarkup = (eventType, eventOffers, offers) => {
+  const allOffers = offers.find((offer) => {
     return eventType === (offer.type);
   });
 
-  return offersList.offers
+  return allOffers.offers
     .map((offer) => {
-      const isCheckedOffer = offers.some((it) => it.title === offer.title);
+      const isCheckedOffer = eventOffers.some((it) => it.title === offer.title);
       const offerId = String(Math.round(Date.now() * Math.random()));
 
       return `
@@ -91,44 +89,8 @@ const createPicturesMarkup = (pictures) => {
     .join(``);
 };
 
-const parseFormData = (form) => {
-  const formData = new FormData(form);
-  const description = form.querySelector(`.event__destination-description`).textContent;
-
-  const offers = [...form.querySelectorAll(`.event__offer-checkbox`)]
-    .filter((input) => input.checked)
-    .map((offer) => {
-      return {
-        title: offer.parentElement.querySelector(`.event__offer-title`).textContent.trim(),
-        price: parseInt(offer.parentElement.querySelector(`.event__offer-price`).textContent, 10)
-      };
-    });
-
-  const pictures = [...form.querySelectorAll(`.event__photo`)]
-    .map((picture) => {
-      return {
-        src: picture.src,
-        description: picture.alt
-      };
-    });
-
-  return {
-    type: formData.get(`event-type`),
-    destination: {
-      name: he.encode(formData.get(`event-destination`)),
-      description,
-      pictures
-    },
-    offers,
-    startDate: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
-    endDate: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
-    price: parseInt(formData.get(`event-price`), 10),
-    isFavorite: formData.get(`event-favorite`) === `on`
-  };
-};
-
 export default class TripEventEdit extends AbstractSmartComponent {
-  constructor(event, mode) {
+  constructor(event, mode, destinations, offers) {
     super();
 
     this._event = event;
@@ -140,6 +102,9 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this._mode = mode;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+
+    this._destinations = destinations;
+    this._offers = offers;
 
     this._applyFlatpickrs();
     this._subscribeOnEvents();
@@ -203,10 +168,9 @@ export default class TripEventEdit extends AbstractSmartComponent {
     const {name, description, pictures} = this._destination;
 
     const picturesMarkup = createPicturesMarkup(pictures);
-    const offersMarkup = createOffersMarkup(this._type, offers);
-
+    const offersMarkup = createOffersMarkup(this._type, offers, this._offers);
+    const cities = createDestinationsMarkup(this._destinations);
     const {TRANSFERS, ACTIVITIES} = EventType;
-    const cities = createDestinationsMarkup(Destinations);
 
     return `
       <form class="${this._isModeAdding() ? `trip-events__item` : ``} event event--edit" action="#" method="post">
@@ -318,7 +282,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
-        const destination = Destinations.find((it) => {
+        const destination = this._destinations.find((it) => {
           return it.name === evt.target.value;
         });
 
@@ -327,7 +291,6 @@ export default class TripEventEdit extends AbstractSmartComponent {
         }
 
         this._destination = destination;
-
         this.rerender();
       });
 
@@ -350,7 +313,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
   getData() {
     const form = this._isModeAdding() ? this.getElement() : this.getElement().querySelector(`.event--edit`);
 
-    return parseFormData(form);
+    return new FormData(form);
   }
 
   getTemplate() {

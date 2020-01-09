@@ -1,7 +1,7 @@
 import {getEventsByFilter} from '../utils/filter.js';
 import {FilterType} from '../const.js';
 
-export default class Events {
+export default class EventsModel {
   constructor() {
     this._events = [];
     this._activeFilterType = FilterType.EVERYTHING;
@@ -25,6 +25,10 @@ export default class Events {
 
   getEventsAll() {
     return this._events;
+  }
+
+  isNoEvents() {
+    return this.getEventsAll().length === 0;
   }
 
   removeEvent(id) {

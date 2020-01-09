@@ -5,13 +5,13 @@ import TripDayComponent from '../components/trip-day.js';
 import TripEventsComponent from '../components/trip-events.js';
 import NoEventsComponent from '../components/no-events.js';
 import EventController from './event-controller.js';
-import {renderComponent, RenderPosition} from '../utils/render.js';
+import {renderComponent, RenderPosition, removeComponent} from '../utils/render.js';
 import {formatFullDate} from '../utils/format.js';
 import {SortType, Mode, EmptyEvent} from '../const.js';
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-const renderEvents = (container, events, onDataChange, onViewChange, defaultSorting) => {
+const renderEvents = (container, events, onDataChange, onViewChange, destinations, offers, defaultSorting) => {
   const eventControllers = [];
 
   const dates = defaultSorting
@@ -33,7 +33,7 @@ const renderEvents = (container, events, onDataChange, onViewChange, defaultSort
         ? formatFullDate(event.startDate) === date
         : event)
       .forEach((event) => {
-        const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange);
+        const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange, destinations, offers);
 
         eventController.render(event, Mode.DEFAULT);
         eventControllers.push(eventController);
@@ -44,16 +44,21 @@ const renderEvents = (container, events, onDataChange, onViewChange, defaultSort
 };
 
 export default class TripController {
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, api) {
     this._container = container;
     this._eventControllers = [];
     this._eventsModel = eventsModel;
     this._isDefaultSorting = true;
     this._creatingEvent = null;
+    this._api = api;
 
-    this._noEventsComponent = new NoEventsComponent();
+    this._destinations = [];
+    this._offers = [];
+
+    this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
     this._tripSortComponent = new TripSortComponent();
+    this._tripInfoComponent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -94,14 +99,20 @@ export default class TripController {
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
     } else {
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, newData)
+        .then((eventModel) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
 
-      if (isSuccess) {
-        eventController.render(newData, Mode.DEFAULT);
-      }
+          if (isSuccess) {
+            eventController.render(eventModel, Mode.DEFAULT);
+            this._updateEvents();
+          }
+        });
     }
 
+    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
+    this._toggleNoEventsComponent();
   }
 
   _onFilterChange() {
@@ -122,7 +133,7 @@ export default class TripController {
         sortedEvents = events.slice().sort((a, b) => b.price - a.price);
         break;
       case SortType.DEFAULT:
-        sortedEvents = events.slice();
+        sortedEvents = events.slice().sort((a, b) => a.startDate - b.startDate);
         break;
     }
 
@@ -140,10 +151,45 @@ export default class TripController {
     this._eventControllers = [];
   }
 
+  _removeNoEventsComponent() {
+    if (this._noEventsComponent) {
+      removeComponent(this._noEventsComponent);
+      this._noEventsComponent = null;
+    }
+  }
+
   _renderEvents(events) {
-    this._eventControllers = renderEvents(this._tripDaysComponent.getElement(), events, this._onDataChange, this._onViewChange, this._isDefaultSorting);
+    this._eventControllers = renderEvents(
+        this._tripDaysComponent.getElement(),
+        events,
+        this._onDataChange,
+        this._onViewChange,
+        this._destinations,
+        this._offers,
+        this._isDefaultSorting
+    );
 
     this._calculateTotalTripCost();
+  }
+
+  _renderTripSortComponent() {
+    if (!this._tripSortComponent) {
+      this._tripSortComponent = new TripSortComponent();
+    }
+
+    renderComponent(this._container, this._tripSortComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _toggleNoEventsComponent() {
+    if (this._eventsModel.isNoEvents()) {
+      this._noEventsComponent = new NoEventsComponent();
+      renderComponent(this._container, this._noEventsComponent);
+
+      removeComponent(this._tripSortComponent);
+      this._tripSortComponent = null;
+    } else {
+      this._removeNoEventsComponent();
+    }
   }
 
   _updateEvents() {
@@ -156,8 +202,20 @@ export default class TripController {
       return;
     }
 
-    this._creatingEvent = new EventController(this._tripSortComponent.getElement(), this._onDataChange, this._onViewChange);
+    this._renderTripSortComponent();
+    this._removeNoEventsComponent();
+
+    this._creatingEvent = new EventController(
+        this._tripSortComponent.getElement(),
+        this._onDataChange,
+        this._onViewChange,
+        this._destinations,
+        this._offers
+    );
+
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
+
+    EmptyEvent.id = String(Math.round(Date.now() * Math.random()));
   }
 
   hide() {
@@ -168,18 +226,22 @@ export default class TripController {
     const container = this._container;
     const events = this._eventsModel.getEvents();
 
-    if (events.length === 0) {
-      renderComponent(container, this._noEventsComponent);
-      return;
-    }
-
     const tripInfo = document.querySelector(`.trip-main__trip-info`);
-    renderComponent(tripInfo, new TripInfoComponent(events), RenderPosition.AFTERBEGIN);
+    this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
+    renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
 
-    renderComponent(container, this._tripSortComponent);
+    this._renderTripSortComponent();
     renderComponent(container, this._tripDaysComponent);
 
     this._renderEvents(events);
+  }
+
+  setDestinations(destinations) {
+    this._destinations = destinations;
+  }
+
+  setOffers(offers) {
+    this._offers = offers;
   }
 
   show() {

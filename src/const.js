@@ -1,3 +1,13 @@
+export const RequestMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+export const AUTHORIZATION = `Basic hIa2vdmGClQ18QPVBaZvI`;
+export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+
 export const EventType = {
   TRANSFERS: [
     `bus`,
