@@ -2,7 +2,6 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDate, formatTime} from '../utils/format.js';
 import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
 import {EventType} from '../const.js';
-import {Destinations, Offers} from '../mock/event.js';
 import {Mode} from '../const.js';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
@@ -44,14 +43,14 @@ const createEventTypesMarkup = (types, eventType) => {
     .join(``);
 };
 
-const createOffersMarkup = (eventType, offers) => {
-  const offersList = Offers.find((offer) => {
+const createOffersMarkup = (eventType, eventOffers, offers) => {
+  const allOffers = offers.find((offer) => {
     return eventType === (offer.type);
   });
 
-  return offersList.offers
+  return allOffers.offers
     .map((offer) => {
-      const isCheckedOffer = offers.some((it) => it.title === offer.title);
+      const isCheckedOffer = eventOffers.some((it) => it.title === offer.title);
       const offerId = String(Math.round(Date.now() * Math.random()));
 
       return `
@@ -128,7 +127,7 @@ const parseFormData = (form) => {
 };
 
 export default class TripEventEdit extends AbstractSmartComponent {
-  constructor(event, mode) {
+  constructor(event, mode, destinations, offers) {
     super();
 
     this._event = event;
@@ -140,6 +139,9 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this._mode = mode;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+
+    this._destinations = destinations;
+    this._offers = offers;
 
     this._applyFlatpickrs();
     this._subscribeOnEvents();
@@ -203,10 +205,9 @@ export default class TripEventEdit extends AbstractSmartComponent {
     const {name, description, pictures} = this._destination;
 
     const picturesMarkup = createPicturesMarkup(pictures);
-    const offersMarkup = createOffersMarkup(this._type, offers);
-
+    const offersMarkup = createOffersMarkup(this._type, offers, this._offers);
+    const cities = createDestinationsMarkup(this._destinations);
     const {TRANSFERS, ACTIVITIES} = EventType;
-    const cities = createDestinationsMarkup(Destinations);
 
     return `
       <form class="${this._isModeAdding() ? `trip-events__item` : ``} event event--edit" action="#" method="post">
@@ -318,7 +319,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
-        const destination = Destinations.find((it) => {
+        const destination = this._destinations.find((it) => {
           return it.name === evt.target.value;
         });
 
@@ -381,6 +382,14 @@ export default class TripEventEdit extends AbstractSmartComponent {
   }
 
   reset() {
+    const event = this._event;
+
+    this._type = event.type;
+    this._destination = Object.assign({}, event.destination);
+    this._price = event.price;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
+
     this.rerender();
   }
 

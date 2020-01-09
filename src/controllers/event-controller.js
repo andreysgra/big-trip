@@ -4,11 +4,14 @@ import {renderComponent, replaceComponent, removeComponent, RenderPosition} from
 import {Mode, EmptyEvent} from '../const.js';
 
 export default class EventController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, destinations, offers) {
     this._container = container;
 
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+
+    this._destinations = destinations;
+    this._offers = offers;
 
     this._mode = Mode.DEFAULT;
 
@@ -62,7 +65,7 @@ export default class EventController {
     this._mode = mode;
 
     this._eventComponent = new TripEventComponent(event);
-    this._eventEditComponent = new TripEventEditComponent(event, this._mode);
+    this._eventEditComponent = new TripEventEditComponent(event, this._mode, this._destinations, this._offers);
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();

@@ -11,7 +11,7 @@ import {SortType, Mode, EmptyEvent} from '../const.js';
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-const renderEvents = (container, events, onDataChange, onViewChange, defaultSorting) => {
+const renderEvents = (container, events, onDataChange, onViewChange, destinations, offers, defaultSorting) => {
   const eventControllers = [];
 
   const dates = defaultSorting
@@ -33,7 +33,7 @@ const renderEvents = (container, events, onDataChange, onViewChange, defaultSort
         ? formatFullDate(event.startDate) === date
         : event)
       .forEach((event) => {
-        const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange);
+        const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange, destinations, offers);
 
         eventController.render(event, Mode.DEFAULT);
         eventControllers.push(eventController);
@@ -50,6 +50,9 @@ export default class TripController {
     this._eventsModel = eventsModel;
     this._isDefaultSorting = true;
     this._creatingEvent = null;
+
+    this._destinations = [];
+    this._offers = [];
 
     this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
@@ -151,7 +154,15 @@ export default class TripController {
   }
 
   _renderEvents(events) {
-    this._eventControllers = renderEvents(this._tripDaysComponent.getElement(), events, this._onDataChange, this._onViewChange, this._isDefaultSorting);
+    this._eventControllers = renderEvents(
+        this._tripDaysComponent.getElement(),
+        events,
+        this._onDataChange,
+        this._onViewChange,
+        this._destinations,
+        this._offers,
+        this._isDefaultSorting
+    );
 
     this._calculateTotalTripCost();
   }
@@ -189,7 +200,14 @@ export default class TripController {
     this._renderTripSortComponent();
     this._removeNoEventsComponent();
 
-    this._creatingEvent = new EventController(this._tripSortComponent.getElement(), this._onDataChange, this._onViewChange);
+    this._creatingEvent = new EventController(
+        this._tripSortComponent.getElement(),
+        this._onDataChange,
+        this._onViewChange,
+        this._destinations,
+        this._offers
+    );
+
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
 
     EmptyEvent.id = String(Math.round(Date.now() * Math.random()));
@@ -211,6 +229,14 @@ export default class TripController {
     renderComponent(container, this._tripDaysComponent);
 
     this._renderEvents(events);
+  }
+
+  setDestinations(destinations) {
+    this._destinations = destinations;
+  }
+
+  setOffers(offers) {
+    this._offers = offers;
   }
 
   show() {

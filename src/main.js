@@ -1,22 +1,19 @@
+import Api from './api/api.js';
 import TripController from './controllers/trip-controller.js';
 import FilterController from './controllers/filter-controller.js';
 import EventsModel from './models/events-model.js';
 import MenuComponent from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
 import {renderComponent, RenderPosition} from './utils/render.js';
-import {MenuItem} from './const.js';
-import {generateEvents} from './mock/event.js';
+import {MenuItem, AUTHORIZATION, END_POINT} from './const.js';
 
 const tripControlsElement = document.querySelector(`.trip-main__trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 const pageMainElement = document.querySelector(`.page-main`);
 
-const events = generateEvents()
-  .slice()
-  .sort((a, b) => a.startDate - b.startDate);
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
 
 const menuItems = Object.values(MenuItem)
   .map((item) => {
@@ -27,16 +24,14 @@ const menuItems = Object.values(MenuItem)
   });
 
 const menuComponent = new MenuComponent(menuItems);
-renderComponent(tripControlsElement, menuComponent, RenderPosition.AFTERBEGIN);
-
 const filterController = new FilterController(tripControlsElement, eventsModel);
-filterController.render();
-
 const tripController = new TripController(tripEventsElement, eventsModel);
-tripController.render();
-
 const statisticsComponent = new StatisticsComponent(eventsModel);
+
+renderComponent(tripControlsElement, menuComponent, RenderPosition.AFTERBEGIN);
+filterController.render();
 renderComponent(pageMainElement.querySelector(`.page-body__container`), statisticsComponent);
+
 statisticsComponent.hide();
 
 document.querySelector(`.trip-main__event-add-btn`)
@@ -58,3 +53,11 @@ menuComponent.setItemClickHandler((menuItem) => {
       break;
   }
 });
+
+Promise.all([api.getDestinations(), api.getOffers(), api.getEvents()])
+  .then((response) => {
+    tripController.setDestinations(response[0]);
+    tripController.setOffers(response[1]);
+    eventsModel.setEvents(response[2]);
+    tripController.render();
+  });
