@@ -1,7 +1,39 @@
+import EventModel from '../models/event-model.js';
 import TripEventComponent from '../components/trip-event.js';
 import TripEventEditComponent from '../components/trip-event-edit.js';
 import {renderComponent, replaceComponent, removeComponent, RenderPosition} from '../utils/render.js';
 import {Mode, EmptyEvent} from '../const.js';
+import moment from "moment";
+import he from 'he';
+
+const parseFormData = (formData, destinations) => {
+  const offers = [...document.querySelectorAll(`.event__offer-checkbox`)]
+    .filter((input) => input.checked)
+    .map((offer) => {
+      return {
+        title: offer.parentElement.querySelector(`.event__offer-title`).textContent.trim(),
+        price: parseInt(offer.parentElement.querySelector(`.event__offer-price`).textContent, 10)
+      };
+    });
+
+  const city = he.encode(formData.get(`event-destination`));
+  const destination = destinations.find((item) => {
+    return city === item.name;
+  });
+
+  const startDate = moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf();
+  const endDate = moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf();
+
+  return new EventModel({
+    'type': formData.get(`event-type`),
+    'destination': destination,
+    'offers': offers,
+    'date_from': moment(startDate).toISOString(),
+    'date_to': moment(endDate).toISOString(),
+    'base_price': parseInt(formData.get(`event-price`), 10),
+    'is_favorite': formData.get(`event-favorite`) === `on`
+  });
+};
 
 export default class EventController {
   constructor(container, onDataChange, onViewChange, destinations, offers) {
@@ -79,14 +111,19 @@ export default class EventController {
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
 
-      const data = this._eventEditComponent.getData();
-      this._onDataChange(this, event, Object.assign({}, data, {id: event.id}));
+      const formData = this._eventEditComponent.getData();
+      const data = parseFormData(formData, this._destinations);
+
+      this._onDataChange(this, event, data);
     });
 
     this._eventEditComponent.setRollupButtonClickHandler(() => this._replaceEditToEvent());
 
     this._eventEditComponent.setFavoriteCheckboxChangeHandler(() => {
-      this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+      const newEvent = EventModel.clone(event);
+      newEvent.isFavorite = !newEvent.isFavorite;
+
+      this._onDataChange(this, event, newEvent);
     });
 
     switch (mode) {

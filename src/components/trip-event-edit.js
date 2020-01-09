@@ -7,7 +7,6 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 import moment from "moment";
-import he from 'he';
 
 const createDestinationsMarkup = (destinations) => {
   return destinations
@@ -88,42 +87,6 @@ const createPicturesMarkup = (pictures) => {
       `;
     })
     .join(``);
-};
-
-const parseFormData = (form) => {
-  const formData = new FormData(form);
-  const description = form.querySelector(`.event__destination-description`).textContent;
-
-  const offers = [...form.querySelectorAll(`.event__offer-checkbox`)]
-    .filter((input) => input.checked)
-    .map((offer) => {
-      return {
-        title: offer.parentElement.querySelector(`.event__offer-title`).textContent.trim(),
-        price: parseInt(offer.parentElement.querySelector(`.event__offer-price`).textContent, 10)
-      };
-    });
-
-  const pictures = [...form.querySelectorAll(`.event__photo`)]
-    .map((picture) => {
-      return {
-        src: picture.src,
-        description: picture.alt
-      };
-    });
-
-  return {
-    type: formData.get(`event-type`),
-    destination: {
-      name: he.encode(formData.get(`event-destination`)),
-      description,
-      pictures
-    },
-    offers,
-    startDate: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
-    endDate: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
-    price: parseInt(formData.get(`event-price`), 10),
-    isFavorite: formData.get(`event-favorite`) === `on`
-  };
 };
 
 export default class TripEventEdit extends AbstractSmartComponent {
@@ -328,7 +291,6 @@ export default class TripEventEdit extends AbstractSmartComponent {
         }
 
         this._destination = destination;
-
         this.rerender();
       });
 
@@ -351,7 +313,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
   getData() {
     const form = this._isModeAdding() ? this.getElement() : this.getElement().querySelector(`.event--edit`);
 
-    return parseFormData(form);
+    return new FormData(form);
   }
 
   getTemplate() {

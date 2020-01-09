@@ -25,7 +25,7 @@ const menuItems = Object.values(MenuItem)
 
 const menuComponent = new MenuComponent(menuItems);
 const filterController = new FilterController(tripControlsElement, eventsModel);
-const tripController = new TripController(tripEventsElement, eventsModel);
+const tripController = new TripController(tripEventsElement, eventsModel, api);
 const statisticsComponent = new StatisticsComponent(eventsModel);
 
 renderComponent(tripControlsElement, menuComponent, RenderPosition.AFTERBEGIN);

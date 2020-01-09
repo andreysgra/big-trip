@@ -19,7 +19,7 @@ export default class EventModel {
       'destination': this.destination,
       'offers': this.offers,
       'date_from': moment(this.startDate).toISOString(),
-      'date_to': moment(this.this.endDate).toISOString(),
+      'date_to': moment(this.endDate).toISOString(),
       'base_price': this.price,
       'is_favorite': this.isFavorite
     };

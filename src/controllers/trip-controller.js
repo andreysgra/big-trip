@@ -44,12 +44,13 @@ const renderEvents = (container, events, onDataChange, onViewChange, destination
 };
 
 export default class TripController {
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, api) {
     this._container = container;
     this._eventControllers = [];
     this._eventsModel = eventsModel;
     this._isDefaultSorting = true;
     this._creatingEvent = null;
+    this._api = api;
 
     this._destinations = [];
     this._offers = [];
@@ -98,11 +99,15 @@ export default class TripController {
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
     } else {
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, newData)
+        .then((eventModel) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
 
-      if (isSuccess) {
-        eventController.render(newData, Mode.DEFAULT);
-      }
+          if (isSuccess) {
+            eventController.render(eventModel, Mode.DEFAULT);
+            this._updateEvents();
+          }
+        });
     }
 
     this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
