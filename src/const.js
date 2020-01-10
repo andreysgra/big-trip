@@ -70,3 +70,14 @@ export const EmptyEvent = {
   price: 0,
   isFavorite: false
 };
+
+export const DefaultButtonText = {
+  SAVE: `Save`,
+  DELETE: `Delete`,
+  CANCEL: `Cancel`
+};
+
+export const ActionButtonText = {
+  SAVE: `Saving...`,
+  DELETE: `Deleting...`
+};

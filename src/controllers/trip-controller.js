@@ -87,6 +87,8 @@ export default class TripController {
         eventController.destroy();
         this._updateEvents();
       } else {
+        eventController.blockEditForm();
+
         this._api.createEvent(newData)
           .then((eventModel) => {
             this._eventsModel.addEvent(eventModel);
@@ -99,12 +101,16 @@ export default class TripController {
           });
       }
     } else if (newData === null) {
+      eventController.blockEditForm();
+
       this._api.deleteEvent(oldData.id)
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
         });
     } else {
+      eventController.blockEditForm();
+
       this._api.updateEvent(oldData.id, newData)
         .then((eventModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
@@ -116,7 +122,6 @@ export default class TripController {
         });
     }
 
-    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
     this._toggleNoEventsComponent();
   }
@@ -175,6 +180,7 @@ export default class TripController {
         this._isDefaultSorting
     );
 
+    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
   }
 
