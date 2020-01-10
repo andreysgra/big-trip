@@ -1,12 +1,13 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDate, formatTime} from '../utils/format.js';
 import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
-import {EventType} from '../const.js';
+import {EventType, DefaultButtonText} from '../const.js';
 import {Mode} from '../const.js';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 import moment from "moment";
+import nanoid from 'nanoid';
 
 const createDestinationsMarkup = (destinations) => {
   return destinations
@@ -49,20 +50,23 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
 
   return allOffers.offers
     .map((offer) => {
-      const isCheckedOffer = eventOffers.some((it) => it.title === offer.title);
-      const offerId = String(Math.round(Date.now() * Math.random()));
+      const isCheckedOffer = eventOffers.some((eventOffer) => eventOffer.title === offer.title);
+      const offerId = nanoid();
 
       return `
         <div class="event__offer-selector">
           <input
             class="event__offer-checkbox  visually-hidden"
-            id="event-offer-${offerId}-1"
+            id="event-offer-${offerId}"
             type="checkbox"
-            name="event-offer" ${isCheckedOffer ? `checked` : ``}
+            name="event-offer"
+            value="${offer.title}"
+            ${isCheckedOffer ? `checked` : ``}
+            data-offer-price="${offer.price}"
           >
           <label
             class="event__offer-label"
-            for="event-offer-${offerId}-1"
+            for="event-offer-${offerId}"
           >
             <span class="event__offer-title">
               ${offer.title}
@@ -103,6 +107,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
 
+    this._buttonText = DefaultButtonText;
     this._destinations = destinations;
     this._offers = offers;
 
@@ -227,8 +232,12 @@ export default class TripEventEdit extends AbstractSmartComponent {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${this._price}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${this._isModeAdding() ? `Cancel` : `Delete`}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">
+            ${this._buttonText.SAVE}
+          </button>
+          <button class="event__reset-btn" type="reset">
+            ${this._isModeAdding() ? `${this._buttonText.CANCEL}` : `${this._buttonText.DELETE}`}
+          </button>
           ${this._isModeAdding() ? `` : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
@@ -310,6 +319,16 @@ export default class TripEventEdit extends AbstractSmartComponent {
       });
   }
 
+  blockFormElements() {
+    const form = this.getElement();
+
+    form.querySelectorAll(`input`)
+      .forEach((element) => (element.disabled = true));
+
+    form.querySelectorAll(`button`)
+      .forEach((element) => (element.disabled = true));
+  }
+
   getData() {
     const form = this._isModeAdding() ? this.getElement() : this.getElement().querySelector(`.event--edit`);
 
@@ -351,6 +370,12 @@ export default class TripEventEdit extends AbstractSmartComponent {
     this._price = event.price;
     this._startDate = event.startDate;
     this._endDate = event.endDate;
+
+    this.rerender();
+  }
+
+  setButtonText(data) {
+    this._buttonText = Object.assign({}, DefaultButtonText, data);
 
     this.rerender();
   }

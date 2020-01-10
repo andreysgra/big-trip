@@ -87,18 +87,36 @@ export default class TripController {
         eventController.destroy();
         this._updateEvents();
       } else {
-        this._eventsModel.addEvent(newData);
-        eventController.render(newData, Mode.DEFAULT);
+        eventController.blockEditForm();
 
-        this._eventControllers = [].concat(eventController, this._eventControllers);
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            this._eventsModel.addEvent(eventModel);
+            eventController.render(eventModel, Mode.DEFAULT);
 
-        this._removeEvents();
-        this._renderEvents(this._eventsModel.getEvents());
+            this._eventControllers = [].concat(eventController, this._eventControllers);
+
+            this._removeEvents();
+            this._renderEvents(this._eventsModel.getEvents());
+          })
+          .catch(() => {
+            eventController.shake();
+          });
       }
     } else if (newData === null) {
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
+      eventController.blockEditForm();
+
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        })
+        .catch(() => {
+          eventController.shake();
+        });
     } else {
+      eventController.blockEditForm();
+
       this._api.updateEvent(oldData.id, newData)
         .then((eventModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
@@ -107,10 +125,12 @@ export default class TripController {
             eventController.render(eventModel, Mode.DEFAULT);
             this._updateEvents();
           }
+        })
+        .catch(() => {
+          eventController.shake();
         });
     }
 
-    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
     this._toggleNoEventsComponent();
   }
@@ -169,6 +189,7 @@ export default class TripController {
         this._isDefaultSorting
     );
 
+    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
   }
 
@@ -214,8 +235,6 @@ export default class TripController {
     );
 
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
-
-    EmptyEvent.id = String(Math.round(Date.now() * Math.random()));
   }
 
   hide() {

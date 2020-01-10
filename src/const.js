@@ -55,7 +55,6 @@ export const ChartTitle = {
 };
 
 export const EmptyEvent = {
-  id: String(Math.round(Date.now() * Math.random())),
   type: `bus`,
   destination: {
     name: ``,
@@ -70,4 +69,15 @@ export const EmptyEvent = {
   endDate: Date.now(),
   price: 0,
   isFavorite: false
+};
+
+export const DefaultButtonText = {
+  SAVE: `Save`,
+  DELETE: `Delete`,
+  CANCEL: `Cancel`
+};
+
+export const ActionButtonText = {
+  SAVE: `Saving...`,
+  DELETE: `Deleting...`
 };
