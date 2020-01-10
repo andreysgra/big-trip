@@ -87,17 +87,23 @@ export default class TripController {
         eventController.destroy();
         this._updateEvents();
       } else {
-        this._eventsModel.addEvent(newData);
-        eventController.render(newData, Mode.DEFAULT);
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            this._eventsModel.addEvent(eventModel);
+            eventController.render(eventModel, Mode.DEFAULT);
 
-        this._eventControllers = [].concat(eventController, this._eventControllers);
+            this._eventControllers = [].concat(eventController, this._eventControllers);
 
-        this._removeEvents();
-        this._renderEvents(this._eventsModel.getEvents());
+            this._removeEvents();
+            this._renderEvents(this._eventsModel.getEvents());
+          });
       }
     } else if (newData === null) {
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        });
     } else {
       this._api.updateEvent(oldData.id, newData)
         .then((eventModel) => {
@@ -214,8 +220,6 @@ export default class TripController {
     );
 
     this._creatingEvent.render(EmptyEvent, Mode.ADDING);
-
-    EmptyEvent.id = String(Math.round(Date.now() * Math.random()));
   }
 
   hide() {

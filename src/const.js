@@ -55,7 +55,6 @@ export const ChartTitle = {
 };
 
 export const EmptyEvent = {
-  id: String(Math.round(Date.now() * Math.random())),
   type: `bus`,
   destination: {
     name: ``,

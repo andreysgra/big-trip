@@ -26,11 +26,18 @@ export default class Api {
   }
 
   createEvent(event) {
-    return event;
+    return this._load({
+      url: `points`,
+      method: RequestMethod.POST,
+      body: JSON.stringify(event.toRAW()),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then((response) => response.json())
+      .then(EventModel.parseEvent);
   }
 
   deleteEvent(id) {
-    return id;
+    return this._load({url: `points/${id}`, method: RequestMethod.DELETE});
   }
 
   getDestinations() {
