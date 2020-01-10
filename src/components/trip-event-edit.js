@@ -7,6 +7,7 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 import moment from "moment";
+import nanoid from 'nanoid';
 
 const createDestinationsMarkup = (destinations) => {
   return destinations
@@ -50,13 +51,13 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
   return allOffers.offers
     .map((offer) => {
       const isCheckedOffer = eventOffers.some((eventOffer) => eventOffer.title === offer.title);
-      const offerId = String(Math.round(Date.now() * Math.random()));
+      const offerId = nanoid();
 
       return `
         <div class="event__offer-selector">
           <input
             class="event__offer-checkbox  visually-hidden"
-            id="event-offer-${offerId}-1"
+            id="event-offer-${offerId}"
             type="checkbox"
             name="event-offer"
             value="${offer.title}"
@@ -65,7 +66,7 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
           >
           <label
             class="event__offer-label"
-            for="event-offer-${offerId}-1"
+            for="event-offer-${offerId}"
           >
             <span class="event__offer-title">
               ${offer.title}
