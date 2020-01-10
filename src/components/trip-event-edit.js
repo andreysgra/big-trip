@@ -49,7 +49,7 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
 
   return allOffers.offers
     .map((offer) => {
-      const isCheckedOffer = eventOffers.some((it) => it.title === offer.title);
+      const isCheckedOffer = eventOffers.some((eventOffer) => eventOffer.title === offer.title);
       const offerId = String(Math.round(Date.now() * Math.random()));
 
       return `
@@ -58,7 +58,10 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
             class="event__offer-checkbox  visually-hidden"
             id="event-offer-${offerId}-1"
             type="checkbox"
-            name="event-offer" ${isCheckedOffer ? `checked` : ``}
+            name="event-offer"
+            value="${offer.title}"
+            ${isCheckedOffer ? `checked` : ``}
+            data-offer-price="${offer.price}"
           >
           <label
             class="event__offer-label"

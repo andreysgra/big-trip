@@ -7,12 +7,13 @@ import moment from "moment";
 import he from 'he';
 
 const parseFormData = (formData, destinations) => {
-  const offers = [...document.querySelectorAll(`.event__offer-checkbox`)]
-    .filter((input) => input.checked)
-    .map((offer) => {
+  const offers = formData.getAll(`event-offer`)
+    .map((title) => {
+      const input = document.querySelector(`input[value="${title}"]`);
+
       return {
-        title: offer.parentElement.querySelector(`.event__offer-title`).textContent.trim(),
-        price: parseInt(offer.parentElement.querySelector(`.event__offer-price`).textContent, 10)
+        title,
+        price: parseInt(input.dataset.offerPrice, 10)
       };
     });
 
