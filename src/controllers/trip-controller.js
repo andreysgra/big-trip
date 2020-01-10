@@ -98,6 +98,9 @@ export default class TripController {
 
             this._removeEvents();
             this._renderEvents(this._eventsModel.getEvents());
+          })
+          .catch(() => {
+            eventController.shake();
           });
       }
     } else if (newData === null) {
@@ -107,6 +110,9 @@ export default class TripController {
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
+        })
+        .catch(() => {
+          eventController.shake();
         });
     } else {
       eventController.blockEditForm();
@@ -119,6 +125,9 @@ export default class TripController {
             eventController.render(eventModel, Mode.DEFAULT);
             this._updateEvents();
           }
+        })
+        .catch(() => {
+          eventController.shake();
         });
     }
 

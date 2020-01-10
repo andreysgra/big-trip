@@ -2,9 +2,11 @@ import EventModel from '../models/event-model.js';
 import TripEventComponent from '../components/trip-event.js';
 import TripEventEditComponent from '../components/trip-event-edit.js';
 import {renderComponent, replaceComponent, removeComponent, RenderPosition} from '../utils/render.js';
-import {Mode, EmptyEvent, ActionButtonText} from '../const.js';
+import {Mode, EmptyEvent, DefaultButtonText, ActionButtonText} from '../const.js';
 import moment from "moment";
 import he from 'he';
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const parseFormData = (formData, destinations) => {
   const offers = formData.getAll(`event-offer`)
@@ -159,6 +161,20 @@ export default class EventController {
         renderComponent(this._container, this._eventEditComponent, RenderPosition.AFTEREND);
         break;
     }
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventEditComponent.getElement().style.outline = `2px solid red`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setButtonText({
+        SAVE: DefaultButtonText.SAVE,
+        DELETE: DefaultButtonText.DELETE,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   setDefaultView() {
