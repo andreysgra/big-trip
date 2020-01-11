@@ -223,6 +223,8 @@ export default class TripController {
       return;
     }
 
+    this._eventControllers.forEach((it) => it.setDefaultView());
+
     this._renderTripSortComponent();
     this._removeNoEventsComponent();
 
