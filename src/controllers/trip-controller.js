@@ -85,7 +85,10 @@ export default class TripController {
 
       if (newData === null) {
         eventController.destroy();
-        this._updateEvents();
+
+        if (eventController.getMode() !== Mode.ADDING) {
+          this._updateEvents();
+        }
       } else {
         eventController.blockEditForm();
 

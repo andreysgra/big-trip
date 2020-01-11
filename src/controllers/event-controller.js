@@ -90,6 +90,10 @@ export default class EventController {
     this._eventEditComponent.blockFormElements();
   }
 
+  getMode() {
+    return this._mode;
+  }
+
   destroy() {
     removeComponent(this._eventEditComponent);
     removeComponent(this._eventComponent);
@@ -125,11 +129,16 @@ export default class EventController {
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
-      this._eventEditComponent.setButtonText({
-        DELETE: ActionButtonText.DELETE
-      });
+      if (mode === Mode.ADDING) {
+        this._onDataChange(this, EmptyEvent, null);
+      } else {
+        this._eventEditComponent.setButtonText({
+          DELETE: ActionButtonText.DELETE
+        });
 
-      this._onDataChange(this, event, null);
+        this._onDataChange(this, event, null);
+      }
+
     });
 
     this._eventEditComponent.setRollupButtonClickHandler(() => this._replaceEditToEvent());
