@@ -59,9 +59,10 @@ menuComponent.setItemClickHandler((menuItem) => {
 
 Promise.all([api.getDestinations(), api.getOffers(), api.getEvents()])
   .then((response) => {
-    tripController.setDestinations(response[0]);
-    tripController.setOffers(response[1]);
-    eventsModel.setEvents(response[2]);
+    const [destinations, offers, events] = response;
+    tripController.setDestinations(destinations);
+    tripController.setOffers(offers);
+    eventsModel.setEvents(events);
     tripController.render();
     removeComponent(loadEvents);
   });

@@ -49,7 +49,7 @@ export default class TripController {
     this._eventControllers = [];
     this._eventsModel = eventsModel;
     this._isDefaultSorting = true;
-    this._activeSortType = null;
+    this._activeSortType = SortType.DEFAULT;
     this._creatingEvent = null;
     this._api = api;
 
@@ -163,7 +163,7 @@ export default class TripController {
         break;
     }
 
-    this._tripDaysComponent.getElement().innerHTML = ``;
+    this._removeEvents();
     this._renderEvents(sortedEvents);
   }
 
