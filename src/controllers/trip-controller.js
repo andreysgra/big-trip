@@ -80,12 +80,31 @@ export default class TripController {
     document.querySelector(`.trip-info__cost-value`).textContent = totalPrice;
   }
 
+  _createNoEventsComponent() {
+    this._noEventsComponent = new NoEventsComponent();
+    renderComponent(this._container, this._noEventsComponent);
+
+    this._removeTripSortComponent();
+  }
+
+  _createTripSortComponent() {
+    if (!this._tripSortComponent) {
+      this._tripSortComponent = new TripSortComponent();
+    }
+
+    renderComponent(this._container, this._tripSortComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _onDataChange(eventController, oldData, newData) {
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
 
       if (newData === null) {
         eventController.destroy();
+
+        if (eventController.getMode() === Mode.ADDING) {
+          this._toggleNoEventsComponent();
+        }
 
         if (eventController.getMode() !== Mode.ADDING) {
           this._updateEvents();
@@ -99,6 +118,8 @@ export default class TripController {
             eventController.render(eventModel, Mode.DEFAULT);
 
             this._eventControllers = [].concat(eventController, this._eventControllers);
+
+            this._createTripSortComponent();
 
             this._removeEvents();
             this._renderEvents(this._eventsModel.getEvents());
@@ -114,6 +135,7 @@ export default class TripController {
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
+          this._toggleNoEventsComponent();
         })
         .catch(() => {
           eventController.shake();
@@ -136,7 +158,6 @@ export default class TripController {
     }
 
     this._calculateTotalTripCost();
-    this._toggleNoEventsComponent();
   }
 
   _onFilterChange() {
@@ -184,6 +205,13 @@ export default class TripController {
     }
   }
 
+  _removeTripSortComponent() {
+    if (this._tripSortComponent) {
+      removeComponent(this._tripSortComponent);
+      this._tripSortComponent = null;
+    }
+  }
+
   _renderEvents(events) {
     this._eventControllers = renderEvents(
         this._tripDaysComponent.getElement(),
@@ -199,21 +227,9 @@ export default class TripController {
     this._calculateTotalTripCost();
   }
 
-  _renderTripSortComponent() {
-    if (!this._tripSortComponent) {
-      this._tripSortComponent = new TripSortComponent();
-    }
-
-    renderComponent(this._container, this._tripSortComponent, RenderPosition.AFTERBEGIN);
-  }
-
   _toggleNoEventsComponent() {
     if (this._eventsModel.isNoEvents()) {
-      this._noEventsComponent = new NoEventsComponent();
-      renderComponent(this._container, this._noEventsComponent);
-
-      removeComponent(this._tripSortComponent);
-      this._tripSortComponent = null;
+      this._createNoEventsComponent();
     } else {
       this._removeNoEventsComponent();
     }
@@ -229,13 +245,20 @@ export default class TripController {
       return;
     }
 
+    const container = this._eventsModel.isNoEvents()
+      ? document.querySelector(`.trip-events h2`)
+      : this._tripSortComponent.getElement();
+
     this._eventControllers.forEach((it) => it.setDefaultView());
 
-    this._renderTripSortComponent();
+    if (!this._eventsModel.isNoEvents()) {
+      this._createTripSortComponent();
+    }
+
     this._removeNoEventsComponent();
 
     this._creatingEvent = new EventController(
-        this._tripSortComponent.getElement(),
+        container,
         this._onDataChange,
         this._onViewChange,
         this._destinations,
@@ -257,8 +280,10 @@ export default class TripController {
     this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
     renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
 
-    this._renderTripSortComponent();
     renderComponent(container, this._tripDaysComponent);
+
+    this._createTripSortComponent();
+    this._toggleNoEventsComponent();
 
     this._renderEvents(events);
   }
