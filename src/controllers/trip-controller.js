@@ -49,6 +49,7 @@ export default class TripController {
     this._eventControllers = [];
     this._eventsModel = eventsModel;
     this._isDefaultSorting = true;
+    this._activeSortType = null;
     this._creatingEvent = null;
     this._api = api;
 
@@ -140,23 +141,25 @@ export default class TripController {
 
   _onFilterChange() {
     this._updateEvents();
+    this._onSortTypeChange(this._activeSortType);
   }
 
   _onSortTypeChange(sortType) {
     let sortedEvents = [];
     const events = this._eventsModel.getEvents();
 
+    this._activeSortType = sortType;
     this._isDefaultSorting = sortType === SortType.DEFAULT;
 
     switch (sortType) {
-      case SortType.TIME_DOWN:
-        sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
-        break;
-      case SortType.PRICE_DOWN:
-        sortedEvents = events.slice().sort((a, b) => b.price - a.price);
-        break;
       case SortType.DEFAULT:
         sortedEvents = events.slice().sort((a, b) => a.startDate - b.startDate);
+        break;
+      case SortType.TIME:
+        sortedEvents = events.slice().sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
+        break;
+      case SortType.PRICE:
+        sortedEvents = events.slice().sort((a, b) => b.price - a.price);
         break;
     }
 

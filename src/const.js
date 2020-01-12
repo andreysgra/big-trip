@@ -33,8 +33,8 @@ export const Mode = {
 
 export const SortType = {
   DEFAULT: `event`,
-  TIME_DOWN: `time`,
-  PRICE_DOWN: `price`
+  TIME: `time`,
+  PRICE: `price`
 };
 
 export const FilterType = {

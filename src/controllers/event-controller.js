@@ -138,7 +138,6 @@ export default class EventController {
 
         this._onDataChange(this, event, null);
       }
-
     });
 
     this._eventEditComponent.setRollupButtonClickHandler(() => this._replaceEditToEvent());
