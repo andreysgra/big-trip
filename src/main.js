@@ -12,6 +12,15 @@ const tripControlsElement = document.querySelector(`.trip-main__trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 const pageMainElement = document.querySelector(`.page-main`);
 
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      // Действие, в случае успешной регистрации ServiceWorker
+    }).catch(() => {
+      // Действие, в случае ошибки при регистрации ServiceWorker
+    });
+});
+
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const eventsModel = new EventsModel();
