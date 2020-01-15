@@ -5,7 +5,7 @@ export const RequestMethod = {
   DELETE: `DELETE`
 };
 
-export const AUTHORIZATION = `Basic hIa2vdmGClQ18QPVBaZvI`;
+export const AUTHORIZATION = `Basic hIa2vdmGClQ18QPVBaZvU`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const EventType = {
@@ -33,8 +33,8 @@ export const Mode = {
 
 export const SortType = {
   DEFAULT: `event`,
-  TIME_DOWN: `time`,
-  PRICE_DOWN: `price`
+  TIME: `time`,
+  PRICE: `price`
 };
 
 export const FilterType = {

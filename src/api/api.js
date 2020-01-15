@@ -56,6 +56,16 @@ export default class Api {
       .then((response) => response.json());
   }
 
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: RequestMethod.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
   updateEvent(id, data) {
     return this._load({
       url: `points/${id}`,
