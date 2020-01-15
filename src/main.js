@@ -4,16 +4,12 @@ import Provider from './api/provider.js';
 import TripController from './controllers/trip-controller.js';
 import FilterController from './controllers/filter-controller.js';
 import EventsModel from './models/events-model.js';
+import EventModel from './models/event-model.js';
 import LoadEvents from './components/load-events.js';
 import MenuComponent from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
 import {renderComponent, removeComponent, RenderPosition} from './utils/render.js';
-import {MenuItem, AUTHORIZATION, END_POINT} from './const.js';
-import EventModel from './models/event-model.js';
-
-const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+import {MenuItem, AUTHORIZATION, END_POINT, STORE_NAME} from './const.js';
 
 const tripControlsElement = document.querySelector(`.trip-main__trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
@@ -21,9 +17,8 @@ const pageMainElement = document.querySelector(`.page-main`);
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      // Действие, в случае успешной регистрации ServiceWorker
-    }).catch((err) => {
+    .then(() => {})
+    .catch((err) => {
       throw new Error(err);
     });
 });
