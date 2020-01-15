@@ -116,11 +116,12 @@ export default class Provider {
           const createdEvents = response.created;
           const updatedEvents = getSyncedEvents(response.updated);
 
-          this._store.setItem(`points`, [...updatedEvents, ...createdEvents]);
+          const synchronizedEvents = [...updatedEvents, ...createdEvents];
+          this._store.setItem(`points`, synchronizedEvents);
 
           this._isSynchronized = true;
 
-          return Promise.resolve();
+          return Promise.resolve(synchronizedEvents);
         });
     }
 

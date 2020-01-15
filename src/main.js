@@ -9,6 +9,7 @@ import MenuComponent from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
 import {renderComponent, removeComponent, RenderPosition} from './utils/render.js';
 import {MenuItem, AUTHORIZATION, END_POINT} from './const.js';
+import EventModel from './models/event-model.js';
 
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
@@ -94,8 +95,9 @@ window.addEventListener(`online`, () => {
 
   if (!apiWithProvider.getSynchronize()) {
     apiWithProvider.sync()
-      .then(() => {
-        // Действие, в случае успешной синхронизации
+      .then((events) => {
+        eventsModel.setEvents(EventModel.parseEvents(events));
+        tripController.updateEvents();
       })
       .catch((err) => {
         throw new Error(err);

@@ -299,4 +299,8 @@ export default class TripController {
   show() {
     this._container.classList.remove(HIDDEN_CLASS);
   }
+
+  updateEvents() {
+    this._updateEvents();
+  }
 }
