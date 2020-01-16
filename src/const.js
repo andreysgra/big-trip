@@ -9,6 +9,8 @@ export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const DEBOUNCE_TIMEOUT = 500;
 
+export const HIDDEN_CLASS = `visually-hidden`;
+
 export const RequestMethod = {
   GET: `GET`,
   POST: `POST`,

@@ -7,9 +7,7 @@ import NoEventsComponent from '../components/no-events.js';
 import EventController from './event-controller.js';
 import {renderComponent, RenderPosition, removeComponent} from '../utils/render.js';
 import {formatFullDate} from '../utils/format.js';
-import {SortType, Mode, EmptyEvent} from '../const.js';
-
-const HIDDEN_CLASS = `visually-hidden`;
+import {SortType, Mode, EmptyEvent, HIDDEN_CLASS} from '../const.js';
 
 const renderEvents = (container, events, onDataChange, onViewChange, destinations, offers, defaultSorting) => {
   const eventControllers = [];
