@@ -20,8 +20,4 @@ export default class Statistics extends AbstractSmartComponent {
       </section>
     `;
   }
-
-  rerender() {
-    super.rerender();
-  }
 }
