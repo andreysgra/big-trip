@@ -1,7 +1,7 @@
-import AbstractSmartComponent from './abstract-smart-component.js';
-import {formatDate, formatTime} from '../utils/format.js';
-import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
-import {DEBOUNCE_TIMEOUT, Mode, EventType, DefaultButtonText} from '../const.js';
+import AbstractSmartComponent from './abstract-smart-component';
+import {formatDate, formatTime} from '../utils/format';
+import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common';
+import {DEBOUNCE_TIMEOUT, Mode, EventType, DefaultButtonText} from '../const';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";

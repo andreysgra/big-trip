@@ -1,7 +1,7 @@
 import StatisticsComponent from '../components/statistics';
-import {EventType, ChartTitle} from '../const.js';
-import {renderComponent} from '../utils/render.js';
-import {sortObject} from '../utils/common.js';
+import {renderComponent} from '../utils/render';
+import {sortObject} from '../utils/common';
+import {EventType, ChartTitle} from '../const';
 import Chart from 'chart.js';
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import moment from "moment";

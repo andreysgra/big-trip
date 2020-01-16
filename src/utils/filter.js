@@ -1,4 +1,4 @@
-import {FilterType} from '../const.js';
+import {FilterType} from '../const';
 
 export const getEverythingEvents = (events) => {
   return events.slice().sort((a, b) => a.startDate - b.startDate);

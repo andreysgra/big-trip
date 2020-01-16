@@ -1,4 +1,4 @@
-import {EventType} from '../const.js';
+import {EventType} from '../const';
 
 export const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 

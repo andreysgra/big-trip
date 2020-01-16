@@ -1,5 +1,5 @@
-import AbstractComponent from './abstract-component.js';
-import {formatFullDate, formatMonth, formatDay} from '../utils/format.js';
+import AbstractComponent from './abstract-component';
+import {formatFullDate, formatMonth, formatDay} from '../utils/format';
 
 export default class TripDay extends AbstractComponent {
   constructor(date = null, count = 0) {

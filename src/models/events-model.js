@@ -1,5 +1,5 @@
-import {getEventsByFilter} from '../utils/filter.js';
-import {FilterType} from '../const.js';
+import {getEventsByFilter} from '../utils/filter';
+import {FilterType} from '../const';
 
 export default class EventsModel {
   constructor() {

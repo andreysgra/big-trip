@@ -1,5 +1,5 @@
+import EventModel from "../models/event-model";
 import nanoid from "nanoid";
-import EventModel from "../models/event-model.js";
 
 const getSyncedEvents = (items) => items
   .filter(({success}) => success)

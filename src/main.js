@@ -1,15 +1,15 @@
-import Api from './api/api.js';
-import Store from './api/store.js';
-import Provider from './api/provider.js';
-import TripController from './controllers/trip-controller.js';
-import FilterController from './controllers/filter-controller.js';
+import Api from './api/api';
+import Store from './api/store';
+import Provider from './api/provider';
+import TripController from './controllers/trip-controller';
+import FilterController from './controllers/filter-controller';
 import StatisticsController from './controllers/statistics-controller';
-import EventsModel from './models/events-model.js';
-import EventModel from './models/event-model.js';
-import LoadEvents from './components/load-events.js';
-import MenuComponent from './components/menu.js';
-import {renderComponent, removeComponent, RenderPosition} from './utils/render.js';
-import {MenuItem, AUTHORIZATION, END_POINT, STORE_NAME} from './const.js';
+import EventsModel from './models/events-model';
+import EventModel from './models/event-model';
+import LoadEvents from './components/load-events';
+import MenuComponent from './components/menu';
+import {renderComponent, removeComponent, RenderPosition} from './utils/render';
+import {MenuItem, AUTHORIZATION, END_POINT, STORE_NAME} from './const';
 
 const tripControlsElement = document.querySelector(`.trip-main__trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
