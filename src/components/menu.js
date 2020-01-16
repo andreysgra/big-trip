@@ -3,9 +3,7 @@ import {toUpperCaseFirstLetter} from '../utils/common.js';
 
 const BUTTON_ACTIVE_CLASS = `trip-tabs__btn--active`;
 
-const createMenuItemMarkup = ((item, isActive) => {
-  const {name} = item;
-
+const createMenuItemMarkup = ((name, isActive) => {
   return `
     <a class="trip-tabs__btn ${isActive ? BUTTON_ACTIVE_CLASS : ``}" href="#" data-item-type="${name}">
       ${toUpperCaseFirstLetter(name)}
@@ -22,7 +20,7 @@ export default class Menu extends AbstractComponent {
 
   getTemplate() {
     const menuItemsMarkup = this._items
-      .map((item) => createMenuItemMarkup(item, item.active))
+      .map(({name, active}) => createMenuItemMarkup(name, active))
       .join(``);
 
     return `
