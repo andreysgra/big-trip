@@ -26,6 +26,10 @@ export default class FilterController {
     this._activeFilterType = filterType;
   }
 
+  hide() {
+    this._filterComponent.hide();
+  }
+
   render() {
     const container = this._container;
     const events = this._eventsModel.getEventsAll();
@@ -49,5 +53,9 @@ export default class FilterController {
     } else {
       renderComponent(container, this._filterComponent);
     }
+  }
+
+  show() {
+    this._filterComponent.show();
   }
 }

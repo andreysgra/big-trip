@@ -57,11 +57,13 @@ menuComponent.setItemClickHandler((menuItem) => {
   switch (menuItem) {
     case MenuItem.STATS:
       menuComponent.setActiveItem(MenuItem.STATS);
+      filterController.hide();
       tripController.hide();
       statisticsController.show();
       break;
     case MenuItem.TABLE:
       menuComponent.setActiveItem(MenuItem.TABLE);
+      filterController.show();
       statisticsController.hide();
       tripController.show();
       break;
