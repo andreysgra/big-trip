@@ -34,6 +34,18 @@ export const EventType = {
     `sightseeing`
   ]
 };
+export const emojiMap = {
+  'bus': `🚌`,
+  'check-in': `🏠`,
+  'drive': `🚗`,
+  'flight': `✈️`,
+  'restaurant': `🍽️`,
+  'ship': `🚢`,
+  'sightseeing': `🗼`,
+  'taxi': `🚕`,
+  'train': `🚂`,
+  'transport': `🚋`
+};
 
 export const Mode = {
   ADDING: `adding`,
