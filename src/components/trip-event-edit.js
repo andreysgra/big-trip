@@ -168,6 +168,13 @@ export default class TripEventEdit extends AbstractSmartComponent {
     }
   }
 
+  _hasOffers() {
+    return this._offers
+      .find((offer) => {
+        return this._type === (offer.type);
+      }).offers.length !== 0;
+  }
+
   _getFormElement() {
     const {offers, isFavorite} = this._event;
     const {name, description, pictures} = this._destination;
@@ -254,6 +261,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
         ${this._isModeAdding() && description === `` ? `` : `
           <section class="event__details">
 
+          ${this._hasOffers() ? `
             <section class="event__section  event__section--offers">
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -261,6 +269,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
                 ${offersMarkup}
               </div>
             </section>
+          ` : ``}
 
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
