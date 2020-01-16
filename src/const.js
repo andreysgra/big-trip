@@ -2,7 +2,7 @@ const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
 export const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
-export const AUTHORIZATION = `Basic hIa2vdmGClQ18QPVBaZvU`;
+export const AUTHORIZATION = `Basic hIa2vdmGClQ18QPVBaZvm`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const DEBOUNCE_TIMEOUT = 500;
