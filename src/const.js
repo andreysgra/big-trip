@@ -1,12 +1,20 @@
+import nanoid from 'nanoid';
+
+const STORE_PREFIX = `bigtrip-localstorage`;
+const STORE_VER = `v1`;
+export const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
+export const AUTHORIZATION = `Basic ${nanoid()}`;
+export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+
+export const DEBOUNCE_TIMEOUT = 500;
+
 export const RequestMethod = {
   GET: `GET`,
   POST: `POST`,
   PUT: `PUT`,
   DELETE: `DELETE`
 };
-
-export const AUTHORIZATION = `Basic hIa2vdmGClQ18QPVBaZvU`;
-export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 export const EventType = {
   TRANSFERS: [

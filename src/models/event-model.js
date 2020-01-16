@@ -12,7 +12,7 @@ export default class EventModel {
     this.isFavorite = Boolean(data[`is_favorite`]);
   }
 
-  toRAW() {
+  toRaw() {
     return {
       'id': this.id,
       'type': this.type,
@@ -26,7 +26,7 @@ export default class EventModel {
   }
 
   static clone(data) {
-    return new EventModel(data.toRAW());
+    return new EventModel(data.toRaw());
   }
 
   static parseEvent(data) {

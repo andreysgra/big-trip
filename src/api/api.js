@@ -29,7 +29,7 @@ export default class Api {
     return this._load({
       url: `points`,
       method: RequestMethod.POST,
-      body: JSON.stringify(event.toRAW()),
+      body: JSON.stringify(event.toRaw()),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then((response) => response.json())
@@ -70,7 +70,7 @@ export default class Api {
     return this._load({
       url: `points/${id}`,
       method: RequestMethod.PUT,
-      body: JSON.stringify(data.toRAW()),
+      body: JSON.stringify(data.toRaw()),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then((response) => response.json())

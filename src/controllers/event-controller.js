@@ -101,7 +101,7 @@ export default class EventController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  render(event, mode) {
+  render(event, mode, isFavoriteChanged) {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
 
@@ -154,7 +154,10 @@ export default class EventController {
         if (oldEventEditComponent && oldEventComponent) {
           replaceComponent(this._eventComponent, oldEventComponent);
           replaceComponent(this._eventEditComponent, oldEventEditComponent);
-          this._replaceEditToEvent();
+
+          if (!isFavoriteChanged) {
+            this._replaceEditToEvent();
+          }
         } else {
           renderComponent(this._container, this._eventComponent);
         }
