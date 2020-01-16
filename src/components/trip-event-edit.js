@@ -362,6 +362,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
   rerender() {
     super.rerender();
 
+    this.recoveryListeners();
     this._applyFlatpickrs();
   }
 

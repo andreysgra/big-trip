@@ -21,10 +21,6 @@ export default class Statistics extends AbstractSmartComponent {
     `;
   }
 
-  recoveryListeners() {
-
-  }
-
   rerender() {
     super.rerender();
   }

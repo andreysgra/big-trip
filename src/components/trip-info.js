@@ -48,8 +48,6 @@ export default class TripInfo extends AbstractSmartComponent {
     `;
   }
 
-  recoveryListeners() {}
-
   rerender(events) {
     this._events = events.slice().sort((a, b) => a.startDate - b.startDate);
 
