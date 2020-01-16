@@ -36,15 +36,15 @@ export const EventType = {
 };
 export const emojiMap = {
   'bus': `🚌`,
-  'check-in': `🏠`,
+  'check-in': `🏨`,
   'drive': `🚗`,
   'flight': `✈️`,
   'restaurant': `🍽️`,
   'ship': `🚢`,
-  'sightseeing': `🗼`,
+  'sightseeing': `🏛️`,
   'taxi': `🚕`,
   'train': `🚂`,
-  'transport': `🚋`
+  'transport': `🚊`
 };
 
 export const Mode = {
