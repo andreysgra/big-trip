@@ -54,10 +54,10 @@ export default class EventController {
 
     this._eventComponent = null;
     this._eventEditComponent = null;
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  _onEscKeyDown(evt) {
+  _escKeyDownHandler(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
@@ -70,7 +70,7 @@ export default class EventController {
   }
 
   _replaceEditToEvent() {
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
 
     this._eventEditComponent.reset();
 
@@ -100,7 +100,7 @@ export default class EventController {
     removeComponent(this._eventEditComponent);
     removeComponent(this._eventComponent);
 
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   render(event, mode, isFavoriteChanged) {
@@ -114,7 +114,7 @@ export default class EventController {
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+      document.addEventListener(`keydown`, this._escKeyDownHandler);
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -170,7 +170,7 @@ export default class EventController {
           removeComponent(oldEventEditComponent);
         }
 
-        document.addEventListener(`keydown`, this._onEscKeyDown);
+        document.addEventListener(`keydown`, this._escKeyDownHandler);
         renderComponent(this._container, this._eventEditComponent, RenderPosition.AFTEREND);
         break;
     }
