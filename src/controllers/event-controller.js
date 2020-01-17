@@ -26,7 +26,7 @@ const parseFormData = (formData, destinations) => {
 
   const startDate = moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf();
   const endDate = moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf();
-  const price = he.encode(parseInt(formData.get(`event-price`), 10));
+  const price = he.encode(formData.get(`event-price`));
 
   return new EventModel({
     'type': formData.get(`event-type`),
@@ -34,7 +34,7 @@ const parseFormData = (formData, destinations) => {
     'offers': offers,
     'date_from': moment(startDate).toISOString(),
     'date_to': moment(endDate).toISOString(),
-    'base_price': price,
+    'base_price': parseInt(price, 10),
     'is_favorite': formData.get(`event-favorite`) === `on`
   });
 };
