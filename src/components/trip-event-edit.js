@@ -336,7 +336,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
               flatpickrOptions,
               {
                 defaultDate,
-                minDate: this.getData().get(`event-start-time`)
+                minDate: this._startDate
               }
           )
       );

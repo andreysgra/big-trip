@@ -34,6 +34,7 @@ export const EventType = {
     `sightseeing`
   ]
 };
+
 export const emojiMap = {
   'bus': `🚌`,
   'check-in': `🏨`,

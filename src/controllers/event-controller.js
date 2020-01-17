@@ -3,7 +3,7 @@ import TripEventComponent from '../components/trip-event';
 import TripEventEditComponent from '../components/trip-event-edit';
 import {renderComponent, replaceComponent, removeComponent, RenderPosition} from '../utils/render';
 import {Mode, EmptyEvent, DefaultButtonText, ActionButtonText} from '../const';
-import moment from "moment";
+import moment from 'moment';
 import he from 'he';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
