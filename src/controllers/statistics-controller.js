@@ -35,7 +35,7 @@ export default class StatisticsController {
             borderColor: `#158deb`,
             borderWidth: 1,
             borderSkipped: false,
-            barThickness: 40,
+            maxBarThickness: 40,
             minBarLength: 60
           }
         ]
