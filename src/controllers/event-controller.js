@@ -17,7 +17,8 @@ const parseFormData = (formData, destinations) => {
         title,
         price: parseInt(input.dataset.offerPrice, 10)
       };
-    });
+    })
+    .filter((offer) => offer !== null);
 
   const city = he.encode(formData.get(`event-destination`));
   const destination = destinations.find((item) => {

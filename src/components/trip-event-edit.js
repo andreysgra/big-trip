@@ -307,7 +307,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
       this.rerender();
     });
 
-    destinationElement.addEventListener(`change`, (evt) => {
+    destinationElement.addEventListener(`input`, (evt) => {
       const destination = this._destinations.find((it) => {
         return it.name === evt.target.value;
       });
