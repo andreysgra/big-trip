@@ -1,5 +1,5 @@
-import AbstractComponent from './abstract-component.js';
-import {toUpperCaseFirstLetter} from '../utils/common.js';
+import AbstractComponent from './abstract-component';
+import {toUpperCaseFirstLetter} from '../utils/common';
 
 const BUTTON_ACTIVE_CLASS = `trip-tabs__btn--active`;
 

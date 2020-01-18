@@ -1,9 +1,9 @@
-import EventModel from '../models/event-model.js';
-import TripEventComponent from '../components/trip-event.js';
-import TripEventEditComponent from '../components/trip-event-edit.js';
-import {renderComponent, replaceComponent, removeComponent, RenderPosition} from '../utils/render.js';
-import {Mode, EmptyEvent, DefaultButtonText, ActionButtonText} from '../const.js';
-import moment from "moment";
+import EventModel from '../models/event-model';
+import TripEventComponent from '../components/trip-event';
+import TripEventEditComponent from '../components/trip-event-edit';
+import {renderComponent, replaceComponent, removeComponent, RenderPosition} from '../utils/render';
+import {Mode, EmptyEvent, DefaultButtonText, ActionButtonText} from '../const';
+import moment from 'moment';
 import he from 'he';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
@@ -17,7 +17,8 @@ const parseFormData = (formData, destinations) => {
         title,
         price: parseInt(input.dataset.offerPrice, 10)
       };
-    });
+    })
+    .filter((offer) => offer !== null);
 
   const city = he.encode(formData.get(`event-destination`));
   const destination = destinations.find((item) => {
@@ -26,6 +27,7 @@ const parseFormData = (formData, destinations) => {
 
   const startDate = moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf();
   const endDate = moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf();
+  const price = he.encode(formData.get(`event-price`));
 
   return new EventModel({
     'type': formData.get(`event-type`),
@@ -33,7 +35,7 @@ const parseFormData = (formData, destinations) => {
     'offers': offers,
     'date_from': moment(startDate).toISOString(),
     'date_to': moment(endDate).toISOString(),
-    'base_price': parseInt(formData.get(`event-price`), 10),
+    'base_price': parseInt(price, 10),
     'is_favorite': formData.get(`event-favorite`) === `on`
   });
 };
@@ -52,10 +54,10 @@ export default class EventController {
 
     this._eventComponent = null;
     this._eventEditComponent = null;
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  _onEscKeyDown(evt) {
+  _escKeyDownHandler(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
@@ -68,7 +70,7 @@ export default class EventController {
   }
 
   _replaceEditToEvent() {
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
 
     this._eventEditComponent.reset();
 
@@ -98,7 +100,7 @@ export default class EventController {
     removeComponent(this._eventEditComponent);
     removeComponent(this._eventComponent);
 
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   render(event, mode, isFavoriteChanged) {
@@ -112,7 +114,7 @@ export default class EventController {
 
     this._eventComponent.setRollupButtonClickHandler(() => {
       this._replaceEventToEdit();
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+      document.addEventListener(`keydown`, this._escKeyDownHandler);
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -168,7 +170,7 @@ export default class EventController {
           removeComponent(oldEventEditComponent);
         }
 
-        document.addEventListener(`keydown`, this._onEscKeyDown);
+        document.addEventListener(`keydown`, this._escKeyDownHandler);
         renderComponent(this._container, this._eventEditComponent, RenderPosition.AFTEREND);
         break;
     }

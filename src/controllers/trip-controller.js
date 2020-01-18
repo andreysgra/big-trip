@@ -1,17 +1,23 @@
-import TripInfoComponent from '../components/trip-info.js';
-import TripSortComponent from '../components/trip-sort.js';
-import TripDaysComponent from '../components/trip-days.js';
-import TripDayComponent from '../components/trip-day.js';
-import TripEventsComponent from '../components/trip-events.js';
-import NoEventsComponent from '../components/no-events.js';
-import EventController from './event-controller.js';
-import {renderComponent, RenderPosition, removeComponent} from '../utils/render.js';
-import {formatFullDate} from '../utils/format.js';
-import {SortType, Mode, EmptyEvent} from '../const.js';
+import TripInfoComponent from '../components/trip-info';
+import TripSortComponent from '../components/trip-sort';
+import TripDaysComponent from '../components/trip-days';
+import TripDayComponent from '../components/trip-day';
+import TripEventsComponent from '../components/trip-events';
+import NoEventsComponent from '../components/no-events';
+import EventController from './event-controller';
+import {renderComponent, RenderPosition, removeComponent} from '../utils/render';
+import {formatFullDate} from '../utils/format';
+import {SortType, Mode, EmptyEvent, HIDDEN_CLASS} from '../const';
 
-const HIDDEN_CLASS = `visually-hidden`;
-
-const renderEvents = (container, events, onDataChange, onViewChange, destinations, offers, defaultSorting) => {
+const renderEvents = (
+    container,
+    events,
+    onDataChange,
+    onViewChange,
+    destinations,
+    offers,
+    defaultSorting
+) => {
   const eventControllers = [];
 
   const dates = defaultSorting
@@ -33,7 +39,12 @@ const renderEvents = (container, events, onDataChange, onViewChange, destination
         ? formatFullDate(event.startDate) === date
         : event)
       .forEach((event) => {
-        const eventController = new EventController(tripEventsComponent.getElement(), onDataChange, onViewChange, destinations, offers);
+        const eventController = new EventController(
+            tripEventsComponent.getElement(),
+            onDataChange,
+            onViewChange,
+            destinations,
+            offers);
 
         eventController.render(event, Mode.DEFAULT);
         eventControllers.push(eventController);

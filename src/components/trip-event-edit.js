@@ -1,13 +1,19 @@
-import AbstractSmartComponent from './abstract-smart-component.js';
-import {formatDate, formatTime} from '../utils/format.js';
-import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common.js';
-import {DEBOUNCE_TIMEOUT, Mode, EventType, DefaultButtonText} from '../const.js';
+import AbstractSmartComponent from './abstract-smart-component';
+import {formatDate, formatTime} from '../utils/format';
+import {toUpperCaseFirstLetter, formatEventTypePlaceholder} from '../utils/common';
+import {DEBOUNCE_TIMEOUT, Mode, EventType, DefaultButtonText} from '../const';
 import flatpickr from 'flatpickr';
-import "flatpickr/dist/flatpickr.min.css";
-import "flatpickr/dist/themes/material_blue.css";
-import moment from "moment";
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/material_blue.css';
+import moment from 'moment';
 import nanoid from 'nanoid';
 import debounce from 'lodash/debounce';
+
+const flatpickrOptions = {
+  allowInput: true,
+  dateFormat: `d/m/y H:i`,
+  enableTime: true
+};
 
 const createDestinationsMarkup = (destinations) => {
   return destinations
@@ -125,32 +131,28 @@ export default class TripEventEdit extends AbstractSmartComponent {
   _applyFlatpickrs() {
     this._deleteFlatpickrs();
 
-    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
-    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+    const element = this.getElement();
+    const startTimeElement = element.querySelector(`#event-start-time-1`);
+    const endTimeElement = element.querySelector(`#event-end-time-1`);
 
-    const flatpickrOptions = {
-      allowInput: true,
-      dateFormat: `d/m/y H:i`,
-      enableTime: true,
-      minDate: `today`
-    };
-
-    this._flatpickrStartDate = flatpickr(startDateElement,
+    this._flatpickrStartDate = flatpickr(startTimeElement,
         Object.assign(
             {},
             flatpickrOptions,
             {
-              defaultDate: this._event.startDate
+              defaultDate: this._event.startDate,
+              minDate: this._event.startDate < Date.now() ? this._event.startDate : `today`
             }
         )
     );
 
-    this._flatpickrEndDate = flatpickr(endDateElement,
+    this._flatpickrEndDate = flatpickr(endTimeElement,
         Object.assign(
             {},
             flatpickrOptions,
             {
-              defaultDate: this._event.endDate
+              defaultDate: this._event.endDate,
+              minDate: this._event.startDate
             }
         )
     );
@@ -166,6 +168,13 @@ export default class TripEventEdit extends AbstractSmartComponent {
       this._flatpickrEndDate.destroy();
       this._flatpickrEndDate = null;
     }
+  }
+
+  _hasOffers() {
+    return this._offers
+      .find((offer) => {
+        return this._type === (offer.type);
+      }).offers.length !== 0;
   }
 
   _getFormElement() {
@@ -254,6 +263,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
         ${this._isModeAdding() && description === `` ? `` : `
           <section class="event__details">
 
+          ${this._hasOffers() ? `
             <section class="event__section  event__section--offers">
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -261,6 +271,7 @@ export default class TripEventEdit extends AbstractSmartComponent {
                 ${offersMarkup}
               </div>
             </section>
+          ` : ``}
 
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -284,42 +295,56 @@ export default class TripEventEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+    const typeElement = element.querySelector(`.event__type-list`);
+    const destinationElement = element.querySelector(`.event__input--destination`);
+    const priceElement = element.querySelector(`.event__input--price`);
+    const startTimeElement = element.querySelector(`#event-start-time-1`);
+    const endTimeElement = element.querySelector(`#event-end-time-1`);
 
-    element.querySelector(`.event__type-list`)
-      .addEventListener(`change`, (evt) => {
-        this._type = evt.target.value;
+    typeElement.addEventListener(`change`, (evt) => {
+      this._type = evt.target.value;
 
-        this.rerender();
+      this.rerender();
+    });
+
+    destinationElement.addEventListener(`input`, (evt) => {
+      const destination = this._destinations.find((it) => {
+        return it.name === evt.target.value;
       });
 
-    element.querySelector(`.event__input--destination`)
-      .addEventListener(`change`, (evt) => {
-        const destination = this._destinations.find((it) => {
-          return it.name === evt.target.value;
-        });
+      if (!destination) {
+        return;
+      }
 
-        if (!destination) {
-          return;
-        }
+      this._destination = destination;
+      this.rerender();
+    });
 
-        this._destination = destination;
-        this.rerender();
-      });
+    priceElement.addEventListener(`change`, (evt) => {
+      this._price = parseInt(evt.target.value, 10);
+    });
 
-    element.querySelector(`.event__input--price`)
-      .addEventListener(`change`, (evt) => {
-        this._price = parseInt(evt.target.value, 10);
-      });
+    startTimeElement.addEventListener(`change`, (evt) => {
+      this._startDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
 
-    element.querySelector(`#event-start-time-1`)
-      .addEventListener(`change`, (evt) => {
-        this._startDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
-      });
+      const defaultDate = moment(this._endDate).isAfter(this._startDate)
+        ? this._endDate : this._startDate;
 
-    element.querySelector(`#event-end-time-1`)
-      .addEventListener(`change`, (evt) => {
-        this._endDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
-      });
+      this._flatpickrEndDate = flatpickr(endTimeElement,
+          Object.assign(
+              {},
+              flatpickrOptions,
+              {
+                defaultDate,
+                minDate: this._startDate
+              }
+          )
+      );
+    });
+
+    endTimeElement.addEventListener(`change`, (evt) => {
+      this._endDate = moment(evt.target.value, `DD/MM/YY HH:mm`).valueOf();
+    });
   }
 
   blockFormElements() {
@@ -333,7 +358,9 @@ export default class TripEventEdit extends AbstractSmartComponent {
   }
 
   getData() {
-    const form = this._isModeAdding() ? this.getElement() : this.getElement().querySelector(`.event--edit`);
+    const form = this._isModeAdding()
+      ? this.getElement()
+      : this.getElement().querySelector(`.event--edit`);
 
     return new FormData(form);
   }
@@ -412,7 +439,9 @@ export default class TripEventEdit extends AbstractSmartComponent {
   }
 
   setSubmitHandler(handler) {
-    const element = this._isModeAdding() ? this.getElement() : this.getElement().querySelector(`.event--edit`);
+    const element = this._isModeAdding()
+      ? this.getElement()
+      : this.getElement().querySelector(`.event--edit`);
     element.addEventListener(`submit`, handler);
 
     this._submitHandler = handler;

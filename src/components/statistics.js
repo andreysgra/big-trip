@@ -1,4 +1,4 @@
-import AbstractSmartComponent from './abstract-smart-component.js';
+import AbstractSmartComponent from './abstract-smart-component';
 
 export default class Statistics extends AbstractSmartComponent {
   getTemplate() {
@@ -19,9 +19,5 @@ export default class Statistics extends AbstractSmartComponent {
         </div>
       </section>
     `;
-  }
-
-  rerender() {
-    super.rerender();
   }
 }

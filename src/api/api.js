@@ -1,5 +1,5 @@
-import EventModel from '../models/event-model.js';
-import {RequestMethod} from '../const.js';
+import EventModel from '../models/event-model';
+import {RequestMethod} from '../const';
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {

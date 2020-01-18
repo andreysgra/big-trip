@@ -1,7 +1,7 @@
-import FilterComponent from '../components/filter.js';
-import {replaceComponent, renderComponent} from '../utils/render.js';
-import {FilterType} from '../const.js';
-import {getEventsByFilter} from '../utils/filter.js';
+import FilterComponent from '../components/filter';
+import {replaceComponent, renderComponent} from '../utils/render';
+import {FilterType} from '../const';
+import {getEventsByFilter} from '../utils/filter';
 
 export default class FilterController {
   constructor(container, eventsModel) {
@@ -24,6 +24,10 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._eventsModel.setFilter(filterType);
     this._activeFilterType = filterType;
+  }
+
+  hide() {
+    this._filterComponent.hide();
   }
 
   render() {
@@ -49,5 +53,9 @@ export default class FilterController {
     } else {
       renderComponent(container, this._filterComponent);
     }
+  }
+
+  show() {
+    this._filterComponent.show();
   }
 }
