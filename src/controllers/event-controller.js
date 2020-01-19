@@ -2,7 +2,7 @@ import EventModel from '../models/event-model';
 import TripEventComponent from '../components/trip-event';
 import TripEventEditComponent from '../components/trip-event-edit';
 import {renderComponent, replaceComponent, removeComponent, RenderPosition} from '../utils/render';
-import {Mode, EmptyEvent, DefaultButtonText, ActionButtonText} from '../const';
+import {Mode, emptyEvent, DefaultButtonText, ActionButtonText} from '../const';
 import moment from 'moment';
 import he from 'he';
 
@@ -62,7 +62,7 @@ export default class EventController {
 
     if (isEscKey) {
       if (this._mode === Mode.ADDING) {
-        this._onDataChange(this, EmptyEvent, null);
+        this._onDataChange(this, emptyEvent, null);
       }
 
       this._replaceEditToEvent();
@@ -132,7 +132,7 @@ export default class EventController {
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
       if (mode === Mode.ADDING) {
-        this._onDataChange(this, EmptyEvent, null);
+        this._onDataChange(this, emptyEvent, null);
       } else {
         this._eventEditComponent.setButtonText({
           DELETE: ActionButtonText.DELETE

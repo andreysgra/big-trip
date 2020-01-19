@@ -7,7 +7,7 @@ import NoEventsComponent from '../components/no-events';
 import EventController from './event-controller';
 import {renderComponent, RenderPosition, removeComponent} from '../utils/render';
 import {formatFullDate} from '../utils/format';
-import {SortType, Mode, EmptyEvent, HIDDEN_CLASS} from '../const';
+import {SortType, Mode, emptyEvent, HIDDEN_CLASS} from '../const';
 
 const renderEvents = (
     container,
@@ -107,7 +107,7 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData) {
-    if (oldData === EmptyEvent) {
+    if (oldData === emptyEvent) {
       this._creatingEvent = null;
 
       if (newData === null) {
@@ -200,7 +200,15 @@ export default class TripController {
     }
 
     this._removeEvents();
-    this._renderEvents(sortedEvents);
+    this._eventControllers = renderEvents(
+        this._tripDaysComponent.getElement(),
+        sortedEvents,
+        this._onDataChange,
+        this._onViewChange,
+        this._destinations,
+        this._offers,
+        this._isDefaultSorting
+    );
   }
 
   _onViewChange() {
@@ -238,6 +246,7 @@ export default class TripController {
         this._isDefaultSorting
     );
 
+    this._onSortTypeChange(this._activeSortType);
     this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
   }
@@ -280,7 +289,7 @@ export default class TripController {
         this._offers
     );
 
-    this._creatingEvent.render(EmptyEvent, Mode.ADDING);
+    this._creatingEvent.render(emptyEvent, Mode.ADDING);
   }
 
   hide() {

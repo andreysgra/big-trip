@@ -77,7 +77,7 @@ export const ChartTitle = {
   TIME_SPENT: `time spent`
 };
 
-export const EmptyEvent = {
+export const emptyEvent = {
   type: `bus`,
   destination: {
     name: ``,
