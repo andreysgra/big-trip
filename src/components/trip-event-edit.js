@@ -9,6 +9,8 @@ import moment from 'moment';
 import nanoid from 'nanoid';
 import debounce from 'lodash/debounce';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const flatpickrOptions = {
   allowInput: true,
   dateFormat: `d/m/y H:i`,
@@ -446,5 +448,21 @@ export default class TripEventEdit extends AbstractSmartComponent {
     element.addEventListener(`submit`, handler);
 
     this._submitHandler = handler;
+  }
+
+  shake() {
+    const element = this.getElement();
+
+    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    element.style.outline = `2px solid red`;
+
+    setTimeout(() => {
+      element.style.animation = ``;
+
+      this.setButtonText({
+        SAVE: DefaultButtonText.SAVE,
+        DELETE: DefaultButtonText.DELETE,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
