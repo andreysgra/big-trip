@@ -56,8 +56,9 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
 
   return allOffers.offers
     .map((offer) => {
-      const isCheckedOffer = eventOffers.some((eventOffer) => eventOffer.title === offer.title);
       const offerId = nanoid();
+      const checkedOffer = eventOffers
+        .find((eventOffer) => eventOffer.title === offer.title);
 
       return `
         <div class="event__offer-selector">
@@ -67,8 +68,8 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
             type="checkbox"
             name="event-offer"
             value="${offer.title}"
-            ${isCheckedOffer ? `checked` : ``}
-            data-offer-price="${offer.price}"
+            ${checkedOffer ? `checked` : ``}
+            data-offer-price="${checkedOffer ? checkedOffer.price : offer.price}"
           >
           <label
             class="event__offer-label"
@@ -80,7 +81,7 @@ const createOffersMarkup = (eventType, eventOffers, offers) => {
               &plus;
               &euro;&nbsp;
             <span class="event__offer-price">
-              ${offer.price}
+              ${checkedOffer ? checkedOffer.price : offer.price}
             </span>
           </label>
         </div>
