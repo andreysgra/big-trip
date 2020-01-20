@@ -8,6 +8,7 @@ import EventsModel from '../models/events-model';
 import EventModel from '../models/event-model';
 import LoadEventsComponent from '../components/load-events';
 import MenuComponent from '../components/menu';
+import TripInfoComponent from '../components/trip-info';
 import TripCostComponent from '../components/trip-cost';
 import NewEventButtonComponent from '../components/new-event-button';
 import {renderComponent, removeComponent, RenderPosition} from '../utils/render';
@@ -36,6 +37,8 @@ export default class AppController {
 
     this._eventsModel = new EventsModel();
 
+    this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
+
     this._tripCostComponent = new TripCostComponent();
     this._menuComponent = new MenuComponent(menuItems);
     this._loadEventsComponent = new LoadEventsComponent();
@@ -48,7 +51,10 @@ export default class AppController {
     this._tripController = new TripController(
         tripEventsElement,
         this._eventsModel,
-        this._tripCostComponent,
+        {
+          tripCostComponent: this._tripCostComponent,
+          tripInfoComponent: this._tripInfoComponent
+        },
         this._apiWithProvider
     );
     this._statisticsController = new StatisticsController(
@@ -58,11 +64,14 @@ export default class AppController {
   }
 
   init() {
+    renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+    renderComponent(tripInfo, this._tripCostComponent);
+
     renderComponent(tripControlsElement, this._menuComponent, RenderPosition.AFTERBEGIN);
     this._filterController.render();
-    renderComponent(tripEventsElement, this._loadEventsComponent);
     renderComponent(tripMainElement, this._newEventButtonComponent);
-    renderComponent(tripInfo, this._tripCostComponent);
+
+    renderComponent(tripEventsElement, this._loadEventsComponent);
 
     Promise.all([
       this._apiWithProvider.getDestinations(),

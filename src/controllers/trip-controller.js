@@ -1,4 +1,3 @@
-import TripInfoComponent from '../components/trip-info';
 import TripSortComponent from '../components/trip-sort';
 import TripDaysComponent from '../components/trip-days';
 import TripDayComponent from '../components/trip-day';
@@ -55,7 +54,7 @@ const renderEvents = (
 };
 
 export default class TripController {
-  constructor(container, eventsModel, tripCostComponent, api) {
+  constructor(container, eventsModel, components, api) {
     this._container = container;
     this._eventControllers = [];
     this._eventsModel = eventsModel;
@@ -70,8 +69,8 @@ export default class TripController {
     this._noEventsComponent = null;
     this._tripDaysComponent = new TripDaysComponent();
     this._tripSortComponent = new TripSortComponent();
-    this._tripInfoComponent = null;
-    this._tripCostComponent = tripCostComponent;
+    this._tripInfoComponent = components.tripInfoComponent;
+    this._tripCostComponent = components.tripCostComponent;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -239,7 +238,7 @@ export default class TripController {
     );
 
     this._onSortTypeChange(this._activeSortType);
-    this._tripInfoComponent.rerender(this._eventsModel.getEventsAll());
+    this._tripInfoComponent.setValue(this._eventsModel.getEventsAll());
     this._calculateTotalTripCost();
   }
 
@@ -313,10 +312,6 @@ export default class TripController {
   render() {
     const container = this._container;
     const events = this._eventsModel.getEvents();
-
-    const tripInfo = document.querySelector(`.trip-main__trip-info`);
-    this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
-    renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
 
     renderComponent(container, this._tripDaysComponent);
 
