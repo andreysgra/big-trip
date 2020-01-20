@@ -91,6 +91,26 @@ export default class TripController {
     document.querySelector(`.trip-info__cost-value`).textContent = totalPrice;
   }
 
+  _createEvent(eventController, newData) {
+    eventController.blockEditForm();
+
+    this._api.createEvent(newData)
+      .then((eventModel) => {
+        this._eventsModel.addEvent(eventModel);
+        eventController.render(eventModel, Mode.DEFAULT);
+
+        this._eventControllers = [].concat(eventController, this._eventControllers);
+
+        this._createTripSortComponent();
+
+        this._removeEvents();
+        this._renderEvents(this._eventsModel.getEvents());
+      })
+      .catch(() => {
+        eventController.shake();
+      });
+  }
+
   _createNoEventsComponent() {
     this._noEventsComponent = new NoEventsComponent();
     renderComponent(this._container, this._noEventsComponent);
@@ -106,6 +126,20 @@ export default class TripController {
     renderComponent(this._container, this._tripSortComponent, RenderPosition.AFTERBEGIN);
   }
 
+  _deleteEvent(eventController, oldData) {
+    eventController.blockEditForm();
+
+    this._api.deleteEvent(oldData.id)
+      .then(() => {
+        this._eventsModel.removeEvent(oldData.id);
+        this._updateEvents();
+        this._toggleNoEventsComponent();
+      })
+      .catch(() => {
+        eventController.shake();
+      });
+  }
+
   _onDataChange(eventController, oldData, newData) {
     if (oldData === emptyEvent) {
       this._creatingEvent = null;
@@ -115,61 +149,18 @@ export default class TripController {
 
         if (eventController.getMode() === Mode.ADDING) {
           this._toggleNoEventsComponent();
-        }
-
-        if (eventController.getMode() !== Mode.ADDING) {
+        } else {
           this._updateEvents();
         }
+
       } else {
-        eventController.blockEditForm();
+        this._createEvent(eventController, newData);
 
-        this._api.createEvent(newData)
-          .then((eventModel) => {
-            this._eventsModel.addEvent(eventModel);
-            eventController.render(eventModel, Mode.DEFAULT);
-
-            this._eventControllers = [].concat(eventController, this._eventControllers);
-
-            this._createTripSortComponent();
-
-            this._removeEvents();
-            this._renderEvents(this._eventsModel.getEvents());
-          })
-          .catch(() => {
-            eventController.shake();
-          });
       }
     } else if (newData === null) {
-      eventController.blockEditForm();
-
-      this._api.deleteEvent(oldData.id)
-        .then(() => {
-          this._eventsModel.removeEvent(oldData.id);
-          this._updateEvents();
-          this._toggleNoEventsComponent();
-        })
-        .catch(() => {
-          eventController.shake();
-        });
+      this._deleteEvent(eventController, oldData);
     } else {
-      eventController.blockEditForm();
-      const isFavoriteChanged = oldData.isFavorite !== newData.isFavorite;
-
-      this._api.updateEvent(oldData.id, newData)
-        .then((eventModel) => {
-          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
-
-          if (isSuccess) {
-            eventController.render(eventModel, Mode.DEFAULT, isFavoriteChanged);
-
-            if (!isFavoriteChanged) {
-              this._updateEvents();
-            }
-          }
-        })
-        .catch(() => {
-          eventController.shake();
-        });
+      this._updateEvent(eventController, oldData, newData);
     }
 
     this._calculateTotalTripCost();
@@ -257,6 +248,28 @@ export default class TripController {
     } else {
       this._removeNoEventsComponent();
     }
+  }
+
+  _updateEvent(eventController, oldData, newData) {
+    eventController.blockEditForm();
+
+    const isFavoriteChanged = oldData.isFavorite !== newData.isFavorite;
+
+    this._api.updateEvent(oldData.id, newData)
+      .then((eventModel) => {
+        const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
+
+        if (isSuccess) {
+          eventController.render(eventModel, Mode.DEFAULT, isFavoriteChanged);
+
+          if (!isFavoriteChanged) {
+            this._updateEvents();
+          }
+        }
+      })
+      .catch(() => {
+        eventController.shake();
+      });
   }
 
   _updateEvents() {
