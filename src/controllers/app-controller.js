@@ -8,14 +8,17 @@ import EventsModel from '../models/events-model';
 import EventModel from '../models/event-model';
 import LoadEventsComponent from '../components/load-events';
 import MenuComponent from '../components/menu';
+import TripCostComponent from '../components/trip-cost';
+import NewEventButtonComponent from '../components/new-event-button';
 import {renderComponent, removeComponent, RenderPosition} from '../utils/render';
 import {MenuItem, AUTHORIZATION, END_POINT, STORE_NAME} from '../const';
 
-const tripControlsElement = document.querySelector(`.trip-main__trip-controls`);
+const tripMainElement = document.querySelector(`.trip-main`);
+const tripControlsElement = tripMainElement.querySelector(`.trip-main__trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
+const tripInfo = document.querySelector(`.trip-main__trip-info`);
 const pageMainElement = document.querySelector(`.page-main`);
 const bodyContainerElement = pageMainElement.querySelector(`.page-body__container`);
-const eventAddButtonElement = document.querySelector(`.trip-main__event-add-btn`);
 
 const menuItems = Object.values(MenuItem)
   .map((item) => {
@@ -33,6 +36,11 @@ export default class AppController {
 
     this._eventsModel = new EventsModel();
 
+    this._tripCostComponent = new TripCostComponent();
+    this._menuComponent = new MenuComponent(menuItems);
+    this._loadEventsComponent = new LoadEventsComponent();
+    this._newEventButtonComponent = new NewEventButtonComponent();
+
     this._filterController = new FilterController(
         tripControlsElement,
         this._eventsModel
@@ -40,21 +48,21 @@ export default class AppController {
     this._tripController = new TripController(
         tripEventsElement,
         this._eventsModel,
+        this._tripCostComponent,
         this._apiWithProvider
     );
     this._statisticsController = new StatisticsController(
         bodyContainerElement,
         this._eventsModel
     );
-
-    this._menuComponent = new MenuComponent(menuItems);
-    this._loadEventsComponent = new LoadEventsComponent();
   }
 
   init() {
     renderComponent(tripControlsElement, this._menuComponent, RenderPosition.AFTERBEGIN);
     this._filterController.render();
     renderComponent(tripEventsElement, this._loadEventsComponent);
+    renderComponent(tripMainElement, this._newEventButtonComponent);
+    renderComponent(tripInfo, this._tripCostComponent);
 
     Promise.all([
       this._apiWithProvider.getDestinations(),
@@ -73,10 +81,9 @@ export default class AppController {
         this._statisticsController.hide();
       });
 
-
-    eventAddButtonElement.addEventListener(`click`, () => {
-      this._tripController.createEvent();
-    });
+    this._newEventButtonComponent.setButtonClickHandler(() =>
+      this._tripController.createEvent()
+    );
 
     this._menuComponent.setItemClickHandler((menuItem) => {
       switch (menuItem) {
