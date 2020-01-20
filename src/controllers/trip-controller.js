@@ -1,4 +1,5 @@
 import TripInfoComponent from '../components/trip-info';
+import TripCostComponent from '../components/trip-cost';
 import TripSortComponent from '../components/trip-sort';
 import TripDaysComponent from '../components/trip-days';
 import TripDayComponent from '../components/trip-day';
@@ -71,6 +72,7 @@ export default class TripController {
     this._tripDaysComponent = new TripDaysComponent();
     this._tripSortComponent = new TripSortComponent();
     this._tripInfoComponent = null;
+    this._tripCostComponent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -88,7 +90,7 @@ export default class TripController {
           .reduce((totalOffersCost, offer) => totalOffersCost + offer.price, 0),
       0);
 
-    document.querySelector(`.trip-info__cost-value`).textContent = totalPrice;
+    this._tripCostComponent.setValue(totalPrice);
   }
 
   _createEvent(eventController, newData) {
@@ -315,7 +317,9 @@ export default class TripController {
 
     const tripInfo = document.querySelector(`.trip-main__trip-info`);
     this._tripInfoComponent = new TripInfoComponent(this._eventsModel.getEventsAll());
+    this._tripCostComponent = new TripCostComponent();
     renderComponent(tripInfo, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+    renderComponent(tripInfo, this._tripCostComponent);
 
     renderComponent(container, this._tripDaysComponent);
 
