@@ -1,5 +1,6 @@
 const path = require(`path`);
 const MomentLocalesPlugin = require(`moment-locales-webpack-plugin`);
+const TerserPlugin = require(`terser-webpack-plugin`);
 
 module.exports = {
   mode: `development`,
@@ -21,6 +22,20 @@ module.exports = {
         test: /\.css$/i,
         use: [`style-loader`, `css-loader`],
       }
+    ]
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        terserOptions: {
+          output: {
+            comments: false,
+          },
+        },
+        extractComments: false
+      })
     ]
   },
   plugins: [

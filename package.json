@@ -15,6 +15,7 @@
     "eslint-config-htmlacademy": "0.6.0",
     "moment-locales-webpack-plugin": "1.2.0",
     "style-loader": "2.0.0",
+    "terser-webpack-plugin": "5.1.1",
     "webpack": "5.12.2",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.1"
