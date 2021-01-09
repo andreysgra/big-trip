@@ -6,7 +6,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
 import moment from 'moment';
-import nanoid from 'nanoid';
+import {nanoid} from 'nanoid';
 import debounce from 'lodash/debounce';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
