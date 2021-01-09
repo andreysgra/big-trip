@@ -4,12 +4,13 @@
   "private": true,
   "description": "Проект «Большое путешествие» от HTML Academy",
   "scripts": {
-    "build": "webpack",
+    "build": "cross-env NODE_ENV=production webpack",
     "eslint": "eslint src/**/*.js",
     "test": "npm run eslint",
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
+    "cross-env": "7.0.3",
     "css-loader": "3.4.0",
     "eslint": "7.17.0",
     "eslint-config-htmlacademy": "0.6.0",
