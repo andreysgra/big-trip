@@ -1,52 +1,19 @@
-# Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
+# Проект «Большое путешествие» от [HTML Academy](https://htmlacademy.ru/)
 
-* Студент: [Андрей Грачев](https://up.htmlacademy.ru/ecmascript/10/user/252055).
-* Наставник: [Олег Петров](https://htmlacademy.ru/profile/id42390).
+Програмирование: [Андрей Грачев](https://github.com/andreysgra/)
 
----
+[Демо проекта](https://andreysgra.github.io/big-trip-10/)
 
-_Не удаляйте и не изменяйте папки и файлы:_
-_`.editorconfig`, `.gitattributes`, `.gitignore`, `.travis.yml`, `package.json`._
+Проект разработан в соответствии с архитектурным паттерном MVC.
 
 ---
 
-### Памятка
+## Как использовать
 
-#### 1. Зарегистрируйтесь на Гитхабе
+`npm install` - установка зависимостей.
 
-Если у вас ещё нет аккаунта на [github.com](https://github.com/join), скорее зарегистрируйтесь.
+`npm start` - сборка проекта в режиме разработки и запуск локального сервера.
 
-#### 2. Создайте форк
+`npm run build` - финальная сборка проекта.
 
-Откройте репозиторий и нажмите кнопку «Fork» в правом верхнем углу. Репозиторий из Академии будет скопирован в ваш аккаунт.
-
-<img width="769" alt="Press 'Fork'" src="https://cloud.githubusercontent.com/assets/259739/20264045/a1ddbf40-aa7a-11e6-9a1a-724a1c0123c8.png">
-
-Получится вот так:
-
-<img width="769" alt="Forked" src="https://cloud.githubusercontent.com/assets/259739/20264122/f63219a6-aa7a-11e6-945a-89818fc7c014.png">
-
-#### 3. Клонируйте репозиторий на свой компьютер
-
-Будьте внимательны: нужно клонировать свой репозиторий (форк), а не репозиторий Академии. Также обратите внимание, что клонировать репозиторий нужно через SSH, а не через HTTPS. Нажмите зелёную кнопку в правой части экрана, чтобы скопировать SSH-адрес вашего репозитория:
-
-<img width="769" alt="SSH" src="https://cloud.githubusercontent.com/assets/259739/20264180/42704126-aa7b-11e6-9ab4-73372b812a53.png">
-
-Клонировать репозиторий можно так:
-
-```
-git clone SSH-адрес_вашего_форка
-```
-
-Команда клонирует репозиторий на ваш компьютер и подготовит всё необходимое для старта работы.
-
-#### 4. Начинайте обучение!
-
----
-
-<a href="https://htmlacademy.ru/intensive/ecmascript"><img align="left" width="50" height="50" title="HTML Academy" src="https://up.htmlacademy.ru/static/img/intensive/ecmascript/logo-for-github.svg"></a>
-
-Репозиторий создан для обучения на интенсивном онлайн‑курсе «[Профессиональный JavaScript, уровень 2](https://htmlacademy.ru/intensive/ecmascript)» от [HTML Academy](https://htmlacademy.ru).
-
-[travis-image]: https://travis-ci.com/htmlacademy-ecmascript/252055-big-trip-10.svg?branch=master
-[travis-url]: https://travis-ci.com/htmlacademy-ecmascript/252055-big-trip-10
+`npm test` - запуск теста на соответствие правилам ESLint.
