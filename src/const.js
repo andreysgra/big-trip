@@ -1,4 +1,4 @@
-import nanoid from 'nanoid';
+import {nanoid} from 'nanoid';
 
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
