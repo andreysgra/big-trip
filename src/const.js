@@ -1,7 +1,7 @@
 import {nanoid} from 'nanoid';
 
 const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v1`;
+const STORE_VER = `v10`;
 export const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 export const AUTHORIZATION = `Basic ${nanoid()}`;
