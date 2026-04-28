@@ -6,14 +6,19 @@ import TripEventFormView from '../view/trip-event-form-view';
 
 export default class TripEventsPresenter {
   #container = null;
+  #pointsModel = null;
+  #points = [];
   #tripSorComponent = new TripSortView;
   #tripEventsListComponent = new TripEventsListView();
 
-  constructor(container) {
+  constructor(container, pointsModel) {
     this.#container = container;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
+    this.#points = [...this.#pointsModel.points];
+
     render(this.#tripSorComponent, this.#container);
     render(this.#tripEventsListComponent, this.#container);
     render(new TripEventFormView, this.#tripEventsListComponent.element);
