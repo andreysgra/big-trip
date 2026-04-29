@@ -20,3 +20,5 @@ export const getDateDiff = (date1, date2) => {
 
   return `${days} ${hours} ${minutes}`.trim();
 };
+
+export const getDateTime = (date) => dayjs(date).format('DD/MM/YY HH:mm');

@@ -7,10 +7,15 @@ import {sortPointsByDate} from '../utils/point';
 
 export default class TripEventsPresenter {
   #container = null;
+
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
+
   #points = [];
+  #destinations = [];
+  #offers = [];
+
   #tripSorComponent = new TripSortView;
   #tripEventsListComponent = new TripEventsListView();
 
@@ -23,14 +28,18 @@ export default class TripEventsPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points].sort(sortPointsByDate);
+    this.#destinations = [...this.#destinationsModel.destinations];
+    this.#offers = [...this.#offersModel.offers];
 
     render(this.#tripSorComponent, this.#container);
     render(this.#tripEventsListComponent, this.#container);
-    render(new TripEventFormView, this.#tripEventsListComponent.element);
+
+    render(new TripEventFormView(this.#points[0], this.#destinations, this.#offers,
+      this.#offersModel.getOffersByType(this.#points[0].type)), this.#tripEventsListComponent.element);
 
     this.#points.forEach((point) => {
       const destination = this.#destinationsModel.getDestination(point.destination);
-      const offers = this.#offersModel.getOffers(point.type);
+      const offers = this.#offersModel.getOffersByType(point.type);
 
       render(new TripEventsItemView(point, destination, offers), this.#tripEventsListComponent.element);
     });
