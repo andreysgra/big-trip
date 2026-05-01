@@ -1,9 +1,10 @@
 import TripSortView from '../view/trip-sort-view';
-import {render} from '../framework/render';
+import {render, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
 import TripEventsItemView from '../view/trip-events-item-view';
 import TripEventFormView from '../view/trip-event-form-view';
 import {sortPointsByDate} from '../utils/point';
+import {addEscapeEvent} from '../utils/common';
 
 export default class TripEventsPresenter {
   #container = null;
@@ -34,14 +35,48 @@ export default class TripEventsPresenter {
     render(this.#tripSorComponent, this.#container);
     render(this.#tripEventsListComponent, this.#container);
 
-    render(new TripEventFormView(this.#points[0], this.#destinations, this.#offers,
-      this.#offersModel.getOffersByType(this.#points[0].type)), this.#tripEventsListComponent.element);
-
-    this.#points.forEach((point) => {
-      const destination = this.#destinationsModel.getDestination(point.destination);
-      const offers = this.#offersModel.getOffersByType(point.type);
-
-      render(new TripEventsItemView(point, destination, offers), this.#tripEventsListComponent.element);
-    });
+    this.#points.forEach((point) => this.#renderPoints(point));
   }
+
+  #renderPoints = (point) => {
+    const destination = this.#destinationsModel.getDestination(point.destination);
+    const offers = this.#offersModel.getOffersByType(point.type);
+    const offersByType = this.#offersModel.getOffersByType(point.type);
+
+    const tripEventsItemComponent = new TripEventsItemView(point, destination, offers);
+    const tripEventFormComponent = new TripEventFormView(point, this.#destinations,
+      this.#offers, offersByType);
+
+    const replaceCardToForm = () => replace(tripEventFormComponent, tripEventsItemComponent);
+
+    const replaceFormToCard = () => replace(tripEventsItemComponent, tripEventFormComponent);
+
+    const onEscKeyDown = (evt) => {
+      addEscapeEvent(evt, replaceFormToCard);
+      document.removeEventListener('keydown', onEscKeyDown);
+    };
+
+    tripEventsItemComponent.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', () => {
+        replaceCardToForm();
+        document.addEventListener('keydown', onEscKeyDown);
+      });
+
+    tripEventFormComponent.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', () => {
+        replaceFormToCard();
+        document.removeEventListener('keydown', onEscKeyDown);
+      });
+
+    tripEventFormComponent.element
+      .querySelector('.event__save-btn')
+      .addEventListener('click', (evt) => {
+        evt.preventDefault();
+        replaceFormToCard();
+      });
+
+    render(tripEventsItemComponent, this.#tripEventsListComponent.element);
+  };
 }
