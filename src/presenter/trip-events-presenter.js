@@ -51,39 +51,32 @@ export default class TripEventsPresenter {
     const offers = this.#offersModel.getOffersByType(point.type);
     const offersByType = this.#offersModel.getOffersByType(point.type);
 
-    const tripEventsItemComponent = new TripEventsItemView(point, destination, offers);
-    const tripEventFormComponent = new TripEventFormView(point, this.#destinations,
-      this.#offers, offersByType);
-
-    const replaceCardToForm = () => replace(tripEventFormComponent, tripEventsItemComponent);
-
-    const replaceFormToCard = () => replace(tripEventsItemComponent, tripEventFormComponent);
-
     const onEscKeyDown = (evt) => {
       addEscapeEvent(evt, replaceFormToCard);
       document.removeEventListener('keydown', onEscKeyDown);
     };
 
-    tripEventsItemComponent.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', () => {
+    const tripEventsItemComponent = new TripEventsItemView({
+      point, destination, offers, onRollupClick: () => {
         replaceCardToForm();
         document.addEventListener('keydown', onEscKeyDown);
-      });
+      }});
 
-    tripEventFormComponent.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', () => {
+    const tripEventFormComponent = new TripEventFormView({
+      point, destinations: this.#destinations, offers: this.#offers,
+      offersByType, onRollupClick: () => {
         replaceFormToCard();
         document.removeEventListener('keydown', onEscKeyDown);
-      });
+      }
+    });
 
-    tripEventFormComponent.element
-      .querySelector('.event__save-btn')
-      .addEventListener('click', (evt) => {
-        evt.preventDefault();
-        replaceFormToCard();
-      });
+    function replaceCardToForm() {
+      replace(tripEventFormComponent, tripEventsItemComponent);
+    }
+
+    function replaceFormToCard() {
+      replace(tripEventsItemComponent, tripEventFormComponent);
+    }
 
     render(tripEventsItemComponent, this.#tripEventsListComponent.element);
   };
