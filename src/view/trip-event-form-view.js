@@ -1,6 +1,15 @@
 import AbstractView from '../framework/view/abstract-view';
 import {getDateTime} from '../utils/format-date-time';
 
+const BLANK_POINT = {
+  basePrice: 0,
+  type: 'sightseeing',
+  destination: '',
+  offers: [],
+  dateFrom: new Date(),
+  dateTo: Date()
+};
+
 const createDestinationListTemplate = (destinations) => {
   const options = destinations
     .map((destination) => `<option value="${destination.name}"></option>`)
@@ -83,14 +92,14 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
-const createTripEventFormTemplate = (point = {}, destinations, offers, offersByType) => {
+const createTripEventFormTemplate = (point, destinations, offers, offersByType) => {
   const {
-    basePrice = 0,
-    type = 'sightseeing',
-    destination: destinationId = '62a6a836-611b-4c0a-a76c-e441b89f1109',
+    basePrice,
+    type,
+    destination: destinationId,
     offers: offerIds,
-    dateFrom = new Date(),
-    dateTo = new Date()
+    dateFrom,
+    dateTo
   } = point;
 
   const {name, description, pictures} = destinations.find((destination) => destination.id === destinationId);
@@ -173,17 +182,26 @@ export default class TripEventFormView extends AbstractView {
   #destinations = [];
   #offers = [];
   #offersByType = [];
+  #handleRollupClick = null;
 
-  constructor(point, destinations, offers, offersByType) {
+  constructor({point = BLANK_POINT, destinations, offers, offersByType, onRollupClick}) {
     super();
 
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#offersByType = offersByType;
+    this.#handleRollupClick = onRollupClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   }
 
   get template() {
     return createTripEventFormTemplate(this.#point, this.#destinations, this.#offers, this.#offersByType);
   }
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
+  };
 }
