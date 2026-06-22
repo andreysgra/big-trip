@@ -5,7 +5,11 @@ export default class OffersModel {
     this.#offers = offers;
   }
 
-  getOffers(type) {
+  get offers() {
+    return this.#offers;
+  }
+
+  getOffersByType(type) {
     return this.#offers.find((offer) => offer.type === type);
   }
 }
