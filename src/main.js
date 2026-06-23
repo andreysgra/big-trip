@@ -17,7 +17,9 @@ const pointsModel = new PointsModel(points);
 const destinationsModel = new DestinationsModel(destinations);
 const offersModel = new OffersModel(offers);
 
-const infoPresenter = new InfoPresenter(tripMainElement);
+const infoPresenter = new InfoPresenter({
+  container: tripMainElement
+});
 
 const filtersPresenter = new FiltersPresenter({
   container: tripControlsFiltersElement,

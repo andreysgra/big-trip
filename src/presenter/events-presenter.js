@@ -109,6 +109,6 @@ export default class EventsPresenter {
   }
 
   #renderTripEventsListEmpty() {
-    render(new TripEventsListEmptyView(FilterType.EVERYTHING), this.#container);
+    render(new TripEventsListEmptyView({filterType: FilterType.EVERYTHING}), this.#container);
   }
 }
