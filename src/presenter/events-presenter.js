@@ -55,45 +55,45 @@ export default class EventsPresenter {
     const offers = this.#offersModel.getOffersByType(point.type);
     const offersByType = this.#offersModel.getOffersByType(point.type);
 
-    const tripEventsItemComponent = new TripEventView({point, destination, offers});
-    const tripEventFormComponent = new TripEventFormView({
-      point,
-      destinations: this.#destinations,
-      offers: this.#offers,
-      offersByType
-    });
-
-    const replaceCardToForm = () => replace(tripEventFormComponent, tripEventsItemComponent);
-
-    const replaceFormToCard = () => replace(tripEventsItemComponent, tripEventFormComponent);
-
     const onEscKeyDown = (evt) => {
       addEscapeEvent(evt, replaceFormToCard);
       document.removeEventListener('keydown', onEscKeyDown);
     };
 
-    tripEventsItemComponent.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', () => {
+    const tripEventComponent = new TripEventView({
+      point,
+      destination,
+      offers,
+      onRollupClick: () => {
         replaceCardToForm();
         document.addEventListener('keydown', onEscKeyDown);
-      });
+      }
+    });
 
-    tripEventFormComponent.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', () => {
+    const tripEventFormComponent = new TripEventFormView({
+      point,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      offersByType,
+      onRollupClick: () => {
         replaceFormToCard();
         document.removeEventListener('keydown', onEscKeyDown);
-      });
-
-    tripEventFormComponent.element
-      .querySelector('.event__save-btn')
-      .addEventListener('click', (evt) => {
-        evt.preventDefault();
+      },
+      onFormSubmit: ()=> {
         replaceFormToCard();
-      });
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    });
 
-    render(tripEventsItemComponent, this.#tripEventsListComponent.element);
+    function replaceCardToForm() {
+      replace(tripEventFormComponent, tripEventComponent);
+    }
+
+    function replaceFormToCard() {
+      replace(tripEventComponent, tripEventFormComponent);
+    }
+
+    render(tripEventComponent, this.#tripEventsListComponent.element);
   };
 
   #renderPoints() {
