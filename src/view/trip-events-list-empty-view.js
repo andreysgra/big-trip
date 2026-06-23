@@ -8,7 +8,7 @@ const createTripEventsListEmptyTemplate = (filterType) => `
 export default class TripEventsListEmptyView extends AbstractView {
   #filterType = null;
 
-  constructor(filterType) {
+  constructor({filterType}) {
     super();
 
     this.#filterType = filterType;

@@ -9,7 +9,7 @@ export default class InfoPresenter {
   #tripInfoMainComponent = new TripInfoMainView();
   #tripInfoCostComponent = new TripInfoCostView();
 
-  constructor(container) {
+  constructor({container}) {
     this.#container = container;
   }
 
