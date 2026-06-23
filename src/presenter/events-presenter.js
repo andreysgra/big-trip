@@ -5,6 +5,8 @@ import TripEventView from '../view/trip-event-view';
 import TripEventFormView from '../view/trip-event-form-view';
 import {sortPointsByDate} from '../utils/point';
 import {addEscapeEvent} from '../utils/common';
+import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
+import {FilterType} from '../const';
 
 export default class EventsPresenter {
   #container = null;
@@ -37,6 +39,12 @@ export default class EventsPresenter {
   }
 
   #renderBoard() {
+    if (this.#points.length === 0) {
+      this.#renderTripEventsListEmpty();
+
+      return;
+    }
+
     this.#renderSort();
     this.#renderTripEventsList();
     this.#renderPoints();
@@ -98,5 +106,9 @@ export default class EventsPresenter {
 
   #renderTripEventsList() {
     render(this.#tripEventsListComponent, this.#container);
+  }
+
+  #renderTripEventsListEmpty() {
+    render(new TripEventsListEmptyView(FilterType.EVERYTHING), this.#container);
   }
 }
