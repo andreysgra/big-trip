@@ -13,6 +13,8 @@ export default class EventsPresenter {
   #offersModel = null;
 
   #points = [];
+  #destinations = [];
+  #offers = [];
 
   #tripSorComponent = new TripSortView;
   #tripEventsListComponent = new TripEventsListView();
@@ -27,14 +29,22 @@ export default class EventsPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points].sort(sortPointsByDate);
+    this.#destinations = [...this.#destinationsModel.destinations];
+    this.#offers = [...this.#offersModel.offers];
 
     render(this.#tripSorComponent, this.#container);
     render(this.#tripEventsListComponent, this.#container);
-    render(new TripEventFormView, this.#tripEventsListComponent.element);
+
+    render(new TripEventFormView({
+      point: this.#points[0],
+      destinations: this.#destinations,
+      offers: this.#offers,
+      offersByType: this.#offersModel.getOffersByType(this.#points[0].type)
+    }), this.#tripEventsListComponent.element);
 
     this.#points.forEach((point) => {
       const destination = this.#destinationsModel.getDestination(point.destination);
-      const offers = this.#offersModel.getOffers(point.type);
+      const offers = this.#offersModel.getOffersByType(point.type);
 
       render(new TripEventView({point, destination, offers}), this.#tripEventsListComponent.element);
     });
