@@ -13,3 +13,12 @@ export const NoTripEventsMessage = {
   [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.PAST]: 'There are no past events now'
 };
+
+export const BLANK_POINT = {
+  basePrice: 0,
+  type: 'sightseeing',
+  destination: '',
+  offers: [],
+  dateFrom: new Date(),
+  dateTo: Date()
+};

@@ -15,13 +15,13 @@ const createOfferTemplate = (offer) => {
   `;
 };
 
-const createOffersTemplate = (offerIds, offers) => {
+const createOffersTemplate = (offerIds, offersByType) => {
   if (offerIds.length === 0) {
     return '';
   }
 
   const offerItems = offerIds
-    .map((offerId) => offers.offers.find((offer) => offer.id === offerId))
+    .map((offerId) => offersByType.offers.find((offer) => offer.id === offerId))
     .slice(0, MAX_OFFERS_COUNT)
     .map((offer) => createOfferTemplate(offer))
     .join('');
@@ -33,14 +33,14 @@ const createOffersTemplate = (offerIds, offers) => {
   `;
 };
 
-const createTripEventTemplate = (point, destination, offers) => {
+const createTripEventTemplate = (point, destination, offersByType) => {
   const {
     basePrice,
     dateFrom,
     dateTo,
     type,
     isFavorite,
-    offers: offerIds
+    offers,
   } = point;
 
   return `
@@ -63,7 +63,7 @@ const createTripEventTemplate = (point, destination, offers) => {
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        ${createOffersTemplate(offerIds, offers)}
+        ${createOffersTemplate(offers, offersByType)}
         <button class="${classNames('event__favorite-btn', {'event__favorite-btn--active': isFavorite})}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -81,23 +81,23 @@ const createTripEventTemplate = (point, destination, offers) => {
 export default class TripEventView extends AbstractView {
   #point = null;
   #destination = [];
-  #offers = [];
+  #offersByType = [];
 
   #handleRollupClick = () => null;
 
-  constructor({point, destination, offers, onRollupClick}) {
+  constructor({point, destination, offersByType, onRollupClick}) {
     super();
 
     this.#point = point;
     this.#destination = destination;
-    this.#offers = offers;
+    this.#offersByType = offersByType;
 
     this.#handleRollupClick = onRollupClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   }
 
   get template() {
-    return createTripEventTemplate(this.#point, this.#destination, this.#offers);
+    return createTripEventTemplate(this.#point, this.#destination, this.#offersByType);
   }
 
   #rollupClickHandler = (evt) => {
