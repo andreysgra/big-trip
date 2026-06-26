@@ -29,6 +29,9 @@ export default class EventPresenter {
   init(point) {
     this.#point = point;
 
+    const currentTripEventComponent = this.#tripEventComponent;
+    const currentTripEventFormComponent = this.#tripEventFormComponent;
+
     this.#tripEventComponent = new TripEventView({
       point: this.#point,
       destination: this.#destinationsModel.getDestination(point.destination),
@@ -45,7 +48,22 @@ export default class EventPresenter {
       onFormSubmit: this.#formSubmitHandler
     });
 
-    render(this.#tripEventComponent, this.#container);
+    if (currentTripEventComponent === null || currentTripEventFormComponent === null) {
+      render(this.#tripEventComponent, this.#container);
+
+      return;
+    }
+
+    if (this.#container.contains(currentTripEventComponent.element)) {
+      replace(this.#tripEventComponent, currentTripEventComponent);
+    }
+
+    if (this.#container.contains(currentTripEventFormComponent.element)) {
+      replace(this.#tripEventFormComponent, currentTripEventFormComponent);
+    }
+
+    remove(currentTripEventComponent);
+    remove(currentTripEventFormComponent);
   }
 
   #replaceCardToForm() {
