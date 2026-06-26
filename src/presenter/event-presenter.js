@@ -10,15 +10,18 @@ export default class EventPresenter {
   #destinationsModel = null;
   #offersModel = null;
 
+  #handleDataChange = () => null;
+
   #point = BLANK_POINT;
 
   #tripEventComponent = null;
   #tripEventFormComponent = null;
 
-  constructor({container, destinationsModel, offersModel}) {
+  constructor({container, destinationsModel, offersModel, onDataChange}) {
     this.#container = container;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+    this.#handleDataChange = onDataChange;
   }
 
   destroy() {
@@ -36,7 +39,8 @@ export default class EventPresenter {
       point: this.#point,
       destination: this.#destinationsModel.getDestination(point.destination),
       offersByType: this.#offersModel.getOffersByType(point.type),
-      onRollupClick: this.#rollupClickHandler
+      onRollupClick: this.#rollupClickHandler,
+      onFavoriteButtonClick: this.#favoriteButtonClickHandler
     });
 
     this.#tripEventFormComponent = new TripEventFormView({
@@ -78,6 +82,10 @@ export default class EventPresenter {
 
   #escKeyDownHandler = (evt) => {
     addEscapeEvent(evt, () => this.#replaceFormToCard());
+  };
+
+  #favoriteButtonClickHandler = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
   #formSubmitHandler = () => {

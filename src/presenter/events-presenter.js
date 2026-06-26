@@ -5,6 +5,7 @@ import {sortPointsByDate} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
 import {FilterType} from '../const';
 import EventPresenter from './event-presenter';
+import {updateItem} from '../utils/common';
 
 export default class EventsPresenter {
   #container = null;
@@ -39,6 +40,11 @@ export default class EventsPresenter {
     this.#eventPresenters.clear();
   }
 
+  #handleEventChange = (updateEvent) => {
+    this.#points = updateItem(this.#points, updateEvent);
+    this.#eventPresenters.get(updateEvent.id).init(updateEvent);
+  };
+
   #renderBoard() {
     if (this.#points.length === 0) {
       this.#renderTripEventsListEmpty();
@@ -55,7 +61,8 @@ export default class EventsPresenter {
     const eventPresenter = new EventPresenter({
       container: this.#tripEventsListComponent.element,
       destinationsModel: this.#destinationsModel,
-      offersModel: this.#offersModel
+      offersModel: this.#offersModel,
+      onDataChange: this.#handleEventChange
     });
 
     eventPresenter.init(point);

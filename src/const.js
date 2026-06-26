@@ -20,5 +20,6 @@ export const BLANK_POINT = {
   destination: '',
   offers: [],
   dateFrom: new Date(),
-  dateTo: Date()
+  dateTo: new Date(),
+  isFavorite: false
 };
