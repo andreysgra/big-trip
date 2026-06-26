@@ -1,14 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 import {getDateTime} from '../utils/format-date-time';
-
-const BLANK_POINT = {
-  basePrice: 0,
-  type: 'sightseeing',
-  destination: '',
-  offers: [],
-  dateFrom: new Date(),
-  dateTo: Date()
-};
+import {BLANK_POINT} from '../const';
 
 const createDestinationListTemplate = (destinations) => {
   const options = destinations

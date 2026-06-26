@@ -7,3 +7,5 @@ export const addEscapeEvent = (evt, action) => {
 };
 
 export const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
