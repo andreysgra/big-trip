@@ -4,6 +4,11 @@ import {addEscapeEvent} from '../utils/common';
 import TripEventFormView from '../view/trip-event-form-view';
 import {BLANK_POINT} from '../const';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class EventPresenter {
   #container = null;
 
@@ -11,17 +16,20 @@ export default class EventPresenter {
   #offersModel = null;
 
   #handleDataChange = () => null;
+  #handleModeChange = () => null;
 
   #point = BLANK_POINT;
+  #mode = Mode.DEFAULT;
 
   #tripEventComponent = null;
   #tripEventFormComponent = null;
 
-  constructor({container, destinationsModel, offersModel, onDataChange}) {
+  constructor({container, destinationsModel, offersModel, onDataChange, onModeChange}) {
     this.#container = container;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   destroy() {
@@ -58,11 +66,11 @@ export default class EventPresenter {
       return;
     }
 
-    if (this.#container.contains(currentTripEventComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#tripEventComponent, currentTripEventComponent);
     }
 
-    if (this.#container.contains(currentTripEventFormComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#tripEventFormComponent, currentTripEventFormComponent);
     }
 
@@ -70,14 +78,23 @@ export default class EventPresenter {
     remove(currentTripEventFormComponent);
   }
 
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToCard();
+    }
+  }
+
   #replaceCardToForm() {
     replace(this.#tripEventFormComponent, this.#tripEventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToCard() {
     replace(this.#tripEventComponent, this.#tripEventFormComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
@@ -93,7 +110,7 @@ export default class EventPresenter {
   };
 
   #rollupClickHandler = () => {
-    if (this.#container.contains(this.#tripEventComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       this.#replaceCardToForm();
     } else {
       this.#replaceFormToCard();

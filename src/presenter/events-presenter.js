@@ -45,6 +45,10 @@ export default class EventsPresenter {
     this.#eventPresenters.get(updateEvent.id).init(updateEvent);
   };
 
+  #handleModeChange = () => {
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.resetView());
+  };
+
   #renderBoard() {
     if (this.#points.length === 0) {
       this.#renderTripEventsListEmpty();
@@ -62,7 +66,8 @@ export default class EventsPresenter {
       container: this.#tripEventsListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      onDataChange: this.#handleEventChange
+      onDataChange: this.#handleEventChange,
+      onModeChange: this.#handleModeChange
     });
 
     eventPresenter.init(point);
