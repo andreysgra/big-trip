@@ -9,6 +9,8 @@ import EventPresenter from './event-presenter';
 export default class EventsPresenter {
   #container = null;
 
+  #eventPresenters = new Map();
+
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
@@ -32,6 +34,11 @@ export default class EventsPresenter {
     this.#renderBoard();
   }
 
+  #clearEventList() {
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
+    this.#eventPresenters.clear();
+  }
+
   #renderBoard() {
     if (this.#points.length === 0) {
       this.#renderTripEventsListEmpty();
@@ -52,6 +59,7 @@ export default class EventsPresenter {
     });
 
     eventPresenter.init(point);
+    this.#eventPresenters.set(point.id, eventPresenter);
   };
 
   #renderPoints() {
