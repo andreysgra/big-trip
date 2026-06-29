@@ -7,6 +7,12 @@ export const FilterType = {
   PAST: 'past',
 };
 
+export const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price'
+};
+
 export const NoTripEventsMessage = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
   [FilterType.FUTURE]: 'There are no future events now',
