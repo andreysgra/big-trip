@@ -1,9 +1,9 @@
 import TripSortView from '../view/trip-sort-view';
-import {render} from '../framework/render';
+import {render, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
-import {sortPointsByDate} from '../utils/point';
+import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
-import {FilterType} from '../const';
+import {FilterType, SortType} from '../const';
 import EventPresenter from './event-presenter';
 import {updateItem} from '../utils/common';
 
@@ -17,8 +17,9 @@ export default class EventsPresenter {
   #offersModel = null;
 
   #points = [];
+  #currentSortType = SortType.DAY;
 
-  #tripSorComponent = new TripSortView;
+  #tripSortComponent = null;
   #tripEventsListComponent = new TripEventsListView();
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
@@ -35,7 +36,7 @@ export default class EventsPresenter {
     this.#renderBoard();
   }
 
-  #clearEventList() {
+  #clearPoints() {
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
   }
@@ -79,7 +80,22 @@ export default class EventsPresenter {
   }
 
   #renderSort() {
-    render(this.#tripSorComponent, this.#container);
+    if (!this.#tripSortComponent) {
+      this.#tripSortComponent = new TripSortView({
+        sortType: this.#currentSortType,
+        onSortTypeChange: this.#sortTypeChangeHandler
+      });
+
+      render(this.#tripSortComponent, this.#container);
+    } else {
+      const updatedSortComponent = new TripSortView({
+        sortType: this.#currentSortType,
+        onSortTypeChange: this.#sortTypeChangeHandler
+      });
+
+      replace(updatedSortComponent, this.#tripSortComponent);
+      this.#tripSortComponent = updatedSortComponent;
+    }
   }
 
   #renderTripEventsList() {
@@ -89,4 +105,30 @@ export default class EventsPresenter {
   #renderTripEventsListEmpty() {
     render(new TripEventsListEmptyView({filterType: FilterType.EVERYTHING}), this.#container);
   }
+
+  #sortPoint = (sortType) => {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#points.sort(sortPointsByTime);
+        break;
+      case SortType.PRICE:
+        this.#points.sort(sortPointsByPrice);
+        break;
+      default:
+        this.#points.sort(sortPointsByDate);
+    }
+
+    this.#currentSortType = sortType;
+  };
+
+  #sortTypeChangeHandler = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoint(sortType);
+    this.#clearPoints();
+    this.#renderSort();
+    this.#renderPoints();
+  };
 }
