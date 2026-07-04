@@ -193,6 +193,9 @@ export default class TripEventFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#eventTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputChangeHandler);
   }
 
   #parseEventToState(point) {
@@ -201,10 +204,35 @@ export default class TripEventFormView extends AbstractStatefulView {
     };
   }
 
+  #destinationInputHandler = (evt) => {
+    const selectedDestination = this.#destinations
+      .find((destination) => destination.name === evt.target.value);
+
+    if (selectedDestination) {
+      this.updateElement({
+        destination: selectedDestination.id
+      });
+    }
+  };
+
+  #eventTypeChangeHandler = (evt) => {
+    if (evt.target.closest('input[type="radio"]')) {
+      this.updateElement({
+        type: evt.target.value
+      });
+    }
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
     this.#handleFormSubmit();
+  };
+
+  #priceInputChangeHandler = (evt) => {
+    this._setState({
+      basePrice: evt.target.value
+    });
   };
 
   #rollupClickHandler = (evt) => {
