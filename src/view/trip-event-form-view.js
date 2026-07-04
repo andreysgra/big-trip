@@ -208,6 +208,12 @@ export default class TripEventFormView extends AbstractStatefulView {
     };
   }
 
+  #parseStateToEvent(state) {
+    return {
+      ...state
+    };
+  }
+
   #destinationInputHandler = (evt) => {
     const selectedDestination = this.#destinations
       .find((destination) => destination.name === evt.target.value);
@@ -230,7 +236,7 @@ export default class TripEventFormView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#parseStateToEvent(this._state));
   };
 
   #priceInputChangeHandler = (evt) => {

@@ -108,7 +108,8 @@ export default class EventPresenter {
     this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
-  #formSubmitHandler = () => {
+  #formSubmitHandler = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToCard();
   };
 
