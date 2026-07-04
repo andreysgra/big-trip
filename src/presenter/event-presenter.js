@@ -79,6 +79,7 @@ export default class EventPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#tripEventFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   }
@@ -97,7 +98,10 @@ export default class EventPresenter {
   }
 
   #escKeyDownHandler = (evt) => {
-    addEscapeEvent(evt, () => this.#replaceFormToCard());
+    addEscapeEvent(evt, () => {
+      this.#tripEventFormComponent.reset(this.#point);
+      this.#replaceFormToCard();
+    });
   };
 
   #favoriteButtonClickHandler = () => {
@@ -112,6 +116,7 @@ export default class EventPresenter {
     if (this.#mode === Mode.DEFAULT) {
       this.#replaceCardToForm();
     } else {
+      this.#tripEventFormComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };

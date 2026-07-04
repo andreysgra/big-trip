@@ -190,6 +190,10 @@ export default class TripEventFormView extends AbstractStatefulView {
     return createTripEventFormTemplate(this._state, this.#destinations, this.#offers);
   }
 
+  reset(point) {
+    this.updateElement(this.#parseEventToState(point));
+  }
+
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
