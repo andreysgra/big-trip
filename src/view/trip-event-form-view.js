@@ -45,12 +45,8 @@ const createEventTypesTemplate = (offers, type) => {
     .join('');
 };
 
-const createOffersTemplate = (offerIds, offersByType) => {
-  if (offersByType.offers.length === 0) {
-    return '';
-  }
-
-  const options = offersByType.offers
+const createOffersTemplate = (offerIds, offers, type) => {
+  const options = offers.find((offer) => offer.type === type).offers
     .map((offer) => {
       const isChecked = (offerIds.includes(offer.id)) ? 'checked' : '';
 
@@ -84,7 +80,7 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
-const createTripEventFormTemplate = (point, destinations, offers, offersByType) => {
+const createTripEventFormTemplate = (point, destinations, offers) => {
   const {
     basePrice,
     type,
@@ -151,7 +147,7 @@ const createTripEventFormTemplate = (point, destinations, offers, offersByType) 
         </header>
 
         <section class="event__details">
-          ${createOffersTemplate(offerIds, offersByType)}
+          ${createOffersTemplate(offerIds, offers, type)}
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -173,18 +169,16 @@ export default class TripEventFormView extends AbstractView {
   #point = null;
   #destinations = [];
   #offers = [];
-  #offersByType = [];
 
   #handleRollupClick = () => null;
   #handleFormSubmit = () => null;
 
-  constructor({point = BLANK_POINT, destinations, offers, offersByType, onRollupClick, onFormSubmit}) {
+  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit}) {
     super();
 
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#offersByType = offersByType;
 
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
@@ -193,7 +187,7 @@ export default class TripEventFormView extends AbstractView {
   }
 
   get template() {
-    return createTripEventFormTemplate(this.#point, this.#destinations, this.#offers, this.#offersByType);
+    return createTripEventFormTemplate(this.#point, this.#destinations, this.#offers);
   }
 
   #formSubmitHandler = (evt) => {

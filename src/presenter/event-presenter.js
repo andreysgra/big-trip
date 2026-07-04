@@ -55,7 +55,6 @@ export default class EventPresenter {
       point: this.#point,
       destinations: this.#destinationsModel.destinations,
       offers: this.#offersModel.offers,
-      offersByType: this.#offersModel.getOffersByType(point.type),
       onRollupClick: this.#rollupClickHandler,
       onFormSubmit: this.#formSubmitHandler
     });
