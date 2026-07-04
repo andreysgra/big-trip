@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {getDateTime} from '../utils/format-date-time';
 import {BLANK_POINT} from '../const';
 
@@ -45,12 +45,8 @@ const createEventTypesTemplate = (offers, type) => {
     .join('');
 };
 
-const createOffersTemplate = (offerIds, offersByType) => {
-  if (offersByType.offers.length === 0) {
-    return '';
-  }
-
-  const options = offersByType.offers
+const createOffersTemplate = (offerIds, offers, type) => {
+  const options = offers.find((offer) => offer.type === type).offers
     .map((offer) => {
       const isChecked = (offerIds.includes(offer.id)) ? 'checked' : '';
 
@@ -84,7 +80,7 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
-const createTripEventFormTemplate = (point, destinations, offers, offersByType) => {
+const createTripEventFormTemplate = (state, destinations, offers) => {
   const {
     basePrice,
     type,
@@ -92,7 +88,7 @@ const createTripEventFormTemplate = (point, destinations, offers, offersByType) 
     offers: offerIds,
     dateFrom,
     dateTo
-  } = point;
+  } = state;
 
   const {name, description, pictures} = destinations.find((destination) => destination.id === destinationId);
 
@@ -151,7 +147,7 @@ const createTripEventFormTemplate = (point, destinations, offers, offersByType) 
         </header>
 
         <section class="event__details">
-          ${createOffersTemplate(offerIds, offersByType)}
+          ${createOffersTemplate(offerIds, offers, type)}
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -169,37 +165,84 @@ const createTripEventFormTemplate = (point, destinations, offers, offersByType) 
   `;
 };
 
-export default class TripEventFormView extends AbstractView {
-  #point = null;
+export default class TripEventFormView extends AbstractStatefulView {
   #destinations = [];
   #offers = [];
-  #offersByType = [];
 
   #handleRollupClick = () => null;
   #handleFormSubmit = () => null;
 
-  constructor({point = BLANK_POINT, destinations, offers, offersByType, onRollupClick, onFormSubmit}) {
+  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit}) {
     super();
 
-    this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#offersByType = offersByType;
+
+    this._setState(this.#parseEventToState(point));
 
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+
+    this._restoreHandlers();
   }
 
   get template() {
-    return createTripEventFormTemplate(this.#point, this.#destinations, this.#offers, this.#offersByType);
+    return createTripEventFormTemplate(this._state, this.#destinations, this.#offers);
   }
+
+  reset(point) {
+    this.updateElement(this.#parseEventToState(point));
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#eventTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputChangeHandler);
+  }
+
+  #parseEventToState(point) {
+    return {
+      ...point
+    };
+  }
+
+  #parseStateToEvent(state) {
+    return {
+      ...state
+    };
+  }
+
+  #destinationInputHandler = (evt) => {
+    const selectedDestination = this.#destinations
+      .find((destination) => destination.name === evt.target.value);
+
+    if (selectedDestination) {
+      this.updateElement({
+        destination: selectedDestination.id
+      });
+    }
+  };
+
+  #eventTypeChangeHandler = (evt) => {
+    if (evt.target.closest('input[type="radio"]')) {
+      this.updateElement({
+        type: evt.target.value
+      });
+    }
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#parseStateToEvent(this._state));
+  };
+
+  #priceInputChangeHandler = (evt) => {
+    this._setState({
+      basePrice: evt.target.value
+    });
   };
 
   #rollupClickHandler = (evt) => {
