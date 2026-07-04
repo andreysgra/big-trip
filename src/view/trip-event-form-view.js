@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {getDateTime} from '../utils/format-date-time';
 import {BLANK_POINT} from '../const';
 
@@ -80,7 +80,7 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
-const createTripEventFormTemplate = (point, destinations, offers) => {
+const createTripEventFormTemplate = (state, destinations, offers) => {
   const {
     basePrice,
     type,
@@ -88,7 +88,7 @@ const createTripEventFormTemplate = (point, destinations, offers) => {
     offers: offerIds,
     dateFrom,
     dateTo
-  } = point;
+  } = state;
 
   const {name, description, pictures} = destinations.find((destination) => destination.id === destinationId);
 
@@ -165,8 +165,7 @@ const createTripEventFormTemplate = (point, destinations, offers) => {
   `;
 };
 
-export default class TripEventFormView extends AbstractView {
-  #point = null;
+export default class TripEventFormView extends AbstractStatefulView {
   #destinations = [];
   #offers = [];
 
@@ -176,18 +175,30 @@ export default class TripEventFormView extends AbstractView {
   constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit}) {
     super();
 
-    this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
 
+    this._setState(this.#parseEventToState(point));
+
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
+
+    this._restoreHandlers();
+  }
+
+  get template() {
+    return createTripEventFormTemplate(this._state, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  get template() {
-    return createTripEventFormTemplate(this.#point, this.#destinations, this.#offers);
+  #parseEventToState(point) {
+    return {
+      ...point
+    };
   }
 
   #formSubmitHandler = (evt) => {
