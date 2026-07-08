@@ -114,7 +114,13 @@ export default class EventPresenter {
   };
 
   #favoriteButtonClickHandler = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {
+        ...this.#point,
+        isFavorite: !this.#point.isFavorite
+      });
   };
 
   #formSubmitHandler = (point) => {
