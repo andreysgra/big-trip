@@ -3,7 +3,7 @@ import {render, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
 import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
-import {FilterType, SortType} from '../const';
+import {FilterType, SortType, UpdateType} from '../const';
 import EventPresenter from './event-presenter';
 
 export default class EventsPresenter {
@@ -26,6 +26,8 @@ export default class EventsPresenter {
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+
+    this.#pointsModel.addObserver(this.#modelEventHandler);
   }
 
   get points() {
@@ -113,6 +115,16 @@ export default class EventsPresenter {
   #renderTripEventsListEmpty() {
     render(new TripEventsListEmptyView({filterType: FilterType.EVERYTHING}), this.#container);
   }
+
+  #modelEventHandler = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        if (this.#eventPresenters.has(data.id)) {
+          this.#eventPresenters.get(data.id).init(data);
+        }
+        break;
+    }
+  };
 
   #sortTypeChangeHandler = (sortType) => {
     if (this.#currentSortType === sortType) {

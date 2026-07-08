@@ -29,3 +29,7 @@ export const BLANK_POINT = {
   dateTo: new Date(),
   isFavorite: false
 };
+
+export const UpdateType = {
+  PATCH: 'PATCH'
+};
