@@ -182,8 +182,9 @@ export default class TripEventFormView extends AbstractStatefulView {
 
   #handleRollupClick = () => null;
   #handleFormSubmit = () => null;
+  #handleDeleteButtonClick = () => null;
 
-  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit}) {
+  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit, onDeleteButtonClick}) {
     super();
 
     this.#destinations = destinations;
@@ -193,6 +194,7 @@ export default class TripEventFormView extends AbstractStatefulView {
 
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteButtonClick = onDeleteButtonClick;
 
     this._restoreHandlers();
   }
@@ -217,6 +219,7 @@ export default class TripEventFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener('change', this.#eventTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputChangeHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteButtonClickHandler);
 
     this.#setDatePickers();
   }
@@ -283,6 +286,12 @@ export default class TripEventFormView extends AbstractStatefulView {
     this.updateElement({
       dateTo: userDate
     });
+  };
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#handleDeleteButtonClick(this.#parseStateToEvent(this._state));
   };
 
   #destinationInputHandler = (evt) => {

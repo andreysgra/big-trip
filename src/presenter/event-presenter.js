@@ -56,7 +56,8 @@ export default class EventPresenter {
       destinations: this.#destinationsModel.destinations,
       offers: this.#offersModel.offers,
       onRollupClick: this.#rollupClickHandler,
-      onFormSubmit: this.#formSubmitHandler
+      onFormSubmit: this.#formSubmitHandler,
+      onDeleteButtonClick: this.#deleteButtonClickHandler
     });
 
     if (currentTripEventComponent === null || currentTripEventFormComponent === null) {
@@ -97,6 +98,14 @@ export default class EventPresenter {
     this.#mode = Mode.DEFAULT;
   }
 
+  #deleteButtonClickHandler = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
   #escKeyDownHandler = (evt) => {
     addEscapeEvent(evt, () => {
       this.#tripEventFormComponent.reset(this.#point);
@@ -111,7 +120,7 @@ export default class EventPresenter {
   #formSubmitHandler = (point) => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.PATCH,
+      UpdateType.MINOR,
       point
     );
     this.#replaceFormToCard();

@@ -31,9 +31,11 @@ export const BLANK_POINT = {
 };
 
 export const UserAction = {
+  DELETE_POINT: 'DELETE_POINT',
   UPDATE_POINT: 'UPDATE_POINT'
 };
 
 export const UpdateType = {
+  MINOR: 'MINOR',
   PATCH: 'PATCH'
 };
