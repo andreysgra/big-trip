@@ -7,6 +7,8 @@ import OffersModel from './model/offers-model';
 import {points} from './mocks/points';
 import {destinations} from './mocks/destinations';
 import {offers} from './mocks/offers';
+import NewEventButtonView from './view/new-event-button-view';
+import {render} from './framework/render';
 
 const bodyElement = document.body;
 const tripMainElement = bodyElement.querySelector('.trip-main');
@@ -33,6 +35,16 @@ const eventsPresenter = new EventsPresenter({
   offersModel
 });
 
+const newEventButtonComponent = new NewEventButtonView({
+  onClick: newEventButtonClickHandler
+});
+
+render(newEventButtonComponent, tripMainElement);
+
 infoPresenter.init();
 filtersPresenter.init();
 eventsPresenter.init();
+
+function newEventButtonClickHandler() {
+  newEventButtonComponent.disable();
+}
