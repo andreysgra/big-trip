@@ -13,6 +13,15 @@ export default class PointsModel extends Observable {
     return this.#points;
   }
 
+  add(updateType, update) {
+    this.#points = [
+      update,
+      ...this.#points
+    ];
+
+    this._notify(updateType, update);
+  }
+
   delete(updateType, update) {
     const index = this.#points.findIndex((comment) => comment.id === update.id);
 
