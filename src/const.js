@@ -30,6 +30,10 @@ export const BLANK_POINT = {
   isFavorite: false
 };
 
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT'
+};
+
 export const UpdateType = {
   PATCH: 'PATCH'
 };

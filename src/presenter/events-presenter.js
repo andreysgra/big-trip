@@ -3,7 +3,7 @@ import {render, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
 import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
-import {FilterType, SortType, UpdateType} from '../const';
+import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
 
 export default class EventsPresenter {
@@ -52,10 +52,6 @@ export default class EventsPresenter {
     this.#eventPresenters.clear();
   }
 
-  #handleEventChange = (updateEvent) => {
-    this.#eventPresenters.get(updateEvent.id).init(updateEvent);
-  };
-
   #handleModeChange = () => {
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.resetView());
   };
@@ -77,7 +73,7 @@ export default class EventsPresenter {
       container: this.#tripEventsListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      onDataChange: this.#handleEventChange,
+      onDataChange: this.#viewActionHandler,
       onModeChange: this.#handleModeChange
     });
 
@@ -135,5 +131,13 @@ export default class EventsPresenter {
     this.#clearPoints();
     this.#renderSort();
     this.#renderPoints();
+  };
+
+  #viewActionHandler = (actionType, updateType, updateFilm) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.update(updateType, updateFilm);
+        break;
+    }
   };
 }

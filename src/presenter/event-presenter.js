@@ -2,7 +2,7 @@ import TripEventView from '../view/trip-event-view';
 import {remove, render, replace} from '../framework/render';
 import {addEscapeEvent} from '../utils/common';
 import TripEventFormView from '../view/trip-event-form-view';
-import {BLANK_POINT} from '../const';
+import {BLANK_POINT, UpdateType, UserAction} from '../const';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -109,7 +109,11 @@ export default class EventPresenter {
   };
 
   #formSubmitHandler = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      point
+    );
     this.#replaceFormToCard();
   };
 
