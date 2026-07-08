@@ -44,7 +44,7 @@ export default class NewEventPresenter {
       },
       destinations: this.#destinationsModel.destinations,
       offers: this.#offersModel.offers,
-      onRollupClick: () => null,
+      isNewEvent: true,
       onFormSubmit: this.#formSubmitHandler,
       onDeleteButtonClick: this.#deleteButtonClickHandler
     });

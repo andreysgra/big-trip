@@ -32,7 +32,8 @@ const eventsPresenter = new EventsPresenter({
   container: tripEventsElement,
   pointsModel,
   destinationsModel,
-  offersModel
+  offersModel,
+  onNewEventDestroy: newEventFormCloseHandler
 });
 
 const newEventButtonComponent = new NewEventButtonView({
@@ -47,4 +48,9 @@ eventsPresenter.init();
 
 function newEventButtonClickHandler() {
   newEventButtonComponent.disable();
+  eventsPresenter.createEvent();
+}
+
+function newEventFormCloseHandler() {
+  newEventButtonComponent.enable();
 }

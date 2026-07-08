@@ -89,7 +89,7 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
-const createTripEventFormTemplate = (state, destinations, offers) => {
+const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) => {
   const {
     basePrice,
     type,
@@ -148,11 +148,12 @@ const createTripEventFormTemplate = (state, destinations, offers) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__reset-btn" type="reset">${isNewEvent ? 'Cancel' : 'Delete'}</button>
 
+          ${isNewEvent ? '' : `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
-          </button>
+          </button>`}
         </header>
 
         <section class="event__details">
@@ -179,16 +180,26 @@ export default class TripEventFormView extends AbstractStatefulView {
   #offers = [];
   #dateStartPicker = null;
   #dateEndPicker = null;
+  #isNewEvent = false;
 
   #handleRollupClick = () => null;
   #handleFormSubmit = () => null;
   #handleDeleteButtonClick = () => null;
 
-  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit, onDeleteButtonClick}) {
+  constructor({
+    point = BLANK_POINT,
+    destinations,
+    offers,
+    isNewEvent = false,
+    onRollupClick = () => null,
+    onFormSubmit,
+    onDeleteButtonClick
+  }) {
     super();
 
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#isNewEvent = isNewEvent;
 
     this._setState(this.#parseEventToState(point));
 
@@ -200,7 +211,7 @@ export default class TripEventFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createTripEventFormTemplate(this._state, this.#destinations, this.#offers);
+    return createTripEventFormTemplate(this._state, this.#destinations, this.#offers, this.#isNewEvent);
   }
 
   removeElement() {
@@ -214,7 +225,12 @@ export default class TripEventFormView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+
+    if (rollupButtonElement) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    }
+
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__type-list').addEventListener('change', this.#eventTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);

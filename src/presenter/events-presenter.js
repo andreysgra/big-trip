@@ -5,11 +5,13 @@ import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/po
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
 import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
+import NewEventPresenter from './new-event-presenter';
 
 export default class EventsPresenter {
   #container = null;
 
   #eventPresenters = new Map();
+  #newEventPresenter = null;
 
   #pointsModel = null;
   #destinationsModel = null;
@@ -21,12 +23,15 @@ export default class EventsPresenter {
   #tripEventsListComponent = new TripEventsListView();
   #tripEventsListEmptyComponent = null;
 
-  constructor({container, pointsModel, destinationsModel, offersModel}) {
+  #handleNewEventDestroy = null;
+
+  constructor({container, pointsModel, destinationsModel, offersModel, onNewEventDestroy}) {
     this.#container = container;
 
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+    this.#handleNewEventDestroy = onNewEventDestroy;
 
     this.#pointsModel.addObserver(this.#modelEventHandler);
   }
@@ -44,11 +49,30 @@ export default class EventsPresenter {
     return points.sort(sortPointsByDate);
   }
 
+  createEvent() {
+    this.#newEventPresenter = new NewEventPresenter({
+      container: this.#tripEventsListComponent.element,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      onDataChange: this.#viewActionHandler,
+      onDestroy: this.#handleNewEventDestroy
+    });
+
+    this.#currentSortType = SortType.DAY;
+
+    this.#newEventPresenter.init();
+    this.#eventPresenters.forEach((eventPresenter) => eventPresenter.resetView());
+  }
+
   init() {
     this.#renderBoard();
   }
 
   #clearBoard({resetSortType = false} = {}) {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.destroy();
+    }
+
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.destroy());
     this.#eventPresenters.clear();
 
@@ -64,6 +88,10 @@ export default class EventsPresenter {
   }
 
   #handleModeChange = () => {
+    if (this.#newEventPresenter) {
+      this.#newEventPresenter.destroy();
+    }
+
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.resetView());
   };
 
@@ -146,6 +174,9 @@ export default class EventsPresenter {
         break;
       case UserAction.DELETE_POINT:
         this.#pointsModel.delete(updateType, updateFilm);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.add(updateType, updateFilm);
         break;
     }
   };
