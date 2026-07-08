@@ -5,7 +5,6 @@ import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/po
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
 import {FilterType, SortType} from '../const';
 import EventPresenter from './event-presenter';
-import {updateItem} from '../utils/common';
 
 export default class EventsPresenter {
   #container = null;
@@ -16,7 +15,6 @@ export default class EventsPresenter {
   #destinationsModel = null;
   #offersModel = null;
 
-  #points = [];
   #currentSortType = SortType.DAY;
 
   #tripSortComponent = null;
@@ -30,9 +28,20 @@ export default class EventsPresenter {
     this.#offersModel = offersModel;
   }
 
-  init() {
-    this.#points = [...this.#pointsModel.points].sort(sortPointsByDate);
+  get points() {
+    const points = [...this.#pointsModel.points];
 
+    switch (this.#currentSortType) {
+      case SortType.TIME:
+        return points.sort(sortPointsByTime);
+      case SortType.PRICE:
+        return points.sort(sortPointsByPrice);
+    }
+
+    return points.sort(sortPointsByDate);
+  }
+
+  init() {
     this.#renderBoard();
   }
 
@@ -42,7 +51,6 @@ export default class EventsPresenter {
   }
 
   #handleEventChange = (updateEvent) => {
-    this.#points = updateItem(this.#points, updateEvent);
     this.#eventPresenters.get(updateEvent.id).init(updateEvent);
   };
 
@@ -51,7 +59,7 @@ export default class EventsPresenter {
   };
 
   #renderBoard() {
-    if (this.#points.length === 0) {
+    if (this.points.length === 0) {
       this.#renderTripEventsListEmpty();
 
       return;
@@ -76,7 +84,7 @@ export default class EventsPresenter {
   };
 
   #renderPoints() {
-    this.#points.forEach((point) => this.#renderPoint(point));
+    this.points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderSort() {
@@ -106,27 +114,12 @@ export default class EventsPresenter {
     render(new TripEventsListEmptyView({filterType: FilterType.EVERYTHING}), this.#container);
   }
 
-  #sortPoint = (sortType) => {
-    switch (sortType) {
-      case SortType.TIME:
-        this.#points.sort(sortPointsByTime);
-        break;
-      case SortType.PRICE:
-        this.#points.sort(sortPointsByPrice);
-        break;
-      default:
-        this.#points.sort(sortPointsByDate);
-    }
-
-    this.#currentSortType = sortType;
-  };
-
   #sortTypeChangeHandler = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
-    this.#sortPoint(sortType);
+    this.#currentSortType = sortType;
     this.#clearPoints();
     this.#renderSort();
     this.#renderPoints();
