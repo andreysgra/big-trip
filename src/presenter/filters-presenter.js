@@ -1,5 +1,6 @@
 import TripFiltersView from '../view/trip-filters-view';
 import {render} from '../framework/render';
+import {filter} from '../utils/filter';
 
 export default class FiltersPresenter {
   #container = null;
@@ -14,8 +15,22 @@ export default class FiltersPresenter {
     this.#pointsModel = pointsModel;
   }
 
+  get filters() {
+    const points = this.#pointsModel.points;
+
+    return Object.entries(filter)
+      .map(([filterName, filterPoints]) => (
+        {
+          name: filterName,
+          count: filterPoints(points).length
+        }
+      ));
+  }
+
   init() {
-    this.#tripFiltersComponent = new TripFiltersView({points: this.#pointsModel.points});
+    const filters = this.filters;
+
+    this.#tripFiltersComponent = new TripFiltersView({filters});
     render(this.#tripFiltersComponent, this.#container);
   }
 }
