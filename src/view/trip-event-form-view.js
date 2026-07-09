@@ -55,7 +55,13 @@ const createEventTypesTemplate = (offers, type) => {
 };
 
 const createOffersTemplate = (offerIds, offers, type) => {
-  const options = offers.find((offer) => offer.type === type).offers
+  const availableOffers = offers.find((offer) => offer.type === type).offers;
+
+  if (availableOffers.length === 0) {
+    return '';
+  }
+
+  const options = availableOffers
     .map((offer) => {
       const isChecked = (offerIds.includes(offer.id)) ? 'checked' : '';
 
@@ -63,7 +69,7 @@ const createOffersTemplate = (offerIds, offers, type) => {
         <div class="event__offer-selector">
           <input
             class="event__offer-checkbox  visually-hidden"
-            id="event-offer-${offer.id}" type="checkbox" name="event-offer" ${isChecked}>
+            id="event-offer-${offer.id}" type="checkbox" name="event-offer" ${isChecked} data-offer-id="${offer.id}">
           <label class="event__offer-label" for="event-offer-${offer.id}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;
@@ -226,6 +232,7 @@ export default class TripEventFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+    const eventOffersElement = this.element.querySelector('.event__available-offers');
 
     if (rollupButtonElement) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
@@ -236,6 +243,10 @@ export default class TripEventFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputChangeHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteButtonClickHandler);
+
+    if (eventOffersElement) {
+      eventOffersElement.addEventListener('change', this.#offerClickHandler);
+    }
 
     this.#setDatePickers();
   }
@@ -339,6 +350,22 @@ export default class TripEventFormView extends AbstractStatefulView {
     this._setState({
       basePrice: evt.target.value
     });
+  };
+
+  #offerClickHandler = (evt) => {
+    if (evt.target.closest('input[type="checkbox"]')) {
+      const offerId = evt.target.dataset.offerId;
+
+      if (this._state.offers.includes(offerId)) {
+        this._setState({
+          offers: this._state.offers.filter((item) => item !== offerId)
+        });
+      } else {
+        this._setState({
+          offers: [...this._state.offers, offerId]
+        });
+      }
+    }
   };
 
   #rollupClickHandler = (evt) => {
