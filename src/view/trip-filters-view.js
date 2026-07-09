@@ -31,14 +31,28 @@ export default class TripFiltersView extends AbstractView {
   #filters = null;
   #currentFilter = null;
 
-  constructor({filters, currentFilter}) {
+  #handleFilterChange = () => null;
+
+  constructor({filters, currentFilter, onFilterChange}) {
     super();
 
     this.#filters = filters;
     this.#currentFilter = currentFilter;
+
+    this.#handleFilterChange = onFilterChange;
+
+    this.element.addEventListener('click', this.#filterChangeHandler);
   }
 
   get template() {
     return createTripFiltersTemplate(this.#filters, this.#currentFilter);
   }
+
+  #filterChangeHandler = (evt) => {
+    if (evt.target.closest('.trip-filters__filter-input')) {
+      evt.preventDefault();
+
+      this.#handleFilterChange(evt.target.value);
+    }
+  };
 }

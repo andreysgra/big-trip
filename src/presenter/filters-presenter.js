@@ -1,6 +1,7 @@
 import TripFiltersView from '../view/trip-filters-view';
 import {remove, render, replace} from '../framework/render';
 import {filter} from '../utils/filter';
+import {UpdateType} from '../const';
 
 export default class FiltersPresenter {
   #container = null;
@@ -40,7 +41,11 @@ export default class FiltersPresenter {
 
     this.#currentFilter = this.#filterModel.getFilter();
 
-    this.#tripFiltersComponent = new TripFiltersView({filters, currentFilter: this.#currentFilter});
+    this.#tripFiltersComponent = new TripFiltersView({
+      filters,
+      currentFilter: this.#currentFilter,
+      onFilterChange: this.#filterChangeHandler
+    });
 
     if (currentFiltersComponent === null) {
       render(this.#tripFiltersComponent, this.#container);
@@ -49,6 +54,14 @@ export default class FiltersPresenter {
       remove(currentFiltersComponent);
     }
   }
+
+  #filterChangeHandler = (filterType) => {
+    if (this.#filterModel.getFilter() === filterType) {
+      return;
+    }
+
+    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+  };
 
   #modelEventHandler = () => {
     this.init();
