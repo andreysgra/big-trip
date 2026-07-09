@@ -1,6 +1,7 @@
 import TripEventFormView from '../view/trip-event-form-view';
 import {BLANK_POINT, UpdateType, UserAction} from '../const';
 import {remove, render, RenderPosition} from '../framework/render';
+import {addEscapeEvent} from '../utils/common';
 
 export default class NewEventPresenter {
   #container = null;
@@ -19,6 +20,8 @@ export default class NewEventPresenter {
     this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
   destroy() {
@@ -30,6 +33,8 @@ export default class NewEventPresenter {
 
     remove(this.#tripEventFormComponent);
     this.#tripEventFormComponent = null;
+
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   init() {
@@ -54,6 +59,12 @@ export default class NewEventPresenter {
 
   #deleteButtonClickHandler = () => {
     this.destroy();
+  };
+
+  #escKeyDownHandler = (evt) => {
+    addEscapeEvent(evt, () => {
+      this.destroy();
+    });
   };
 
   #formSubmitHandler = (point) => {
