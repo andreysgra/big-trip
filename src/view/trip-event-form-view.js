@@ -95,6 +95,25 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
+const createDestinationTemplate = (description, pictures) => {
+  if (description === '' && pictures.length === 0) {
+    return '';
+  }
+
+  return `
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${description}</p>
+
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${createPicturesTemplate(pictures)}
+        </div>
+      </div>
+    </section>
+  `;
+};
+
 const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) => {
   const {
     basePrice,
@@ -164,17 +183,7 @@ const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) =>
 
         <section class="event__details">
           ${createOffersTemplate(offerIds, offers, type)}
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${createPicturesTemplate(pictures)}
-              </div>
-            </div>
-          </section>
+          ${createDestinationTemplate(description, pictures)}
         </section>
       </form>
     </li>
