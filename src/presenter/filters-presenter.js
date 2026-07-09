@@ -1,18 +1,25 @@
 import TripFiltersView from '../view/trip-filters-view';
-import {render} from '../framework/render';
+import {remove, render, replace} from '../framework/render';
 import {filter} from '../utils/filter';
 
 export default class FiltersPresenter {
   #container = null;
 
   #pointsModel = null;
+  #filterModel = null;
+
+  #currentFilter = null;
 
   #tripFiltersComponent = null;
 
-  constructor({container, pointsModel}) {
+  constructor({container, pointsModel, filterModel}) {
     this.#container = container;
 
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
+
+    this.#pointsModel.addObserver(this.#modelEventHandler);
+    this.#filterModel.addObserver(this.#modelEventHandler);
   }
 
   get filters() {
@@ -29,8 +36,21 @@ export default class FiltersPresenter {
 
   init() {
     const filters = this.filters;
+    const currentFiltersComponent = this.#tripFiltersComponent;
 
-    this.#tripFiltersComponent = new TripFiltersView({filters});
-    render(this.#tripFiltersComponent, this.#container);
+    this.#currentFilter = this.#filterModel.getFilter();
+
+    this.#tripFiltersComponent = new TripFiltersView({filters, currentFilter: this.#currentFilter});
+
+    if (currentFiltersComponent === null) {
+      render(this.#tripFiltersComponent, this.#container);
+    } else {
+      replace(this.#tripFiltersComponent, currentFiltersComponent);
+      remove(currentFiltersComponent);
+    }
   }
+
+  #modelEventHandler = () => {
+    this.init();
+  };
 }

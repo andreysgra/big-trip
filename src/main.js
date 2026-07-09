@@ -9,6 +9,7 @@ import {destinations} from './mocks/destinations';
 import {offers} from './mocks/offers';
 import NewEventButtonView from './view/new-event-button-view';
 import {render} from './framework/render';
+import FilterModel from './model/filter-model';
 
 const bodyElement = document.body;
 const tripMainElement = bodyElement.querySelector('.trip-main');
@@ -18,6 +19,7 @@ const tripEventsElement = bodyElement.querySelector('.trip-events');
 const pointsModel = new PointsModel(points);
 const destinationsModel = new DestinationsModel(destinations);
 const offersModel = new OffersModel(offers);
+const filterModel = new FilterModel();
 
 const infoPresenter = new InfoPresenter({
   container: tripMainElement
@@ -25,7 +27,8 @@ const infoPresenter = new InfoPresenter({
 
 const filtersPresenter = new FiltersPresenter({
   container: tripControlsFiltersElement,
-  pointsModel
+  pointsModel,
+  filterModel
 });
 
 const eventsPresenter = new EventsPresenter({

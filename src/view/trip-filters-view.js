@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
 import {capitalizeFirstLetter} from '../utils/common';
-import {FilterType} from '../const';
 
 const createTripFilterTemplate = ({name, count}, currentFilter) => `
   <div class="trip-filters__filter">
@@ -30,12 +29,13 @@ const createTripFiltersTemplate = (filters, currentFilter) => `
 
 export default class TripFiltersView extends AbstractView {
   #filters = null;
-  #currentFilter = FilterType.EVERYTHING;
+  #currentFilter = null;
 
-  constructor({filters}) {
+  constructor({filters, currentFilter}) {
     super();
 
     this.#filters = filters;
+    this.#currentFilter = currentFilter;
   }
 
   get template() {
