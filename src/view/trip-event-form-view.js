@@ -55,7 +55,13 @@ const createEventTypesTemplate = (offers, type) => {
 };
 
 const createOffersTemplate = (offerIds, offers, type) => {
-  const options = offers.find((offer) => offer.type === type).offers
+  const availableOffers = offers.find((offer) => offer.type === type).offers;
+
+  if (availableOffers.length === 0) {
+    return '';
+  }
+
+  const options = availableOffers
     .map((offer) => {
       const isChecked = (offerIds.includes(offer.id)) ? 'checked' : '';
 
@@ -63,7 +69,7 @@ const createOffersTemplate = (offerIds, offers, type) => {
         <div class="event__offer-selector">
           <input
             class="event__offer-checkbox  visually-hidden"
-            id="event-offer-${offer.id}" type="checkbox" name="event-offer" ${isChecked}>
+            id="event-offer-${offer.id}" type="checkbox" name="event-offer" ${isChecked} data-offer-id="${offer.id}">
           <label class="event__offer-label" for="event-offer-${offer.id}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;
@@ -89,7 +95,26 @@ const createPicturesTemplate = (pictures) =>
     .map((picture) =>`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
     .join('');
 
-const createTripEventFormTemplate = (state, destinations, offers) => {
+const createDestinationTemplate = (description, pictures) => {
+  if (description === '' && pictures.length === 0) {
+    return '';
+  }
+
+  return `
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${description}</p>
+
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${createPicturesTemplate(pictures)}
+        </div>
+      </div>
+    </section>
+  `;
+};
+
+const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) => {
   const {
     basePrice,
     type,
@@ -148,26 +173,17 @@ const createTripEventFormTemplate = (state, destinations, offers) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__reset-btn" type="reset">${isNewEvent ? 'Cancel' : 'Delete'}</button>
 
+          ${isNewEvent ? '' : `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
-          </button>
+          </button>`}
         </header>
 
         <section class="event__details">
           ${createOffersTemplate(offerIds, offers, type)}
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${createPicturesTemplate(pictures)}
-              </div>
-            </div>
-          </section>
+          ${createDestinationTemplate(description, pictures)}
         </section>
       </form>
     </li>
@@ -179,26 +195,38 @@ export default class TripEventFormView extends AbstractStatefulView {
   #offers = [];
   #dateStartPicker = null;
   #dateEndPicker = null;
+  #isNewEvent = false;
 
   #handleRollupClick = () => null;
   #handleFormSubmit = () => null;
+  #handleDeleteButtonClick = () => null;
 
-  constructor({point = BLANK_POINT, destinations, offers, onRollupClick, onFormSubmit}) {
+  constructor({
+    point = BLANK_POINT,
+    destinations,
+    offers,
+    isNewEvent = false,
+    onRollupClick = () => null,
+    onFormSubmit,
+    onDeleteButtonClick
+  }) {
     super();
 
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#isNewEvent = isNewEvent;
 
     this._setState(this.#parseEventToState(point));
 
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteButtonClick = onDeleteButtonClick;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createTripEventFormTemplate(this._state, this.#destinations, this.#offers);
+    return createTripEventFormTemplate(this._state, this.#destinations, this.#offers, this.#isNewEvent);
   }
 
   removeElement() {
@@ -212,11 +240,22 @@ export default class TripEventFormView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+    const eventOffersElement = this.element.querySelector('.event__available-offers');
+
+    if (rollupButtonElement) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+    }
+
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__type-list').addEventListener('change', this.#eventTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputChangeHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteButtonClickHandler);
+
+    if (eventOffersElement) {
+      eventOffersElement.addEventListener('change', this.#offerClickHandler);
+    }
 
     this.#setDatePickers();
   }
@@ -285,6 +324,12 @@ export default class TripEventFormView extends AbstractStatefulView {
     });
   };
 
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#handleDeleteButtonClick(this.#parseStateToEvent(this._state));
+  };
+
   #destinationInputHandler = (evt) => {
     const selectedDestination = this.#destinations
       .find((destination) => destination.name === evt.target.value);
@@ -311,9 +356,28 @@ export default class TripEventFormView extends AbstractStatefulView {
   };
 
   #priceInputChangeHandler = (evt) => {
+    const priceValue = parseInt(evt.target.value, 10);
+    const basePrice = (priceValue >= 0) ? priceValue : 0;
+
     this._setState({
-      basePrice: evt.target.value
+      basePrice
     });
+  };
+
+  #offerClickHandler = (evt) => {
+    if (evt.target.closest('input[type="checkbox"]')) {
+      const offerId = evt.target.dataset.offerId;
+
+      if (this._state.offers.includes(offerId)) {
+        this._setState({
+          offers: this._state.offers.filter((item) => item !== offerId)
+        });
+      } else {
+        this._setState({
+          offers: [...this._state.offers, offerId]
+        });
+      }
+    }
   };
 
   #rollupClickHandler = (evt) => {

@@ -29,3 +29,15 @@ export const BLANK_POINT = {
   dateTo: new Date(),
   isFavorite: false
 };
+
+export const UserAction = {
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+  UPDATE_POINT: 'UPDATE_POINT'
+};
+
+export const UpdateType = {
+  MAJOR: 'MAJOR',
+  MINOR: 'MINOR',
+  PATCH: 'PATCH'
+};

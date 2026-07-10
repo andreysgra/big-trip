@@ -7,6 +7,9 @@ import OffersModel from './model/offers-model';
 import {points} from './mocks/points';
 import {destinations} from './mocks/destinations';
 import {offers} from './mocks/offers';
+import NewEventButtonView from './view/new-event-button-view';
+import {render} from './framework/render';
+import FilterModel from './model/filter-model';
 
 const bodyElement = document.body;
 const tripMainElement = bodyElement.querySelector('.trip-main');
@@ -16,6 +19,7 @@ const tripEventsElement = bodyElement.querySelector('.trip-events');
 const pointsModel = new PointsModel(points);
 const destinationsModel = new DestinationsModel(destinations);
 const offersModel = new OffersModel(offers);
+const filterModel = new FilterModel();
 
 const infoPresenter = new InfoPresenter({
   container: tripMainElement
@@ -23,16 +27,34 @@ const infoPresenter = new InfoPresenter({
 
 const filtersPresenter = new FiltersPresenter({
   container: tripControlsFiltersElement,
-  pointsModel
+  pointsModel,
+  filterModel
 });
 
 const eventsPresenter = new EventsPresenter({
   container: tripEventsElement,
   pointsModel,
   destinationsModel,
-  offersModel
+  offersModel,
+  filterModel,
+  onNewEventDestroy: newEventFormCloseHandler
 });
+
+const newEventButtonComponent = new NewEventButtonView({
+  onClick: newEventButtonClickHandler
+});
+
+render(newEventButtonComponent, tripMainElement);
 
 infoPresenter.init();
 filtersPresenter.init();
 eventsPresenter.init();
+
+function newEventButtonClickHandler() {
+  newEventButtonComponent.disable();
+  eventsPresenter.createEvent();
+}
+
+function newEventFormCloseHandler() {
+  newEventButtonComponent.enable();
+}
