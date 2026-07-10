@@ -356,8 +356,11 @@ export default class TripEventFormView extends AbstractStatefulView {
   };
 
   #priceInputChangeHandler = (evt) => {
+    const priceValue = parseInt(evt.target.value, 10);
+    const basePrice = (priceValue >= 0) ? priceValue : 0;
+
     this._setState({
-      basePrice: evt.target.value
+      basePrice
     });
   };
 
