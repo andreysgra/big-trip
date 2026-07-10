@@ -14,3 +14,5 @@ export const filter = {
   [FilterType.PRESENT]: (points) => points.filter(isEventPresent),
   [FilterType.PAST]: (points) => points.filter(isEventPast)
 };
+
+export const getFilter = (points, filterType) => filter[filterType](points);

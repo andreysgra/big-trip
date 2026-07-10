@@ -36,6 +36,7 @@ const eventsPresenter = new EventsPresenter({
   pointsModel,
   destinationsModel,
   offersModel,
+  filterModel,
   onNewEventDestroy: newEventFormCloseHandler
 });
 

@@ -1,11 +1,12 @@
 import TripSortView from '../view/trip-sort-view';
-import {remove, render, RenderPosition} from '../framework/render';
+import {remove, render, RenderPosition, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
 import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
 import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
 import NewEventPresenter from './new-event-presenter';
+import {getFilter} from '../utils/filter';
 
 export default class EventsPresenter {
   #container = null;
@@ -16,8 +17,10 @@ export default class EventsPresenter {
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
+  #filterModel = null;
 
   #currentSortType = SortType.DAY;
+  #filterType = '';
 
   #tripSortComponent = null;
   #tripEventsListComponent = new TripEventsListView();
@@ -25,28 +28,34 @@ export default class EventsPresenter {
 
   #handleNewEventDestroy = null;
 
-  constructor({container, pointsModel, destinationsModel, offersModel, onNewEventDestroy}) {
+  constructor({container, pointsModel, destinationsModel, offersModel, filterModel, onNewEventDestroy}) {
     this.#container = container;
 
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+    this.#filterModel = filterModel;
+
     this.#handleNewEventDestroy = onNewEventDestroy;
 
     this.#pointsModel.addObserver(this.#modelEventHandler);
+    this.#filterModel.addObserver(this.#modelEventHandler);
   }
 
   get points() {
+    this.#filterType = this.#filterModel.getFilter();
+
     const points = [...this.#pointsModel.points];
+    const filteredPoints = getFilter(points, this.#filterType);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return points.sort(sortPointsByTime);
+        return filteredPoints.sort(sortPointsByTime);
       case SortType.PRICE:
-        return points.sort(sortPointsByPrice);
+        return filteredPoints.sort(sortPointsByPrice);
     }
 
-    return points.sort(sortPointsByDate);
+    return filteredPoints.sort(sortPointsByDate);
   }
 
   createEvent() {
@@ -59,6 +68,7 @@ export default class EventsPresenter {
     });
 
     this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
 
     this.#newEventPresenter.init();
     this.#eventPresenters.forEach((eventPresenter) => eventPresenter.resetView());
@@ -138,8 +148,8 @@ export default class EventsPresenter {
   }
 
   #renderTripEventsListEmpty() {
-    this.#tripEventsListEmptyComponent = new TripEventsListEmptyView({filterType: FilterType.EVERYTHING});
-    render(this.#tripEventsListEmptyComponent, this.#container);
+    this.#tripEventsListEmptyComponent = new TripEventsListEmptyView({filterType: this.#filterType});
+    replace(this.#tripEventsListEmptyComponent, this.#tripEventsListComponent);
   }
 
   #modelEventHandler = (updateType, data) => {
@@ -151,6 +161,12 @@ export default class EventsPresenter {
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({
+          resetSortType: true
+        });
         this.#renderBoard();
         break;
     }
