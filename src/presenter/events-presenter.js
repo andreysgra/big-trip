@@ -169,6 +169,9 @@ export default class EventsPresenter {
         });
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#renderBoard();
+        break;
     }
   };
 

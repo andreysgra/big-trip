@@ -1,8 +1,10 @@
 export default class DestinationsModel {
+  #destinationsApiService = null;
+
   #destinations = [];
 
-  constructor(destinations) {
-    this.#destinations = destinations;
+  constructor(destinationsApiService) {
+    this.#destinationsApiService = destinationsApiService;
   }
 
   get destinations() {
@@ -15,5 +17,13 @@ export default class DestinationsModel {
 
   getDefaultDestinationId() {
     return this.#destinations[0].id;
+  }
+
+  async init() {
+    try {
+      this.#destinations = await this.#destinationsApiService.destinations;
+    } catch (err) {
+      this.#destinations = [];
+    }
   }
 }
