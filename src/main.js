@@ -5,7 +5,7 @@ import PointsModel from './model/points-model';
 import DestinationsModel from './model/destinations-model';
 import OffersModel from './model/offers-model';
 import NewEventButtonView from './view/new-event-button-view';
-import {render} from './framework/render';
+import {remove, render} from './framework/render';
 import FilterModel from './model/filter-model';
 import PointsApiService from './api-service/points-api-service';
 import {AUTHORIZATION, END_POINT} from './api-service/const';
@@ -45,16 +45,23 @@ const newEventButtonComponent = new NewEventButtonView({
   onClick: newEventButtonClickHandler
 });
 
-render(newEventButtonComponent, tripMainElement);
-
-
 filtersPresenter.init();
 eventsPresenter.init();
 infoPresenter.init();
 
-destinationsModel.init();
-offersModel.init();
-pointsModel.init();
+(async () => {
+  try {
+    await Promise.all([
+      destinationsModel.init(),
+      offersModel.init(),
+      pointsModel.init()
+    ]);
+
+    render(newEventButtonComponent, tripMainElement);
+  } catch (e) {
+    remove(newEventButtonComponent);
+  }
+})();
 
 function newEventButtonClickHandler() {
   newEventButtonComponent.disable();
