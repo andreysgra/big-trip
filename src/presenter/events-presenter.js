@@ -7,6 +7,8 @@ import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
 import NewEventPresenter from './new-event-presenter';
 import {getFilter} from '../utils/filter';
+import ErrorMessageView from '../view/error-message-view';
+import PointsLoadingView from '../view/points-loading-view';
 
 export default class EventsPresenter {
   #container = null;
@@ -21,10 +23,13 @@ export default class EventsPresenter {
 
   #currentSortType = SortType.DAY;
   #filterType = '';
+  #isLoading = true;
 
   #tripSortComponent = null;
   #tripEventsListComponent = new TripEventsListView();
   #tripEventsListEmptyComponent = null;
+  #errorMessageComponent = new ErrorMessageView();
+  #pointsLoadingComponent = new PointsLoadingView();
 
   #handleNewEventDestroy = null;
 
@@ -106,6 +111,14 @@ export default class EventsPresenter {
   };
 
   #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderPointsLoading();
+
+      return;
+    }
+
+    remove(this.#pointsLoadingComponent);
+
     if (this.points.length === 0) {
       this.#renderTripEventsListEmpty();
 
@@ -115,6 +128,11 @@ export default class EventsPresenter {
     this.#renderSort();
     this.#renderTripEventsList();
     this.#renderPoints();
+  }
+
+  #renderErrorMessage() {
+    remove(this.#pointsLoadingComponent);
+    render(this.#errorMessageComponent, this.#container);
   }
 
   #renderPoint = (point) => {
@@ -132,6 +150,10 @@ export default class EventsPresenter {
 
   #renderPoints() {
     this.points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderPointsLoading() {
+    render(this.#pointsLoadingComponent, this.#container);
   }
 
   #renderSort() {
@@ -168,6 +190,14 @@ export default class EventsPresenter {
           resetSortType: true
         });
         this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        this.#renderBoard();
+        break;
+      case UpdateType.ERROR:
+        this.#renderErrorMessage();
+        this.#isLoading = false;
         break;
     }
   };
