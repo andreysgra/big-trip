@@ -131,6 +131,7 @@ export default class EventsPresenter {
   }
 
   #renderErrorMessage() {
+    remove(this.#pointsLoadingComponent);
     render(this.#errorMessageComponent, this.#container);
   }
 
@@ -195,7 +196,6 @@ export default class EventsPresenter {
         this.#renderBoard();
         break;
       case UpdateType.ERROR:
-        this.#clearBoard();
         this.#renderErrorMessage();
         this.#isLoading = false;
         break;
