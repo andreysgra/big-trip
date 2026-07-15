@@ -7,6 +7,7 @@ import {FilterType, SortType, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
 import NewEventPresenter from './new-event-presenter';
 import {getFilter} from '../utils/filter';
+import ErrorMessageView from '../view/error-message-view';
 
 export default class EventsPresenter {
   #container = null;
@@ -25,6 +26,7 @@ export default class EventsPresenter {
   #tripSortComponent = null;
   #tripEventsListComponent = new TripEventsListView();
   #tripEventsListEmptyComponent = null;
+  #errorMessageComponent = new ErrorMessageView();
 
   #handleNewEventDestroy = null;
 
@@ -117,6 +119,10 @@ export default class EventsPresenter {
     this.#renderPoints();
   }
 
+  #renderErrorMessage() {
+    render(this.#errorMessageComponent, this.#container);
+  }
+
   #renderPoint = (point) => {
     const eventPresenter = new EventPresenter({
       container: this.#tripEventsListComponent.element,
@@ -171,6 +177,10 @@ export default class EventsPresenter {
         break;
       case UpdateType.INIT:
         this.#renderBoard();
+        break;
+      case UpdateType.ERROR:
+        this.#clearBoard();
+        this.#renderErrorMessage();
         break;
     }
   };
