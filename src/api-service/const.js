@@ -1,6 +1,8 @@
 export const Method = {
   GET: 'GET',
-  PUT: 'PUT'
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
 };
 
 export const AUTHORIZATION = 'Basic Xd5rls3c2Abfu';
