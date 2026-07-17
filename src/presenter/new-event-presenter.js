@@ -57,6 +57,18 @@ export default class NewEventPresenter {
     render(this.#tripEventFormComponent, this.#container, RenderPosition.AFTERBEGIN);
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this.#tripEventFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#tripEventFormComponent.shake(resetFormState);
+  }
+
   setSaving() {
     this.#tripEventFormComponent.updateElement({
       isDisabled: true,

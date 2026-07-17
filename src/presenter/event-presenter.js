@@ -78,6 +78,24 @@ export default class EventPresenter {
     remove(currentTripEventFormComponent);
   }
 
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#tripEventComponent.shake();
+
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#tripEventFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this.#tripEventFormComponent.shake(resetFormState);
+  }
+
   setDeleting() {
     if (this.#mode === Mode.EDITING) {
       this.#tripEventFormComponent.updateElement({

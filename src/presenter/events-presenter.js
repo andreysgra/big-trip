@@ -217,15 +217,30 @@ export default class EventsPresenter {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#eventPresenters.get(update.id).setSaving();
-        await this.#pointsModel.update(updateType, update);
+
+        try {
+          await this.#pointsModel.update(updateType, update);
+        } catch (err) {
+          this.#eventPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
         this.#eventPresenters.get(update.id).setDeleting();
-        await this.#pointsModel.delete(updateType, update);
+
+        try {
+          await this.#pointsModel.delete(updateType, update);
+        } catch (err) {
+          this.#eventPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
         this.#newEventPresenter.setSaving();
-        await this.#pointsModel.add(updateType, update);
+
+        try {
+          await this.#pointsModel.add(updateType, update);
+        } catch (err) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
     }
   };
