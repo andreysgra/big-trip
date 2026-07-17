@@ -43,3 +43,8 @@ export const UpdateType = {
   MINOR: 'MINOR',
   PATCH: 'PATCH'
 };
+
+export const TimeLimit = {
+  LOWER: 350,
+  UPPER: 1000
+};

@@ -3,12 +3,13 @@ import {remove, render, RenderPosition, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
 import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
-import {FilterType, SortType, UpdateType, UserAction} from '../const';
+import {FilterType, SortType, TimeLimit, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
 import NewEventPresenter from './new-event-presenter';
 import {getFilter} from '../utils/filter';
 import ErrorMessageView from '../view/error-message-view';
 import PointsLoadingView from '../view/points-loading-view';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 export default class EventsPresenter {
   #container = null;
@@ -24,6 +25,7 @@ export default class EventsPresenter {
   #currentSortType = SortType.DAY;
   #filterType = '';
   #isLoading = true;
+  #uiBlocker = new UiBlocker({lowerLimit: TimeLimit.LOWER, upperLimit: TimeLimit.UPPER});
 
   #tripSortComponent = null;
   #tripEventsListComponent = new TripEventsListView();
@@ -214,6 +216,8 @@ export default class EventsPresenter {
   };
 
   #viewActionHandler = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#eventPresenters.get(update.id).setSaving();
@@ -243,5 +247,7 @@ export default class EventsPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 }
