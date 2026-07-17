@@ -213,16 +213,19 @@ export default class EventsPresenter {
     this.#renderPoints();
   };
 
-  #viewActionHandler = (actionType, updateType, updateFilm) => {
+  #viewActionHandler = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.update(updateType, updateFilm);
+        this.#eventPresenters.get(update.id).setSaving();
+        await this.#pointsModel.update(updateType, update);
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.delete(updateType, updateFilm);
+        this.#eventPresenters.get(update.id).setDeleting();
+        await this.#pointsModel.delete(updateType, update);
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.add(updateType, updateFilm);
+        this.#newEventPresenter.setSaving();
+        await this.#pointsModel.add(updateType, update);
         break;
     }
   };

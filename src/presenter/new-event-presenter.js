@@ -57,6 +57,13 @@ export default class NewEventPresenter {
     render(this.#tripEventFormComponent, this.#container, RenderPosition.AFTERBEGIN);
   }
 
+  setSaving() {
+    this.#tripEventFormComponent.updateElement({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
   #deleteButtonClickHandler = () => {
     this.destroy();
   };
@@ -73,7 +80,5 @@ export default class NewEventPresenter {
       UpdateType.MINOR,
       point
     );
-
-    this.destroy();
   };
 }
