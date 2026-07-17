@@ -3,12 +3,13 @@ import {remove, render, RenderPosition, replace} from '../framework/render';
 import TripEventsListView from '../view/trip-events-list-view';
 import {sortPointsByDate, sortPointsByPrice, sortPointsByTime} from '../utils/point';
 import TripEventsListEmptyView from '../view/trip-events-list-empty-view';
-import {FilterType, SortType, UpdateType, UserAction} from '../const';
+import {FilterType, SortType, TimeLimit, UpdateType, UserAction} from '../const';
 import EventPresenter from './event-presenter';
 import NewEventPresenter from './new-event-presenter';
 import {getFilter} from '../utils/filter';
 import ErrorMessageView from '../view/error-message-view';
 import PointsLoadingView from '../view/points-loading-view';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 export default class EventsPresenter {
   #container = null;
@@ -24,6 +25,7 @@ export default class EventsPresenter {
   #currentSortType = SortType.DAY;
   #filterType = '';
   #isLoading = true;
+  #uiBlocker = new UiBlocker({lowerLimit: TimeLimit.LOWER, upperLimit: TimeLimit.UPPER});
 
   #tripSortComponent = null;
   #tripEventsListComponent = new TripEventsListView();
@@ -213,17 +215,39 @@ export default class EventsPresenter {
     this.#renderPoints();
   };
 
-  #viewActionHandler = (actionType, updateType, updateFilm) => {
+  #viewActionHandler = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.update(updateType, updateFilm);
+        this.#eventPresenters.get(update.id).setSaving();
+
+        try {
+          await this.#pointsModel.update(updateType, update);
+        } catch (err) {
+          this.#eventPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.delete(updateType, updateFilm);
+        this.#eventPresenters.get(update.id).setDeleting();
+
+        try {
+          await this.#pointsModel.delete(updateType, update);
+        } catch (err) {
+          this.#eventPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.add(updateType, updateFilm);
+        this.#newEventPresenter.setSaving();
+
+        try {
+          await this.#pointsModel.add(updateType, update);
+        } catch (err) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 }

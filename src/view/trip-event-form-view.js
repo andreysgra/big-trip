@@ -11,6 +11,18 @@ const datePickerOptions = {
   'time_24hr': true
 };
 
+const getResetButtonName = (isNewEvent, isDeleting) => {
+  if (isNewEvent) {
+    return 'Cancel';
+  }
+
+  if (isDeleting) {
+    return 'Deleting';
+  }
+  // isNewEvent ? 'Cancel' : isDeleting ? 'Deleting' : 'Delete'
+  return 'Delete';
+};
+
 const createDestinationListTemplate = (destinations) => {
   const options = destinations
     .map((destination) => `<option value="${destination.name}"></option>`)
@@ -54,7 +66,7 @@ const createEventTypesTemplate = (offers, type) => {
     .join('');
 };
 
-const createOffersTemplate = (offerIds, offers, type) => {
+const createOffersTemplate = (offerIds, offers, type, isDisabled) => {
   const availableOffers = offers.find((offer) => offer.type === type).offers;
 
   if (availableOffers.length === 0) {
@@ -69,7 +81,9 @@ const createOffersTemplate = (offerIds, offers, type) => {
         <div class="event__offer-selector">
           <input
             class="event__offer-checkbox  visually-hidden"
-            id="event-offer-${offer.id}" type="checkbox" name="event-offer" ${isChecked} data-offer-id="${offer.id}">
+            id="event-offer-${offer.id}"
+            type="checkbox"
+            name="event-offer" ${isChecked} data-offer-id="${offer.id}" ${isDisabled ? 'disabled' : ''}>
           <label class="event__offer-label" for="event-offer-${offer.id}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;
@@ -121,7 +135,10 @@ const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) =>
     destination: destinationId,
     offers: offerIds,
     dateFrom,
-    dateTo
+    dateTo,
+    isSaving,
+    isDeleting,
+    isDisabled
   } = state;
 
   const {name, description, pictures} = destinations.find((destination) => destination.id === destinationId);
@@ -135,7 +152,8 @@ const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) =>
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox"
+              ${isDisabled ? 'disabled' : ''}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -148,7 +166,8 @@ const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) =>
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">${type}</label>
             <input class="event__input  event__input--destination" id="event-destination-1"
-              type="text" name="event-destination" value="${name}" list="destination-list-1">
+              type="text" name="event-destination" value="${name}" list="destination-list-1"
+              ${isDisabled ? 'disabled' : ''}>
 
               ${createDestinationListTemplate(destinations)}
           </div>
@@ -156,11 +175,11 @@ const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) =>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
             <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time"
-              value="${getDateTime(dateFrom)}">
+              value="${getDateTime(dateFrom)}" ${isDisabled ? 'disabled' : ''}>
               &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
             <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time"
-              value="${getDateTime(dateTo)}">
+              value="${getDateTime(dateTo)}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -169,20 +188,24 @@ const createTripEventFormTemplate = (state, destinations, offers, isNewEvent) =>
               &euro;
             </label>
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price"
-              value="${basePrice}">
+              value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${isNewEvent ? 'Cancel' : 'Delete'}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
+            ${isSaving ? 'Saving' : 'Save'}
+          </button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+            ${getResetButtonName(isNewEvent, isDeleting)}
+          </button>
 
           ${isNewEvent ? '' : `
-          <button class="event__rollup-btn" type="button">
+          <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
             <span class="visually-hidden">Open event</span>
           </button>`}
         </header>
 
         <section class="event__details">
-          ${createOffersTemplate(offerIds, offers, type)}
+          ${createOffersTemplate(offerIds, offers, type, isDisabled)}
           ${createDestinationTemplate(description, pictures)}
         </section>
       </form>
@@ -284,14 +307,21 @@ export default class TripEventFormView extends AbstractStatefulView {
 
   #parseEventToState(point) {
     return {
-      ...point
+      ...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false
     };
   }
 
   #parseStateToEvent(state) {
-    return {
-      ...state
-    };
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
   }
 
   #setDatePickers() {
