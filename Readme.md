@@ -6,6 +6,8 @@
 
 Программирование: [Андрей Грачев](https://github.com/andreysgra/)
 
+[Демо проекта](https://big-trip-service.vercel.app/)
+
 [Техническое задание](Specification.md)
 
 ## Используемый стек
