@@ -23,7 +23,10 @@ const offersModel = new OffersModel(new OffersApiService(END_POINT, AUTHORIZATIO
 const filterModel = new FilterModel();
 
 const infoPresenter = new InfoPresenter({
-  container: tripMainElement
+  container: tripMainElement,
+  pointsModel,
+  destinationsModel,
+  offersModel
 });
 
 const filtersPresenter = new FiltersPresenter({
@@ -47,7 +50,6 @@ const newEventButtonComponent = new NewEventButtonView({
 
 filtersPresenter.init();
 eventsPresenter.init();
-infoPresenter.init();
 
 (async () => {
   try {
@@ -58,6 +60,7 @@ infoPresenter.init();
     ]);
 
     render(newEventButtonComponent, tripMainElement);
+    infoPresenter.init();
   } catch (e) {
     remove(newEventButtonComponent);
   }

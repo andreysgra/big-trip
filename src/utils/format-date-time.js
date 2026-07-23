@@ -3,7 +3,7 @@ import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
-export const getMonthAsStringDay = (date) => dayjs(date).format('MMMM DD');
+export const getMonthAsStringDay = (date) => dayjs(date).format('MMM DD');
 
 export const getFullDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
