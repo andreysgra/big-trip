@@ -25,7 +25,8 @@ const filterModel = new FilterModel();
 const infoPresenter = new InfoPresenter({
   container: tripMainElement,
   pointsModel,
-  destinationsModel
+  destinationsModel,
+  offersModel
 });
 
 const filtersPresenter = new FiltersPresenter({

@@ -11,16 +11,18 @@ export default class InfoPresenter {
 
   #pointsModel = null;
   #destinationsModel = null;
+  #offersModel = null;
 
   #tripInfoComponent = new TripInfoView();
   #tripInfoMainComponent = null;
-  #tripInfoCostComponent = new TripInfoCostView();
+  #tripInfoCostComponent = null;
 
-  constructor({container, pointsModel, destinationsModel}) {
+  constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#container = container;
 
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
 
     this.#pointsModel.addObserver(this.#modelEventHandler);
   }
@@ -28,7 +30,7 @@ export default class InfoPresenter {
   init() {
     this.#renderTripInfo();
     this.#renderTripInfoMain();
-    render(this.#tripInfoCostComponent, this.#tripInfoComponent.element);
+    this.#renderTripInfoCost();
   }
 
   #getInfoDates() {
@@ -72,8 +74,44 @@ export default class InfoPresenter {
     }
   }
 
+  #getTotalCost() {
+    const points = [...this.#pointsModel.points];
+    const baseCost = points.reduce((acc, point) => acc + point.basePrice, 0);
+
+    const offersCost = points
+      .filter((point) => point.offers.length !== 0)
+      .map((point) => {
+        const item = {
+          type: point.type,
+          offers: point.offers
+        };
+
+        return this.#offersModel.getOffersByType(item.type).offers
+          .filter((offer) => item.offers.includes(offer.id));
+      })
+      .reduce((acc, offer) =>
+        acc + offer.reduce((cost, item) => cost + item.price, 0),
+      0);
+
+    return baseCost + offersCost;
+  }
+
   #renderTripInfo() {
     render(this.#tripInfoComponent, this.#container, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderTripInfoCost() {
+    const cost = this.#getTotalCost();
+    const currentTripInfoComponent = this.#tripInfoCostComponent;
+
+    this.#tripInfoCostComponent = new TripInfoCostView({cost});
+
+    if (currentTripInfoComponent === null) {
+      render(this.#tripInfoCostComponent, this.#tripInfoComponent.element);
+    } else {
+      replace(this.#tripInfoCostComponent, currentTripInfoComponent);
+      remove(currentTripInfoComponent);
+    }
   }
 
   #renderTripInfoMain() {
@@ -95,6 +133,7 @@ export default class InfoPresenter {
     switch (updateType) {
       case UpdateType.MINOR:
         this.#renderTripInfoMain();
+        this.#renderTripInfoCost();
         break;
     }
   };
